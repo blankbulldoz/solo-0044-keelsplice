@@ -1,0 +1,6416 @@
+{
+  "task_source_schema_version": 1,
+  "cc_feedback_profile": "cc-feedback-2611",
+  "project_domain": "基础设施",
+  "project_subdirection": "数据库",
+  "supported_task_types": [
+    "功能开发",
+    "功能优化",
+    "泛Agent需求",
+    "代码重构",
+    "依赖升级与迁移",
+    "质量保障",
+    "项目维护",
+    "技术讨论",
+    "问题排查与诊断",
+    "部署运维"
+  ],
+  "type_coverage": {
+    "功能开发": {
+      "status": "supported",
+      "reason": "目录、选样、证据和交接已经实现，能够作为新增样本能力的输入或消费者。",
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/capture.py",
+        "keelsplice/catalog.py",
+        "keelsplice/codec.py",
+        "keelsplice/recipe.py",
+        "keelsplice/service.py",
+        "keelsplice/storage.py"
+      ]
+    },
+    "功能优化": {
+      "status": "supported",
+      "reason": "现行配方、闭包、封存与认证均有可观察行为可迭代，且有已存数据语义要保留。",
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/capture.py",
+        "keelsplice/catalog.py",
+        "keelsplice/codec.py",
+        "keelsplice/recipe.py",
+        "keelsplice/service.py",
+        "keelsplice/storage.py"
+      ]
+    },
+    "泛Agent需求": {
+      "status": "supported",
+      "reason": "目录、示例 SQL、公开取证与认证子库可共同产生消费方使用的领域数据材料。",
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/capture.py",
+        "keelsplice/catalog.py",
+        "keelsplice/codec.py",
+        "keelsplice/recipe.py",
+        "keelsplice/service.py",
+        "keelsplice/storage.py"
+      ]
+    },
+    "代码重构": {
+      "status": "supported",
+      "reason": "遍历与 SQLite 读取、封存预期与实际库认证的职责可分开，同时保持快照和字节语义。",
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/capture.py",
+        "keelsplice/catalog.py",
+        "keelsplice/codec.py",
+        "keelsplice/recipe.py",
+        "keelsplice/service.py",
+        "keelsplice/storage.py"
+      ]
+    },
+    "依赖升级与迁移": {
+      "status": "supported",
+      "reason": "实际持久配方、封存 JSON、SQLite 库和认证元数据都有可生成的旧格式材料。",
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/capture.py",
+        "keelsplice/catalog.py",
+        "keelsplice/codec.py",
+        "keelsplice/recipe.py",
+        "keelsplice/service.py",
+        "keelsplice/storage.py"
+      ]
+    },
+    "质量保障": {
+      "status": "supported",
+      "reason": "可从独立 SQLite 约束试验及旧新捕获的时间序列建立真实选择和认证判据。",
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/capture.py",
+        "keelsplice/catalog.py",
+        "keelsplice/codec.py",
+        "keelsplice/recipe.py",
+        "keelsplice/service.py",
+        "keelsplice/storage.py"
+      ]
+    },
+    "项目维护": {
+      "status": "supported",
+      "reason": "现有目录变化、预算、版本绑定与交接状态提供有实际决策分叉的操作维护内容。",
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/capture.py",
+        "keelsplice/catalog.py",
+        "keelsplice/codec.py",
+        "keelsplice/recipe.py",
+        "keelsplice/service.py",
+        "keelsplice/storage.py"
+      ]
+    },
+    "技术讨论": {
+      "status": "supported",
+      "reason": "可根据 SQLite 关系查询、事务边界、闭包大小和内容认证选择可行的后续设计。",
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/capture.py",
+        "keelsplice/catalog.py",
+        "keelsplice/codec.py",
+        "keelsplice/recipe.py",
+        "keelsplice/service.py",
+        "keelsplice/storage.py"
+      ]
+    },
+    "问题排查与诊断": {
+      "status": "supported",
+      "reason": "输入拼法、原生外键语义、目录摘要和状态门槛提供可复现的多原因排查场景。",
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/capture.py",
+        "keelsplice/catalog.py",
+        "keelsplice/codec.py",
+        "keelsplice/recipe.py",
+        "keelsplice/service.py",
+        "keelsplice/storage.py"
+      ]
+    },
+    "部署运维": {
+      "status": "supported",
+      "reason": "源和元数据为分开的本地数据库，真实 HTTP 与独立子库提供环境切换后可验证的结果。",
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/capture.py",
+        "keelsplice/catalog.py",
+        "keelsplice/codec.py",
+        "keelsplice/recipe.py",
+        "keelsplice/service.py",
+        "keelsplice/storage.py"
+      ]
+    },
+    "Bugfix": {
+      "status": "no_verified_defect",
+      "reason": "当前没有核实并保留的真实契约违例。"
+    }
+  },
+  "prompt_contract": {
+    "schema_version": 1,
+    "mode": "integrated",
+    "baseline_tier": "deep-task-ready",
+    "generation_scope": {
+      "mode": "all_supported"
+    },
+    "minimum_active_prompts": {
+      "功能开发": 20,
+      "功能优化": 20,
+      "泛Agent需求": 10,
+      "代码重构": 2,
+      "依赖升级与迁移": 2,
+      "质量保障": 2,
+      "项目维护": 2,
+      "技术讨论": 2,
+      "问题排查与诊断": 2,
+      "部署运维": 2
+    },
+    "minimum_anchors": {
+      "功能开发": 25,
+      "功能优化": 25,
+      "泛Agent需求": 15,
+      "代码重构": 15,
+      "依赖升级与迁移": 15,
+      "质量保障": 15,
+      "项目维护": 15,
+      "技术讨论": 15,
+      "问题排查与诊断": 15,
+      "部署运维": 15
+    },
+    "capacity_floor": {
+      "modules": 8,
+      "workflows": 10,
+      "mechanisms": 8,
+      "entities": 8,
+      "state_machines": 5,
+      "extension_seams": 12,
+      "tension_points": 10
+    }
+  },
+  "entities": [
+    {
+      "id": "source",
+      "label": "注册源库",
+      "relations": [
+        "table.belongs_to.source"
+      ],
+      "invariants": [
+        "只读别名仅指向管理员注册的文件"
+      ]
+    },
+    {
+      "id": "table",
+      "label": "关系表",
+      "relations": [
+        "edge.child.table",
+        "row.belongs_to.table"
+      ],
+      "invariants": [
+        "声明主键必须存在，列顺序来自目录"
+      ]
+    },
+    {
+      "id": "edge",
+      "label": "外键",
+      "relations": [
+        "edge.references.table"
+      ],
+      "invariants": [
+        "父键定义决定针对该边的匹配"
+      ]
+    },
+    {
+      "id": "catalog_hash",
+      "label": "模式摘要",
+      "relations": [
+        "catalog_hash.binds.source"
+      ],
+      "invariants": [
+        "表、索引和边均进入摘要"
+      ]
+    },
+    {
+      "id": "root",
+      "label": "根出现项",
+      "relations": [
+        "root.resolves.row",
+        "root.belongs_to.recipe"
+      ],
+      "invariants": [
+        "每个根的输入顺序保留"
+      ]
+    },
+    {
+      "id": "recipe",
+      "label": "配方版本",
+      "relations": [
+        "recipe.binds.catalog_hash",
+        "capture.uses.recipe"
+      ],
+      "invariants": [
+        "已分配版本内容不变"
+      ]
+    },
+    {
+      "id": "row",
+      "label": "入选行",
+      "relations": [
+        "row.belongs_to.capture"
+      ],
+      "invariants": [
+        "同一捕获内按表名及类型化主键去重"
+      ]
+    },
+    {
+      "id": "budget",
+      "label": "捕获预算",
+      "relations": [
+        "budget.bounds.capture"
+      ],
+      "invariants": [
+        "超限不产生部分捕获"
+      ]
+    },
+    {
+      "id": "capture",
+      "label": "封存捕获",
+      "relations": [
+        "capture.contains.row",
+        "capture.contains.witness"
+      ],
+      "invariants": [
+        "封存后源数据更新不改写捕获"
+      ]
+    },
+    {
+      "id": "witness",
+      "label": "入选证据",
+      "relations": [
+        "witness.connects.row",
+        "witness.uses.edge"
+      ],
+      "invariants": [
+        "根标记及关系方向保有各自含义"
+      ]
+    },
+    {
+      "id": "artifact",
+      "label": "SQLite 子库",
+      "relations": [
+        "artifact.from.capture"
+      ],
+      "invariants": [
+        "由封存数据一次性重建，未认证时不可下载"
+      ]
+    },
+    {
+      "id": "certificate",
+      "label": "认证记录",
+      "relations": [
+        "certificate.attests.artifact",
+        "certificate.attests.capture"
+      ],
+      "invariants": [
+        "证书绑定实际字节和捕获"
+      ]
+    }
+  ],
+  "state_machines": [
+    {
+      "subject": "source",
+      "states": [
+        "registered",
+        "reading",
+        "closed"
+      ],
+      "transitions": [
+        "registered->reading",
+        "reading->closed"
+      ],
+      "invariants": [
+        "读事务上的目录和行可见性统一，连接关闭后释放快照"
+      ]
+    },
+    {
+      "subject": "recipe",
+      "states": [
+        "active",
+        "retired"
+      ],
+      "transitions": [
+        "active->retired"
+      ],
+      "invariants": [
+        "退役不能修改具体版本，也不能恢复为活动"
+      ]
+    },
+    {
+      "subject": "row",
+      "states": [
+        "unseen",
+        "enqueued",
+        "expanded"
+      ],
+      "transitions": [
+        "unseen->enqueued",
+        "enqueued->expanded"
+      ],
+      "invariants": [
+        "同一个类型化身份最多扩展一次"
+      ]
+    },
+    {
+      "subject": "capture",
+      "states": [
+        "sealed",
+        "built",
+        "certified"
+      ],
+      "transitions": [
+        "sealed->built",
+        "built->certified"
+      ],
+      "invariants": [
+        "阶段更新条件写入，失败后可安全重试"
+      ]
+    },
+    {
+      "subject": "artifact",
+      "states": [
+        "temporary",
+        "reconstructed",
+        "verified",
+        "handed-off"
+      ],
+      "transitions": [
+        "temporary->reconstructed",
+        "reconstructed->verified",
+        "verified->handed-off"
+      ],
+      "invariants": [
+        "交接前对已认证字节重新计算摘要"
+      ]
+    }
+  ],
+  "capability_families": [
+    {
+      "family": "版本化与审计",
+      "occupied_by": [
+        "recipe",
+        "catalog_hash"
+      ],
+      "available": true
+    },
+    {
+      "family": "关系选样与证据",
+      "occupied_by": [
+        "row",
+        "edge",
+        "witness"
+      ],
+      "available": true
+    },
+    {
+      "family": "导出与冻结",
+      "occupied_by": [
+        "capture",
+        "artifact",
+        "certificate"
+      ],
+      "available": true
+    },
+    {
+      "family": "批量事务与恢复",
+      "occupied_by": [
+        "capture",
+        "source"
+      ],
+      "available": true
+    }
+  ],
+  "extension_seams": [
+    {
+      "id": "catalog-01",
+      "anchor": "catalog.inspect storage.source",
+      "entry": "GET /sources/{alias}/catalog",
+      "distinct_outcome": "结构化表能力描述",
+      "mechanism": "policy_rules"
+    },
+    {
+      "id": "catalog-02",
+      "anchor": "catalog.inspect codec.quote",
+      "entry": "GET /sources/{alias}/catalog",
+      "distinct_outcome": "关系兼容契约",
+      "mechanism": "lineage"
+    },
+    {
+      "id": "catalog-03",
+      "anchor": "catalog.snapshot codec.fingerprint",
+      "entry": "GET /sources/{alias}/catalog",
+      "distinct_outcome": "模式指纹映射",
+      "mechanism": "versioning_audit"
+    },
+    {
+      "id": "recipe-04",
+      "anchor": "recipe.identity codec.decode",
+      "entry": "POST /recipes/{name}/versions",
+      "distinct_outcome": "外部根选择",
+      "mechanism": "policy_rules"
+    },
+    {
+      "id": "recipe-05",
+      "anchor": "recipe.validate catalog.inspect",
+      "entry": "POST /recipes/{name}/versions",
+      "distinct_outcome": "反向边表达",
+      "mechanism": "policy_rules"
+    },
+    {
+      "id": "recipe-06",
+      "anchor": "storage.add_recipe recipe.describe",
+      "entry": "POST /recipes/{name}/versions",
+      "distinct_outcome": "配方身份关联",
+      "mechanism": "versioning_audit"
+    },
+    {
+      "id": "preview-09",
+      "anchor": "capture.find recipe.identity",
+      "entry": "POST /preview",
+      "distinct_outcome": "主键同一性观测",
+      "mechanism": "snapshot_consistency"
+    },
+    {
+      "id": "preview-10",
+      "anchor": "capture.parents catalog.inspect",
+      "entry": "POST /preview",
+      "distinct_outcome": "闭包边界分析",
+      "mechanism": "policy_rules"
+    },
+    {
+      "id": "preview-11",
+      "anchor": "capture.children catalog.inspect",
+      "entry": "POST /preview",
+      "distinct_outcome": "关系采纳策略",
+      "mechanism": "lineage"
+    },
+    {
+      "id": "preview-12",
+      "anchor": "capture.collect codec.key",
+      "entry": "POST /preview",
+      "distinct_outcome": "样本构造",
+      "mechanism": "lineage"
+    },
+    {
+      "id": "preview-13",
+      "anchor": "capture.collect recipe.validate",
+      "entry": "POST /preview",
+      "distinct_outcome": "容量解释",
+      "mechanism": "capacity"
+    },
+    {
+      "id": "capture-14",
+      "anchor": "storage.source service.execute",
+      "entry": "POST /captures",
+      "distinct_outcome": "源查询计量",
+      "mechanism": "capacity"
+    },
+    {
+      "id": "capture-15",
+      "anchor": "service.execute storage.source",
+      "entry": "POST /captures",
+      "distinct_outcome": "源快照证明",
+      "mechanism": "snapshot_consistency"
+    },
+    {
+      "id": "capture-16",
+      "anchor": "service.execute catalog.snapshot",
+      "entry": "POST /captures",
+      "distinct_outcome": "模式绑定演进",
+      "mechanism": "versioning_audit"
+    },
+    {
+      "id": "trace-17",
+      "anchor": "capture.trace storage.load_capture",
+      "entry": "POST /captures/{id}/trace",
+      "distinct_outcome": "关系解释产物",
+      "mechanism": "lineage"
+    },
+    {
+      "id": "trace-18",
+      "anchor": "capture.trace codec.key",
+      "entry": "POST /captures/{id}/trace",
+      "distinct_outcome": "证据地址投影",
+      "mechanism": "policy_rules"
+    },
+    {
+      "id": "build-19",
+      "anchor": "bundle.build catalog.inspect",
+      "entry": "POST /captures/{id}/build",
+      "distinct_outcome": "模式交接",
+      "mechanism": "export_freeze"
+    },
+    {
+      "id": "build-20",
+      "anchor": "bundle.build codec.decode",
+      "entry": "POST /captures/{id}/build",
+      "distinct_outcome": "逻辑数据交接",
+      "mechanism": "export_freeze"
+    },
+    {
+      "id": "build-21",
+      "anchor": "bundle.check_references storage.promote",
+      "entry": "POST /captures/{id}/build",
+      "distinct_outcome": "约束装载观察",
+      "mechanism": "recovery_rollback"
+    },
+    {
+      "id": "certify-22",
+      "anchor": "bundle.certify codec.row_values",
+      "entry": "POST /captures/{id}/certify",
+      "distinct_outcome": "离线内容核验",
+      "mechanism": "snapshot_consistency"
+    },
+    {
+      "id": "certify-23",
+      "anchor": "service.certify storage.promote",
+      "entry": "POST /captures/{id}/certify",
+      "distinct_outcome": "认证过渡",
+      "mechanism": "idempotency"
+    },
+    {
+      "id": "compare-24",
+      "anchor": "capture.compare codec.key",
+      "entry": "POST /compare",
+      "distinct_outcome": "跨捕获关系解释",
+      "mechanism": "lineage"
+    },
+    {
+      "id": "download-25",
+      "anchor": "service.download bundle.digest_bytes",
+      "entry": "GET /captures/{id}/database",
+      "distinct_outcome": "交接验证凭证",
+      "mechanism": "export_freeze"
+    },
+    {
+      "id": "retire-07",
+      "anchor": "storage.retire recipe.describe",
+      "entry": "POST /recipes/{name}/versions/{number}/retire",
+      "distinct_outcome": "版本退役协调",
+      "mechanism": "state_machine"
+    },
+    {
+      "id": "capture-08",
+      "anchor": "storage.add_capture service.execute",
+      "entry": "POST /captures",
+      "distinct_outcome": "既有封存协调",
+      "mechanism": "batch_transaction"
+    }
+  ],
+  "tension_points": [
+    {
+      "workflow_id": "catalog",
+      "description": "目录同时需要识别真主键及隐式复合目标次序",
+      "observable_failure": "无表、缺少主键或不支持的表被明确拒绝"
+    },
+    {
+      "workflow_id": "recipe",
+      "description": "配方可复现性和源 DDL 的持续演进",
+      "observable_failure": "无效列名、方向或种子形状不产生版本"
+    },
+    {
+      "workflow_id": "retire",
+      "description": "停用需要阻止新捕获，又要保留已经形成的引用",
+      "observable_failure": "未知版本不改已有配方"
+    },
+    {
+      "workflow_id": "preview",
+      "description": "反向扇出可能挤占保证源锚点参照完整所需的行预算",
+      "observable_failure": "预算不足不留下捕获记录"
+    },
+    {
+      "workflow_id": "capture",
+      "description": "配方版本、源事务与结果元数据有三种独立时间",
+      "observable_failure": "模式漂移或悬空引用拒绝封存"
+    },
+    {
+      "workflow_id": "trace",
+      "description": "一条共享行可能通过多个入口和方向被选中",
+      "observable_failure": "未知类型或行没有伪造的路径"
+    },
+    {
+      "workflow_id": "build",
+      "description": "循环引用的装载顺序与最终数据库完整性",
+      "observable_failure": "返回错误并保留 sealed 状态，不向下载暴露半成品"
+    },
+    {
+      "workflow_id": "certify",
+      "description": "SQLite 可打开与内容等价提供不同保障",
+      "observable_failure": "未生成的捕获拒绝认证"
+    },
+    {
+      "workflow_id": "compare",
+      "description": "外键运营证据变动与实际行值变动有独立含义",
+      "observable_failure": "模式摘要不同拒绝直接比较"
+    },
+    {
+      "workflow_id": "download",
+      "description": "交接凭据必须与真正交给消费者的字节绑定",
+      "observable_failure": "未认证捕获拒绝下载"
+    }
+  ],
+  "prompt_anchors": [
+    {
+      "id": "01-01",
+      "task_type": "功能开发",
+      "capability_family": "新用途可消费的领域事实",
+      "subject": "table",
+      "state": "目录快照",
+      "invariant": "SQLite 主库普通表具有声明主键",
+      "observable": "目录返回有序主键、表类型和列元数据",
+      "primary_mechanism": "policy_rules",
+      "workflow_ids": [
+        "catalog"
+      ],
+      "source_anchors": [
+        "keelsplice/catalog.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/catalog.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "inspect",
+          "source"
+        ]
+      },
+      "extension_seam_id": "catalog-01"
+    },
+    {
+      "id": "01-02",
+      "task_type": "功能开发",
+      "capability_family": "新用途可消费的领域事实",
+      "subject": "edge",
+      "state": "外键发现",
+      "invariant": "复合目标列按外键序号与父键次序解析",
+      "observable": "目录给出源列和目标列对应关系",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "catalog"
+      ],
+      "source_anchors": [
+        "keelsplice/catalog.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/catalog.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "inspect",
+          "quote"
+        ]
+      },
+      "extension_seam_id": "catalog-02"
+    },
+    {
+      "id": "01-03",
+      "task_type": "功能开发",
+      "capability_family": "新用途可消费的领域事实",
+      "subject": "catalog_hash",
+      "state": "模式识别",
+      "invariant": "摘要绑定表定义、列信息、关系和显式索引",
+      "observable": "DDL 修改后目录摘要改变",
+      "primary_mechanism": "versioning_audit",
+      "workflow_ids": [
+        "catalog"
+      ],
+      "source_anchors": [
+        "keelsplice/catalog.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/catalog.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "snapshot",
+          "fingerprint"
+        ]
+      },
+      "extension_seam_id": "catalog-03"
+    },
+    {
+      "id": "01-04",
+      "task_type": "功能开发",
+      "capability_family": "新用途可消费的领域事实",
+      "subject": "root",
+      "state": "登记",
+      "invariant": "根输入必须符合真实主键的维数和 SQLite 值类型",
+      "observable": "错误输入被拒绝，有效版本提供标准化表名",
+      "primary_mechanism": "policy_rules",
+      "workflow_ids": [
+        "recipe"
+      ],
+      "source_anchors": [
+        "keelsplice/recipe.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/recipe.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "identity",
+          "decode"
+        ]
+      },
+      "extension_seam_id": "recipe-04"
+    },
+    {
+      "id": "01-05",
+      "task_type": "功能开发",
+      "capability_family": "新用途可消费的领域事实",
+      "subject": "edge",
+      "state": "配置反向边",
+      "invariant": "反向边由子表及 SQLite 外键编号共同定位",
+      "observable": "配方回读可查到规范化的反向选择",
+      "primary_mechanism": "policy_rules",
+      "workflow_ids": [
+        "recipe"
+      ],
+      "source_anchors": [
+        "keelsplice/recipe.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/recipe.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "validate",
+          "inspect"
+        ]
+      },
+      "extension_seam_id": "recipe-05"
+    },
+    {
+      "id": "01-06",
+      "task_type": "功能开发",
+      "capability_family": "新用途可消费的领域事实",
+      "subject": "recipe",
+      "state": "定版",
+      "invariant": "名称下版本递增，旧版本的根和模式绑定保留",
+      "observable": "HTTP 可分别取两个不同版本",
+      "primary_mechanism": "versioning_audit",
+      "workflow_ids": [
+        "recipe"
+      ],
+      "source_anchors": [
+        "keelsplice/storage.py",
+        "keelsplice/recipe.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/storage.py",
+          "keelsplice/recipe.py"
+        ],
+        "functions": [
+          "add_recipe",
+          "describe"
+        ]
+      },
+      "extension_seam_id": "recipe-06"
+    },
+    {
+      "id": "01-07",
+      "task_type": "功能开发",
+      "capability_family": "新用途可消费的领域事实",
+      "subject": "recipe",
+      "state": "停用",
+      "invariant": "已停用版本可读但不能新增封存",
+      "observable": "浏览旧版本能读取内容，新捕获得到冲突",
+      "primary_mechanism": "state_machine",
+      "workflow_ids": [
+        "retire"
+      ],
+      "source_anchors": [
+        "keelsplice/storage.py",
+        "keelsplice/recipe.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/storage.py",
+          "keelsplice/recipe.py"
+        ],
+        "functions": [
+          "retire",
+          "describe"
+        ]
+      },
+      "extension_seam_id": "retire-07"
+    },
+    {
+      "id": "01-08",
+      "task_type": "功能开发",
+      "capability_family": "新用途可消费的领域事实",
+      "subject": "capture",
+      "state": "提交封存",
+      "invariant": "提交时再次要求配方为活动状态",
+      "observable": "与退役竞争时只有符合提交条件的捕获落地",
+      "primary_mechanism": "batch_transaction",
+      "workflow_ids": [
+        "capture"
+      ],
+      "source_anchors": [
+        "keelsplice/storage.py",
+        "keelsplice/service.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/storage.py",
+          "keelsplice/service.py"
+        ],
+        "functions": [
+          "add_capture",
+          "execute"
+        ]
+      },
+      "extension_seam_id": "capture-08"
+    },
+    {
+      "id": "01-09",
+      "task_type": "功能开发",
+      "capability_family": "新用途可消费的领域事实",
+      "subject": "row",
+      "state": "根解析",
+      "invariant": "实际 SQLite 查找允许由规范值取代输入拼法",
+      "observable": "预览返回按输入序次排列的实际主键值",
+      "primary_mechanism": "snapshot_consistency",
+      "workflow_ids": [
+        "preview"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/recipe.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/recipe.py"
+        ],
+        "functions": [
+          "find",
+          "identity"
+        ]
+      },
+      "extension_seam_id": "preview-09"
+    },
+    {
+      "id": "01-10",
+      "task_type": "功能开发",
+      "capability_family": "新用途可消费的领域事实",
+      "subject": "edge",
+      "state": "补齐父行",
+      "invariant": "任意 NULL 子键分量不触发父行补齐",
+      "observable": "汇总计数体现可空引用行为",
+      "primary_mechanism": "policy_rules",
+      "workflow_ids": [
+        "preview"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "parents",
+          "inspect"
+        ]
+      },
+      "extension_seam_id": "preview-10"
+    },
+    {
+      "id": "01-11",
+      "task_type": "功能开发",
+      "capability_family": "新用途可消费的领域事实",
+      "subject": "edge",
+      "state": "采纳子行",
+      "invariant": "反向查询继承父键比较语义",
+      "observable": "复合 NOCASE 目标的两个测量行都可入选",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "preview"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "children",
+          "inspect"
+        ]
+      },
+      "extension_seam_id": "preview-11"
+    },
+    {
+      "id": "01-12",
+      "task_type": "功能开发",
+      "capability_family": "新用途可消费的领域事实",
+      "subject": "row",
+      "state": "扩展",
+      "invariant": "已发现的实际行身份只入队一次",
+      "observable": "环中两个盒的行数有限而关系证据保留",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "preview"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "collect",
+          "key"
+        ]
+      },
+      "extension_seam_id": "preview-12"
+    },
+    {
+      "id": "01-13",
+      "task_type": "功能开发",
+      "capability_family": "新用途可消费的领域事实",
+      "subject": "budget",
+      "state": "容量判定",
+      "invariant": "根和补齐行共享整批行数上限",
+      "observable": "收紧上限时公开结果是 row_budget",
+      "primary_mechanism": "capacity",
+      "workflow_ids": [
+        "preview"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/recipe.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/recipe.py"
+        ],
+        "functions": [
+          "collect",
+          "validate"
+        ]
+      },
+      "extension_seam_id": "preview-13"
+    },
+    {
+      "id": "01-14",
+      "task_type": "功能开发",
+      "capability_family": "新用途可消费的领域事实",
+      "subject": "budget",
+      "state": "扫描中断",
+      "invariant": "源语句共用连接级 SQLite 工作预算",
+      "observable": "长扫描引发 scan_budget 且无封存",
+      "primary_mechanism": "capacity",
+      "workflow_ids": [
+        "capture"
+      ],
+      "source_anchors": [
+        "keelsplice/storage.py",
+        "keelsplice/service.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/storage.py",
+          "keelsplice/service.py"
+        ],
+        "functions": [
+          "source",
+          "execute"
+        ]
+      },
+      "extension_seam_id": "capture-14"
+    },
+    {
+      "id": "01-15",
+      "task_type": "功能开发",
+      "capability_family": "新用途可消费的领域事实",
+      "subject": "capture",
+      "state": "读快照",
+      "invariant": "模式检查及全部关系读取使用同一事务",
+      "observable": "捕获内容保持为一次源读，旧成果不随源更新",
+      "primary_mechanism": "snapshot_consistency",
+      "workflow_ids": [
+        "capture"
+      ],
+      "source_anchors": [
+        "keelsplice/service.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/service.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "execute",
+          "source"
+        ]
+      },
+      "extension_seam_id": "capture-15"
+    },
+    {
+      "id": "01-16",
+      "task_type": "功能开发",
+      "capability_family": "新用途可消费的领域事实",
+      "subject": "capture",
+      "state": "模式绑定",
+      "invariant": "现行摘要必须与登记时摘要一致",
+      "observable": "旧版本遇见 DDL 返回 schema_conflict",
+      "primary_mechanism": "versioning_audit",
+      "workflow_ids": [
+        "capture"
+      ],
+      "source_anchors": [
+        "keelsplice/service.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/service.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "execute",
+          "snapshot"
+        ]
+      },
+      "extension_seam_id": "capture-16"
+    },
+    {
+      "id": "01-17",
+      "task_type": "功能开发",
+      "capability_family": "新用途可消费的领域事实",
+      "subject": "witness",
+      "state": "行归因",
+      "invariant": "根位置、入边以及父依赖是独立事实",
+      "observable": "同一底盘既有根位置也有多条被指向的证据",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "trace"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "trace",
+          "load_capture"
+        ]
+      },
+      "extension_seam_id": "trace-17"
+    },
+    {
+      "id": "01-18",
+      "task_type": "功能开发",
+      "capability_family": "新用途可消费的领域事实",
+      "subject": "row",
+      "state": "按键追踪",
+      "invariant": "证据使用已封存的类型化主键身份",
+      "observable": "实际拼法可定位，别名拼法得到 404",
+      "primary_mechanism": "policy_rules",
+      "workflow_ids": [
+        "trace"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "trace",
+          "key"
+        ]
+      },
+      "extension_seam_id": "trace-18"
+    },
+    {
+      "id": "01-19",
+      "task_type": "功能开发",
+      "capability_family": "新用途可消费的领域事实",
+      "subject": "artifact",
+      "state": "重建 DDL",
+      "invariant": "普通表与显式索引从封存目录重建",
+      "observable": "独立数据库可读取同一模式与索引",
+      "primary_mechanism": "export_freeze",
+      "workflow_ids": [
+        "build"
+      ],
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/bundle.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "build",
+          "inspect"
+        ]
+      },
+      "extension_seam_id": "build-19"
+    },
+    {
+      "id": "01-20",
+      "task_type": "功能开发",
+      "capability_family": "新用途可消费的领域事实",
+      "subject": "artifact",
+      "state": "回填行",
+      "invariant": "生成列由子库计算，数据列按原 SQLite 类型绑定",
+      "observable": "消费端读出实际生成值与 BLOB",
+      "primary_mechanism": "export_freeze",
+      "workflow_ids": [
+        "build"
+      ],
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/bundle.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "build",
+          "decode"
+        ]
+      },
+      "extension_seam_id": "build-20"
+    },
+    {
+      "id": "01-21",
+      "task_type": "功能开发",
+      "capability_family": "新用途可消费的领域事实",
+      "subject": "artifact",
+      "state": "完整性提交",
+      "invariant": "环可装载而真正缺父会被 SQLite 完整性检查拒绝",
+      "observable": "能够保存合法循环库且无 FK 检查异常",
+      "primary_mechanism": "recovery_rollback",
+      "workflow_ids": [
+        "build"
+      ],
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/bundle.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "check_references",
+          "promote"
+        ]
+      },
+      "extension_seam_id": "build-21"
+    },
+    {
+      "id": "01-22",
+      "task_type": "功能开发",
+      "capability_family": "新用途可消费的领域事实",
+      "subject": "certificate",
+      "state": "内容认证",
+      "invariant": "SQLite 结构正确与逐表类型化内容等价分别核验",
+      "observable": "认证响应绑定库字节、模式、捕获和表计数",
+      "primary_mechanism": "snapshot_consistency",
+      "workflow_ids": [
+        "certify"
+      ],
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/bundle.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "certify",
+          "row_values"
+        ]
+      },
+      "extension_seam_id": "certify-22"
+    },
+    {
+      "id": "01-23",
+      "task_type": "功能开发",
+      "capability_family": "新用途可消费的领域事实",
+      "subject": "certificate",
+      "state": "状态推进",
+      "invariant": "仅 built 能写认证标记，重试返回既有终态",
+      "observable": "重复请求读取同一证书且 sealed 认证失败",
+      "primary_mechanism": "idempotency",
+      "workflow_ids": [
+        "certify"
+      ],
+      "source_anchors": [
+        "keelsplice/service.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/service.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "certify",
+          "promote"
+        ]
+      },
+      "extension_seam_id": "certify-23"
+    },
+    {
+      "id": "01-24",
+      "task_type": "功能开发",
+      "capability_family": "新用途可消费的领域事实",
+      "subject": "row",
+      "state": "值差异",
+      "invariant": "相同模式下以类型化键区分新增、离开和更新",
+      "observable": "两捕获显示实际修改主键而无误报新增",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "compare"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "compare",
+          "key"
+        ]
+      },
+      "extension_seam_id": "compare-24"
+    },
+    {
+      "id": "01-25",
+      "task_type": "功能开发",
+      "capability_family": "新用途可消费的领域事实",
+      "subject": "artifact",
+      "state": "交接认证",
+      "invariant": "发送字节先与同一记录的证书摘要核对",
+      "observable": "响应 ETag 等于独立消费方重算摘要",
+      "primary_mechanism": "export_freeze",
+      "workflow_ids": [
+        "download"
+      ],
+      "source_anchors": [
+        "keelsplice/service.py",
+        "keelsplice/bundle.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/service.py",
+          "keelsplice/bundle.py"
+        ],
+        "functions": [
+          "download",
+          "digest_bytes"
+        ]
+      },
+      "extension_seam_id": "download-25"
+    },
+    {
+      "id": "02-01",
+      "task_type": "功能优化",
+      "capability_family": "现有入口的可观察兼容行为",
+      "subject": "table",
+      "state": "目录快照",
+      "invariant": "SQLite 主库普通表具有声明主键",
+      "observable": "目录返回有序主键、表类型和列元数据",
+      "primary_mechanism": "policy_rules",
+      "workflow_ids": [
+        "catalog"
+      ],
+      "source_anchors": [
+        "keelsplice/catalog.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/catalog.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "inspect",
+          "source"
+        ]
+      }
+    },
+    {
+      "id": "02-02",
+      "task_type": "功能优化",
+      "capability_family": "现有入口的可观察兼容行为",
+      "subject": "edge",
+      "state": "外键发现",
+      "invariant": "复合目标列按外键序号与父键次序解析",
+      "observable": "目录给出源列和目标列对应关系",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "catalog"
+      ],
+      "source_anchors": [
+        "keelsplice/catalog.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/catalog.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "inspect",
+          "quote"
+        ]
+      }
+    },
+    {
+      "id": "02-03",
+      "task_type": "功能优化",
+      "capability_family": "现有入口的可观察兼容行为",
+      "subject": "catalog_hash",
+      "state": "模式识别",
+      "invariant": "摘要绑定表定义、列信息、关系和显式索引",
+      "observable": "DDL 修改后目录摘要改变",
+      "primary_mechanism": "versioning_audit",
+      "workflow_ids": [
+        "catalog"
+      ],
+      "source_anchors": [
+        "keelsplice/catalog.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/catalog.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "snapshot",
+          "fingerprint"
+        ]
+      }
+    },
+    {
+      "id": "02-04",
+      "task_type": "功能优化",
+      "capability_family": "现有入口的可观察兼容行为",
+      "subject": "root",
+      "state": "登记",
+      "invariant": "根输入必须符合真实主键的维数和 SQLite 值类型",
+      "observable": "错误输入被拒绝，有效版本提供标准化表名",
+      "primary_mechanism": "policy_rules",
+      "workflow_ids": [
+        "recipe"
+      ],
+      "source_anchors": [
+        "keelsplice/recipe.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/recipe.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "identity",
+          "decode"
+        ]
+      }
+    },
+    {
+      "id": "02-05",
+      "task_type": "功能优化",
+      "capability_family": "现有入口的可观察兼容行为",
+      "subject": "edge",
+      "state": "配置反向边",
+      "invariant": "反向边由子表及 SQLite 外键编号共同定位",
+      "observable": "配方回读可查到规范化的反向选择",
+      "primary_mechanism": "policy_rules",
+      "workflow_ids": [
+        "recipe"
+      ],
+      "source_anchors": [
+        "keelsplice/recipe.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/recipe.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "validate",
+          "inspect"
+        ]
+      }
+    },
+    {
+      "id": "02-06",
+      "task_type": "功能优化",
+      "capability_family": "现有入口的可观察兼容行为",
+      "subject": "recipe",
+      "state": "定版",
+      "invariant": "名称下版本递增，旧版本的根和模式绑定保留",
+      "observable": "HTTP 可分别取两个不同版本",
+      "primary_mechanism": "versioning_audit",
+      "workflow_ids": [
+        "recipe"
+      ],
+      "source_anchors": [
+        "keelsplice/storage.py",
+        "keelsplice/recipe.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/storage.py",
+          "keelsplice/recipe.py"
+        ],
+        "functions": [
+          "add_recipe",
+          "describe"
+        ]
+      }
+    },
+    {
+      "id": "02-07",
+      "task_type": "功能优化",
+      "capability_family": "现有入口的可观察兼容行为",
+      "subject": "recipe",
+      "state": "停用",
+      "invariant": "已停用版本可读但不能新增封存",
+      "observable": "浏览旧版本能读取内容，新捕获得到冲突",
+      "primary_mechanism": "state_machine",
+      "workflow_ids": [
+        "retire"
+      ],
+      "source_anchors": [
+        "keelsplice/storage.py",
+        "keelsplice/recipe.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/storage.py",
+          "keelsplice/recipe.py"
+        ],
+        "functions": [
+          "retire",
+          "describe"
+        ]
+      }
+    },
+    {
+      "id": "02-08",
+      "task_type": "功能优化",
+      "capability_family": "现有入口的可观察兼容行为",
+      "subject": "capture",
+      "state": "提交封存",
+      "invariant": "提交时再次要求配方为活动状态",
+      "observable": "与退役竞争时只有符合提交条件的捕获落地",
+      "primary_mechanism": "batch_transaction",
+      "workflow_ids": [
+        "capture"
+      ],
+      "source_anchors": [
+        "keelsplice/storage.py",
+        "keelsplice/service.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/storage.py",
+          "keelsplice/service.py"
+        ],
+        "functions": [
+          "add_capture",
+          "execute"
+        ]
+      }
+    },
+    {
+      "id": "02-09",
+      "task_type": "功能优化",
+      "capability_family": "现有入口的可观察兼容行为",
+      "subject": "row",
+      "state": "根解析",
+      "invariant": "实际 SQLite 查找允许由规范值取代输入拼法",
+      "observable": "预览返回按输入序次排列的实际主键值",
+      "primary_mechanism": "snapshot_consistency",
+      "workflow_ids": [
+        "preview"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/recipe.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/recipe.py"
+        ],
+        "functions": [
+          "find",
+          "identity"
+        ]
+      }
+    },
+    {
+      "id": "02-10",
+      "task_type": "功能优化",
+      "capability_family": "现有入口的可观察兼容行为",
+      "subject": "edge",
+      "state": "补齐父行",
+      "invariant": "任意 NULL 子键分量不触发父行补齐",
+      "observable": "汇总计数体现可空引用行为",
+      "primary_mechanism": "policy_rules",
+      "workflow_ids": [
+        "preview"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "parents",
+          "inspect"
+        ]
+      }
+    },
+    {
+      "id": "02-11",
+      "task_type": "功能优化",
+      "capability_family": "现有入口的可观察兼容行为",
+      "subject": "edge",
+      "state": "采纳子行",
+      "invariant": "反向查询继承父键比较语义",
+      "observable": "复合 NOCASE 目标的两个测量行都可入选",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "preview"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "children",
+          "inspect"
+        ]
+      }
+    },
+    {
+      "id": "02-12",
+      "task_type": "功能优化",
+      "capability_family": "现有入口的可观察兼容行为",
+      "subject": "row",
+      "state": "扩展",
+      "invariant": "已发现的实际行身份只入队一次",
+      "observable": "环中两个盒的行数有限而关系证据保留",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "preview"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "collect",
+          "key"
+        ]
+      }
+    },
+    {
+      "id": "02-13",
+      "task_type": "功能优化",
+      "capability_family": "现有入口的可观察兼容行为",
+      "subject": "budget",
+      "state": "容量判定",
+      "invariant": "根和补齐行共享整批行数上限",
+      "observable": "收紧上限时公开结果是 row_budget",
+      "primary_mechanism": "capacity",
+      "workflow_ids": [
+        "preview"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/recipe.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/recipe.py"
+        ],
+        "functions": [
+          "collect",
+          "validate"
+        ]
+      }
+    },
+    {
+      "id": "02-14",
+      "task_type": "功能优化",
+      "capability_family": "现有入口的可观察兼容行为",
+      "subject": "budget",
+      "state": "扫描中断",
+      "invariant": "源语句共用连接级 SQLite 工作预算",
+      "observable": "长扫描引发 scan_budget 且无封存",
+      "primary_mechanism": "capacity",
+      "workflow_ids": [
+        "capture"
+      ],
+      "source_anchors": [
+        "keelsplice/storage.py",
+        "keelsplice/service.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/storage.py",
+          "keelsplice/service.py"
+        ],
+        "functions": [
+          "source",
+          "execute"
+        ]
+      }
+    },
+    {
+      "id": "02-15",
+      "task_type": "功能优化",
+      "capability_family": "现有入口的可观察兼容行为",
+      "subject": "capture",
+      "state": "读快照",
+      "invariant": "模式检查及全部关系读取使用同一事务",
+      "observable": "捕获内容保持为一次源读，旧成果不随源更新",
+      "primary_mechanism": "snapshot_consistency",
+      "workflow_ids": [
+        "capture"
+      ],
+      "source_anchors": [
+        "keelsplice/service.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/service.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "execute",
+          "source"
+        ]
+      }
+    },
+    {
+      "id": "02-16",
+      "task_type": "功能优化",
+      "capability_family": "现有入口的可观察兼容行为",
+      "subject": "capture",
+      "state": "模式绑定",
+      "invariant": "现行摘要必须与登记时摘要一致",
+      "observable": "旧版本遇见 DDL 返回 schema_conflict",
+      "primary_mechanism": "versioning_audit",
+      "workflow_ids": [
+        "capture"
+      ],
+      "source_anchors": [
+        "keelsplice/service.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/service.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "execute",
+          "snapshot"
+        ]
+      }
+    },
+    {
+      "id": "02-17",
+      "task_type": "功能优化",
+      "capability_family": "现有入口的可观察兼容行为",
+      "subject": "witness",
+      "state": "行归因",
+      "invariant": "根位置、入边以及父依赖是独立事实",
+      "observable": "同一底盘既有根位置也有多条被指向的证据",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "trace"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "trace",
+          "load_capture"
+        ]
+      }
+    },
+    {
+      "id": "02-18",
+      "task_type": "功能优化",
+      "capability_family": "现有入口的可观察兼容行为",
+      "subject": "row",
+      "state": "按键追踪",
+      "invariant": "证据使用已封存的类型化主键身份",
+      "observable": "实际拼法可定位，别名拼法得到 404",
+      "primary_mechanism": "policy_rules",
+      "workflow_ids": [
+        "trace"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "trace",
+          "key"
+        ]
+      }
+    },
+    {
+      "id": "02-19",
+      "task_type": "功能优化",
+      "capability_family": "现有入口的可观察兼容行为",
+      "subject": "artifact",
+      "state": "重建 DDL",
+      "invariant": "普通表与显式索引从封存目录重建",
+      "observable": "独立数据库可读取同一模式与索引",
+      "primary_mechanism": "export_freeze",
+      "workflow_ids": [
+        "build"
+      ],
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/bundle.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "build",
+          "inspect"
+        ]
+      }
+    },
+    {
+      "id": "02-20",
+      "task_type": "功能优化",
+      "capability_family": "现有入口的可观察兼容行为",
+      "subject": "artifact",
+      "state": "回填行",
+      "invariant": "生成列由子库计算，数据列按原 SQLite 类型绑定",
+      "observable": "消费端读出实际生成值与 BLOB",
+      "primary_mechanism": "export_freeze",
+      "workflow_ids": [
+        "build"
+      ],
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/bundle.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "build",
+          "decode"
+        ]
+      }
+    },
+    {
+      "id": "02-21",
+      "task_type": "功能优化",
+      "capability_family": "现有入口的可观察兼容行为",
+      "subject": "artifact",
+      "state": "完整性提交",
+      "invariant": "环可装载而真正缺父会被 SQLite 完整性检查拒绝",
+      "observable": "能够保存合法循环库且无 FK 检查异常",
+      "primary_mechanism": "recovery_rollback",
+      "workflow_ids": [
+        "build"
+      ],
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/bundle.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "check_references",
+          "promote"
+        ]
+      }
+    },
+    {
+      "id": "02-22",
+      "task_type": "功能优化",
+      "capability_family": "现有入口的可观察兼容行为",
+      "subject": "certificate",
+      "state": "内容认证",
+      "invariant": "SQLite 结构正确与逐表类型化内容等价分别核验",
+      "observable": "认证响应绑定库字节、模式、捕获和表计数",
+      "primary_mechanism": "snapshot_consistency",
+      "workflow_ids": [
+        "certify"
+      ],
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/bundle.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "certify",
+          "row_values"
+        ]
+      }
+    },
+    {
+      "id": "02-23",
+      "task_type": "功能优化",
+      "capability_family": "现有入口的可观察兼容行为",
+      "subject": "certificate",
+      "state": "状态推进",
+      "invariant": "仅 built 能写认证标记，重试返回既有终态",
+      "observable": "重复请求读取同一证书且 sealed 认证失败",
+      "primary_mechanism": "idempotency",
+      "workflow_ids": [
+        "certify"
+      ],
+      "source_anchors": [
+        "keelsplice/service.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/service.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "certify",
+          "promote"
+        ]
+      }
+    },
+    {
+      "id": "02-24",
+      "task_type": "功能优化",
+      "capability_family": "现有入口的可观察兼容行为",
+      "subject": "row",
+      "state": "值差异",
+      "invariant": "相同模式下以类型化键区分新增、离开和更新",
+      "observable": "两捕获显示实际修改主键而无误报新增",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "compare"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "compare",
+          "key"
+        ]
+      }
+    },
+    {
+      "id": "02-25",
+      "task_type": "功能优化",
+      "capability_family": "现有入口的可观察兼容行为",
+      "subject": "artifact",
+      "state": "交接认证",
+      "invariant": "发送字节先与同一记录的证书摘要核对",
+      "observable": "响应 ETag 等于独立消费方重算摘要",
+      "primary_mechanism": "export_freeze",
+      "workflow_ids": [
+        "download"
+      ],
+      "source_anchors": [
+        "keelsplice/service.py",
+        "keelsplice/bundle.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/service.py",
+          "keelsplice/bundle.py"
+        ],
+        "functions": [
+          "download",
+          "digest_bytes"
+        ]
+      }
+    },
+    {
+      "id": "03-01",
+      "task_type": "泛Agent需求",
+      "capability_family": "外部样本消费者作决定可复查的事实",
+      "subject": "table",
+      "state": "目录快照",
+      "invariant": "SQLite 主库普通表具有声明主键",
+      "observable": "目录返回有序主键、表类型和列元数据",
+      "primary_mechanism": "policy_rules",
+      "workflow_ids": [
+        "catalog"
+      ],
+      "source_anchors": [
+        "keelsplice/catalog.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/catalog.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "inspect",
+          "source"
+        ]
+      }
+    },
+    {
+      "id": "03-02",
+      "task_type": "泛Agent需求",
+      "capability_family": "外部样本消费者作决定可复查的事实",
+      "subject": "edge",
+      "state": "外键发现",
+      "invariant": "复合目标列按外键序号与父键次序解析",
+      "observable": "目录给出源列和目标列对应关系",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "catalog"
+      ],
+      "source_anchors": [
+        "keelsplice/catalog.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/catalog.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "inspect",
+          "quote"
+        ]
+      }
+    },
+    {
+      "id": "03-03",
+      "task_type": "泛Agent需求",
+      "capability_family": "外部样本消费者作决定可复查的事实",
+      "subject": "catalog_hash",
+      "state": "模式识别",
+      "invariant": "摘要绑定表定义、列信息、关系和显式索引",
+      "observable": "DDL 修改后目录摘要改变",
+      "primary_mechanism": "versioning_audit",
+      "workflow_ids": [
+        "catalog"
+      ],
+      "source_anchors": [
+        "keelsplice/catalog.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/catalog.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "snapshot",
+          "fingerprint"
+        ]
+      }
+    },
+    {
+      "id": "03-04",
+      "task_type": "泛Agent需求",
+      "capability_family": "外部样本消费者作决定可复查的事实",
+      "subject": "root",
+      "state": "登记",
+      "invariant": "根输入必须符合真实主键的维数和 SQLite 值类型",
+      "observable": "错误输入被拒绝，有效版本提供标准化表名",
+      "primary_mechanism": "policy_rules",
+      "workflow_ids": [
+        "recipe"
+      ],
+      "source_anchors": [
+        "keelsplice/recipe.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/recipe.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "identity",
+          "decode"
+        ]
+      }
+    },
+    {
+      "id": "03-05",
+      "task_type": "泛Agent需求",
+      "capability_family": "外部样本消费者作决定可复查的事实",
+      "subject": "edge",
+      "state": "配置反向边",
+      "invariant": "反向边由子表及 SQLite 外键编号共同定位",
+      "observable": "配方回读可查到规范化的反向选择",
+      "primary_mechanism": "policy_rules",
+      "workflow_ids": [
+        "recipe"
+      ],
+      "source_anchors": [
+        "keelsplice/recipe.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/recipe.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "validate",
+          "inspect"
+        ]
+      }
+    },
+    {
+      "id": "03-06",
+      "task_type": "泛Agent需求",
+      "capability_family": "外部样本消费者作决定可复查的事实",
+      "subject": "recipe",
+      "state": "定版",
+      "invariant": "名称下版本递增，旧版本的根和模式绑定保留",
+      "observable": "HTTP 可分别取两个不同版本",
+      "primary_mechanism": "versioning_audit",
+      "workflow_ids": [
+        "recipe"
+      ],
+      "source_anchors": [
+        "keelsplice/storage.py",
+        "keelsplice/recipe.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/storage.py",
+          "keelsplice/recipe.py"
+        ],
+        "functions": [
+          "add_recipe",
+          "describe"
+        ]
+      }
+    },
+    {
+      "id": "03-09",
+      "task_type": "泛Agent需求",
+      "capability_family": "外部样本消费者作决定可复查的事实",
+      "subject": "row",
+      "state": "根解析",
+      "invariant": "实际 SQLite 查找允许由规范值取代输入拼法",
+      "observable": "预览返回按输入序次排列的实际主键值",
+      "primary_mechanism": "snapshot_consistency",
+      "workflow_ids": [
+        "preview"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/recipe.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/recipe.py"
+        ],
+        "functions": [
+          "find",
+          "identity"
+        ]
+      }
+    },
+    {
+      "id": "03-10",
+      "task_type": "泛Agent需求",
+      "capability_family": "外部样本消费者作决定可复查的事实",
+      "subject": "edge",
+      "state": "补齐父行",
+      "invariant": "任意 NULL 子键分量不触发父行补齐",
+      "observable": "汇总计数体现可空引用行为",
+      "primary_mechanism": "policy_rules",
+      "workflow_ids": [
+        "preview"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "parents",
+          "inspect"
+        ]
+      }
+    },
+    {
+      "id": "03-11",
+      "task_type": "泛Agent需求",
+      "capability_family": "外部样本消费者作决定可复查的事实",
+      "subject": "edge",
+      "state": "采纳子行",
+      "invariant": "反向查询继承父键比较语义",
+      "observable": "复合 NOCASE 目标的两个测量行都可入选",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "preview"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "children",
+          "inspect"
+        ]
+      }
+    },
+    {
+      "id": "03-12",
+      "task_type": "泛Agent需求",
+      "capability_family": "外部样本消费者作决定可复查的事实",
+      "subject": "row",
+      "state": "扩展",
+      "invariant": "已发现的实际行身份只入队一次",
+      "observable": "环中两个盒的行数有限而关系证据保留",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "preview"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "collect",
+          "key"
+        ]
+      }
+    },
+    {
+      "id": "03-13",
+      "task_type": "泛Agent需求",
+      "capability_family": "外部样本消费者作决定可复查的事实",
+      "subject": "budget",
+      "state": "容量判定",
+      "invariant": "根和补齐行共享整批行数上限",
+      "observable": "收紧上限时公开结果是 row_budget",
+      "primary_mechanism": "capacity",
+      "workflow_ids": [
+        "preview"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/recipe.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/recipe.py"
+        ],
+        "functions": [
+          "collect",
+          "validate"
+        ]
+      }
+    },
+    {
+      "id": "03-15",
+      "task_type": "泛Agent需求",
+      "capability_family": "外部样本消费者作决定可复查的事实",
+      "subject": "capture",
+      "state": "读快照",
+      "invariant": "模式检查及全部关系读取使用同一事务",
+      "observable": "捕获内容保持为一次源读，旧成果不随源更新",
+      "primary_mechanism": "snapshot_consistency",
+      "workflow_ids": [
+        "capture"
+      ],
+      "source_anchors": [
+        "keelsplice/service.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/service.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "execute",
+          "source"
+        ]
+      }
+    },
+    {
+      "id": "03-16",
+      "task_type": "泛Agent需求",
+      "capability_family": "外部样本消费者作决定可复查的事实",
+      "subject": "capture",
+      "state": "模式绑定",
+      "invariant": "现行摘要必须与登记时摘要一致",
+      "observable": "旧版本遇见 DDL 返回 schema_conflict",
+      "primary_mechanism": "versioning_audit",
+      "workflow_ids": [
+        "capture"
+      ],
+      "source_anchors": [
+        "keelsplice/service.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/service.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "execute",
+          "snapshot"
+        ]
+      }
+    },
+    {
+      "id": "03-17",
+      "task_type": "泛Agent需求",
+      "capability_family": "外部样本消费者作决定可复查的事实",
+      "subject": "witness",
+      "state": "行归因",
+      "invariant": "根位置、入边以及父依赖是独立事实",
+      "observable": "同一底盘既有根位置也有多条被指向的证据",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "trace"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "trace",
+          "load_capture"
+        ]
+      }
+    },
+    {
+      "id": "03-18",
+      "task_type": "泛Agent需求",
+      "capability_family": "外部样本消费者作决定可复查的事实",
+      "subject": "row",
+      "state": "按键追踪",
+      "invariant": "证据使用已封存的类型化主键身份",
+      "observable": "实际拼法可定位，别名拼法得到 404",
+      "primary_mechanism": "policy_rules",
+      "workflow_ids": [
+        "trace"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "trace",
+          "key"
+        ]
+      }
+    },
+    {
+      "id": "03-19",
+      "task_type": "泛Agent需求",
+      "capability_family": "外部样本消费者作决定可复查的事实",
+      "subject": "artifact",
+      "state": "重建 DDL",
+      "invariant": "普通表与显式索引从封存目录重建",
+      "observable": "独立数据库可读取同一模式与索引",
+      "primary_mechanism": "export_freeze",
+      "workflow_ids": [
+        "build"
+      ],
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/bundle.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "build",
+          "inspect"
+        ]
+      }
+    },
+    {
+      "id": "03-20",
+      "task_type": "泛Agent需求",
+      "capability_family": "外部样本消费者作决定可复查的事实",
+      "subject": "artifact",
+      "state": "回填行",
+      "invariant": "生成列由子库计算，数据列按原 SQLite 类型绑定",
+      "observable": "消费端读出实际生成值与 BLOB",
+      "primary_mechanism": "export_freeze",
+      "workflow_ids": [
+        "build"
+      ],
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/bundle.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "build",
+          "decode"
+        ]
+      }
+    },
+    {
+      "id": "03-22",
+      "task_type": "泛Agent需求",
+      "capability_family": "外部样本消费者作决定可复查的事实",
+      "subject": "certificate",
+      "state": "内容认证",
+      "invariant": "SQLite 结构正确与逐表类型化内容等价分别核验",
+      "observable": "认证响应绑定库字节、模式、捕获和表计数",
+      "primary_mechanism": "snapshot_consistency",
+      "workflow_ids": [
+        "certify"
+      ],
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/bundle.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "certify",
+          "row_values"
+        ]
+      }
+    },
+    {
+      "id": "03-24",
+      "task_type": "泛Agent需求",
+      "capability_family": "外部样本消费者作决定可复查的事实",
+      "subject": "row",
+      "state": "值差异",
+      "invariant": "相同模式下以类型化键区分新增、离开和更新",
+      "observable": "两捕获显示实际修改主键而无误报新增",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "compare"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "compare",
+          "key"
+        ]
+      }
+    },
+    {
+      "id": "03-25",
+      "task_type": "泛Agent需求",
+      "capability_family": "外部样本消费者作决定可复查的事实",
+      "subject": "artifact",
+      "state": "交接认证",
+      "invariant": "发送字节先与同一记录的证书摘要核对",
+      "observable": "响应 ETag 等于独立消费方重算摘要",
+      "primary_mechanism": "export_freeze",
+      "workflow_ids": [
+        "download"
+      ],
+      "source_anchors": [
+        "keelsplice/service.py",
+        "keelsplice/bundle.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/service.py",
+          "keelsplice/bundle.py"
+        ],
+        "functions": [
+          "download",
+          "digest_bytes"
+        ]
+      }
+    },
+    {
+      "id": "04-01",
+      "task_type": "代码重构",
+      "capability_family": "领域判断与外部依赖的职责边界",
+      "subject": "table",
+      "state": "目录快照",
+      "invariant": "SQLite 主库普通表具有声明主键",
+      "observable": "目录返回有序主键、表类型和列元数据",
+      "primary_mechanism": "policy_rules",
+      "workflow_ids": [
+        "catalog"
+      ],
+      "source_anchors": [
+        "keelsplice/catalog.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/catalog.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "inspect",
+          "source"
+        ]
+      }
+    },
+    {
+      "id": "04-02",
+      "task_type": "代码重构",
+      "capability_family": "领域判断与外部依赖的职责边界",
+      "subject": "edge",
+      "state": "外键发现",
+      "invariant": "复合目标列按外键序号与父键次序解析",
+      "observable": "目录给出源列和目标列对应关系",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "catalog"
+      ],
+      "source_anchors": [
+        "keelsplice/catalog.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/catalog.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "inspect",
+          "quote"
+        ]
+      }
+    },
+    {
+      "id": "04-03",
+      "task_type": "代码重构",
+      "capability_family": "领域判断与外部依赖的职责边界",
+      "subject": "catalog_hash",
+      "state": "模式识别",
+      "invariant": "摘要绑定表定义、列信息、关系和显式索引",
+      "observable": "DDL 修改后目录摘要改变",
+      "primary_mechanism": "versioning_audit",
+      "workflow_ids": [
+        "catalog"
+      ],
+      "source_anchors": [
+        "keelsplice/catalog.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/catalog.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "snapshot",
+          "fingerprint"
+        ]
+      }
+    },
+    {
+      "id": "04-04",
+      "task_type": "代码重构",
+      "capability_family": "领域判断与外部依赖的职责边界",
+      "subject": "root",
+      "state": "登记",
+      "invariant": "根输入必须符合真实主键的维数和 SQLite 值类型",
+      "observable": "错误输入被拒绝，有效版本提供标准化表名",
+      "primary_mechanism": "policy_rules",
+      "workflow_ids": [
+        "recipe"
+      ],
+      "source_anchors": [
+        "keelsplice/recipe.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/recipe.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "identity",
+          "decode"
+        ]
+      }
+    },
+    {
+      "id": "04-05",
+      "task_type": "代码重构",
+      "capability_family": "领域判断与外部依赖的职责边界",
+      "subject": "edge",
+      "state": "配置反向边",
+      "invariant": "反向边由子表及 SQLite 外键编号共同定位",
+      "observable": "配方回读可查到规范化的反向选择",
+      "primary_mechanism": "policy_rules",
+      "workflow_ids": [
+        "recipe"
+      ],
+      "source_anchors": [
+        "keelsplice/recipe.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/recipe.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "validate",
+          "inspect"
+        ]
+      }
+    },
+    {
+      "id": "04-06",
+      "task_type": "代码重构",
+      "capability_family": "领域判断与外部依赖的职责边界",
+      "subject": "recipe",
+      "state": "定版",
+      "invariant": "名称下版本递增，旧版本的根和模式绑定保留",
+      "observable": "HTTP 可分别取两个不同版本",
+      "primary_mechanism": "versioning_audit",
+      "workflow_ids": [
+        "recipe"
+      ],
+      "source_anchors": [
+        "keelsplice/storage.py",
+        "keelsplice/recipe.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/storage.py",
+          "keelsplice/recipe.py"
+        ],
+        "functions": [
+          "add_recipe",
+          "describe"
+        ]
+      }
+    },
+    {
+      "id": "04-08",
+      "task_type": "代码重构",
+      "capability_family": "领域判断与外部依赖的职责边界",
+      "subject": "capture",
+      "state": "提交封存",
+      "invariant": "提交时再次要求配方为活动状态",
+      "observable": "与退役竞争时只有符合提交条件的捕获落地",
+      "primary_mechanism": "batch_transaction",
+      "workflow_ids": [
+        "capture"
+      ],
+      "source_anchors": [
+        "keelsplice/storage.py",
+        "keelsplice/service.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/storage.py",
+          "keelsplice/service.py"
+        ],
+        "functions": [
+          "add_capture",
+          "execute"
+        ]
+      }
+    },
+    {
+      "id": "04-09",
+      "task_type": "代码重构",
+      "capability_family": "领域判断与外部依赖的职责边界",
+      "subject": "row",
+      "state": "根解析",
+      "invariant": "实际 SQLite 查找允许由规范值取代输入拼法",
+      "observable": "预览返回按输入序次排列的实际主键值",
+      "primary_mechanism": "snapshot_consistency",
+      "workflow_ids": [
+        "preview"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/recipe.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/recipe.py"
+        ],
+        "functions": [
+          "find",
+          "identity"
+        ]
+      }
+    },
+    {
+      "id": "04-10",
+      "task_type": "代码重构",
+      "capability_family": "领域判断与外部依赖的职责边界",
+      "subject": "edge",
+      "state": "补齐父行",
+      "invariant": "任意 NULL 子键分量不触发父行补齐",
+      "observable": "汇总计数体现可空引用行为",
+      "primary_mechanism": "policy_rules",
+      "workflow_ids": [
+        "preview"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "parents",
+          "inspect"
+        ]
+      }
+    },
+    {
+      "id": "04-11",
+      "task_type": "代码重构",
+      "capability_family": "领域判断与外部依赖的职责边界",
+      "subject": "edge",
+      "state": "采纳子行",
+      "invariant": "反向查询继承父键比较语义",
+      "observable": "复合 NOCASE 目标的两个测量行都可入选",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "preview"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "children",
+          "inspect"
+        ]
+      }
+    },
+    {
+      "id": "04-12",
+      "task_type": "代码重构",
+      "capability_family": "领域判断与外部依赖的职责边界",
+      "subject": "row",
+      "state": "扩展",
+      "invariant": "已发现的实际行身份只入队一次",
+      "observable": "环中两个盒的行数有限而关系证据保留",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "preview"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "collect",
+          "key"
+        ]
+      }
+    },
+    {
+      "id": "04-15",
+      "task_type": "代码重构",
+      "capability_family": "领域判断与外部依赖的职责边界",
+      "subject": "capture",
+      "state": "读快照",
+      "invariant": "模式检查及全部关系读取使用同一事务",
+      "observable": "捕获内容保持为一次源读，旧成果不随源更新",
+      "primary_mechanism": "snapshot_consistency",
+      "workflow_ids": [
+        "capture"
+      ],
+      "source_anchors": [
+        "keelsplice/service.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/service.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "execute",
+          "source"
+        ]
+      }
+    },
+    {
+      "id": "04-17",
+      "task_type": "代码重构",
+      "capability_family": "领域判断与外部依赖的职责边界",
+      "subject": "witness",
+      "state": "行归因",
+      "invariant": "根位置、入边以及父依赖是独立事实",
+      "observable": "同一底盘既有根位置也有多条被指向的证据",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "trace"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "trace",
+          "load_capture"
+        ]
+      }
+    },
+    {
+      "id": "04-19",
+      "task_type": "代码重构",
+      "capability_family": "领域判断与外部依赖的职责边界",
+      "subject": "artifact",
+      "state": "重建 DDL",
+      "invariant": "普通表与显式索引从封存目录重建",
+      "observable": "独立数据库可读取同一模式与索引",
+      "primary_mechanism": "export_freeze",
+      "workflow_ids": [
+        "build"
+      ],
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/bundle.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "build",
+          "inspect"
+        ]
+      }
+    },
+    {
+      "id": "04-20",
+      "task_type": "代码重构",
+      "capability_family": "领域判断与外部依赖的职责边界",
+      "subject": "artifact",
+      "state": "回填行",
+      "invariant": "生成列由子库计算，数据列按原 SQLite 类型绑定",
+      "observable": "消费端读出实际生成值与 BLOB",
+      "primary_mechanism": "export_freeze",
+      "workflow_ids": [
+        "build"
+      ],
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/bundle.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "build",
+          "decode"
+        ]
+      }
+    },
+    {
+      "id": "04-21",
+      "task_type": "代码重构",
+      "capability_family": "领域判断与外部依赖的职责边界",
+      "subject": "artifact",
+      "state": "完整性提交",
+      "invariant": "环可装载而真正缺父会被 SQLite 完整性检查拒绝",
+      "observable": "能够保存合法循环库且无 FK 检查异常",
+      "primary_mechanism": "recovery_rollback",
+      "workflow_ids": [
+        "build"
+      ],
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/bundle.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "check_references",
+          "promote"
+        ]
+      }
+    },
+    {
+      "id": "04-22",
+      "task_type": "代码重构",
+      "capability_family": "领域判断与外部依赖的职责边界",
+      "subject": "certificate",
+      "state": "内容认证",
+      "invariant": "SQLite 结构正确与逐表类型化内容等价分别核验",
+      "observable": "认证响应绑定库字节、模式、捕获和表计数",
+      "primary_mechanism": "snapshot_consistency",
+      "workflow_ids": [
+        "certify"
+      ],
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/bundle.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "certify",
+          "row_values"
+        ]
+      }
+    },
+    {
+      "id": "04-23",
+      "task_type": "代码重构",
+      "capability_family": "领域判断与外部依赖的职责边界",
+      "subject": "certificate",
+      "state": "状态推进",
+      "invariant": "仅 built 能写认证标记，重试返回既有终态",
+      "observable": "重复请求读取同一证书且 sealed 认证失败",
+      "primary_mechanism": "idempotency",
+      "workflow_ids": [
+        "certify"
+      ],
+      "source_anchors": [
+        "keelsplice/service.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/service.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "certify",
+          "promote"
+        ]
+      }
+    },
+    {
+      "id": "04-25",
+      "task_type": "代码重构",
+      "capability_family": "领域判断与外部依赖的职责边界",
+      "subject": "artifact",
+      "state": "交接认证",
+      "invariant": "发送字节先与同一记录的证书摘要核对",
+      "observable": "响应 ETag 等于独立消费方重算摘要",
+      "primary_mechanism": "export_freeze",
+      "workflow_ids": [
+        "download"
+      ],
+      "source_anchors": [
+        "keelsplice/service.py",
+        "keelsplice/bundle.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/service.py",
+          "keelsplice/bundle.py"
+        ],
+        "functions": [
+          "download",
+          "digest_bytes"
+        ]
+      }
+    },
+    {
+      "id": "05-01",
+      "task_type": "依赖升级与迁移",
+      "capability_family": "目标表示中需要保真的旧源或旧产物事实",
+      "subject": "table",
+      "state": "目录快照",
+      "invariant": "SQLite 主库普通表具有声明主键",
+      "observable": "目录返回有序主键、表类型和列元数据",
+      "primary_mechanism": "policy_rules",
+      "workflow_ids": [
+        "catalog"
+      ],
+      "source_anchors": [
+        "keelsplice/catalog.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/catalog.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "inspect",
+          "source"
+        ]
+      }
+    },
+    {
+      "id": "05-02",
+      "task_type": "依赖升级与迁移",
+      "capability_family": "目标表示中需要保真的旧源或旧产物事实",
+      "subject": "edge",
+      "state": "外键发现",
+      "invariant": "复合目标列按外键序号与父键次序解析",
+      "observable": "目录给出源列和目标列对应关系",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "catalog"
+      ],
+      "source_anchors": [
+        "keelsplice/catalog.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/catalog.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "inspect",
+          "quote"
+        ]
+      }
+    },
+    {
+      "id": "05-03",
+      "task_type": "依赖升级与迁移",
+      "capability_family": "目标表示中需要保真的旧源或旧产物事实",
+      "subject": "catalog_hash",
+      "state": "模式识别",
+      "invariant": "摘要绑定表定义、列信息、关系和显式索引",
+      "observable": "DDL 修改后目录摘要改变",
+      "primary_mechanism": "versioning_audit",
+      "workflow_ids": [
+        "catalog"
+      ],
+      "source_anchors": [
+        "keelsplice/catalog.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/catalog.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "snapshot",
+          "fingerprint"
+        ]
+      }
+    },
+    {
+      "id": "05-04",
+      "task_type": "依赖升级与迁移",
+      "capability_family": "目标表示中需要保真的旧源或旧产物事实",
+      "subject": "root",
+      "state": "登记",
+      "invariant": "根输入必须符合真实主键的维数和 SQLite 值类型",
+      "observable": "错误输入被拒绝，有效版本提供标准化表名",
+      "primary_mechanism": "policy_rules",
+      "workflow_ids": [
+        "recipe"
+      ],
+      "source_anchors": [
+        "keelsplice/recipe.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/recipe.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "identity",
+          "decode"
+        ]
+      }
+    },
+    {
+      "id": "05-05",
+      "task_type": "依赖升级与迁移",
+      "capability_family": "目标表示中需要保真的旧源或旧产物事实",
+      "subject": "edge",
+      "state": "配置反向边",
+      "invariant": "反向边由子表及 SQLite 外键编号共同定位",
+      "observable": "配方回读可查到规范化的反向选择",
+      "primary_mechanism": "policy_rules",
+      "workflow_ids": [
+        "recipe"
+      ],
+      "source_anchors": [
+        "keelsplice/recipe.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/recipe.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "validate",
+          "inspect"
+        ]
+      }
+    },
+    {
+      "id": "05-06",
+      "task_type": "依赖升级与迁移",
+      "capability_family": "目标表示中需要保真的旧源或旧产物事实",
+      "subject": "recipe",
+      "state": "定版",
+      "invariant": "名称下版本递增，旧版本的根和模式绑定保留",
+      "observable": "HTTP 可分别取两个不同版本",
+      "primary_mechanism": "versioning_audit",
+      "workflow_ids": [
+        "recipe"
+      ],
+      "source_anchors": [
+        "keelsplice/storage.py",
+        "keelsplice/recipe.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/storage.py",
+          "keelsplice/recipe.py"
+        ],
+        "functions": [
+          "add_recipe",
+          "describe"
+        ]
+      }
+    },
+    {
+      "id": "05-07",
+      "task_type": "依赖升级与迁移",
+      "capability_family": "目标表示中需要保真的旧源或旧产物事实",
+      "subject": "recipe",
+      "state": "停用",
+      "invariant": "已停用版本可读但不能新增封存",
+      "observable": "浏览旧版本能读取内容，新捕获得到冲突",
+      "primary_mechanism": "state_machine",
+      "workflow_ids": [
+        "retire"
+      ],
+      "source_anchors": [
+        "keelsplice/storage.py",
+        "keelsplice/recipe.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/storage.py",
+          "keelsplice/recipe.py"
+        ],
+        "functions": [
+          "retire",
+          "describe"
+        ]
+      }
+    },
+    {
+      "id": "05-08",
+      "task_type": "依赖升级与迁移",
+      "capability_family": "目标表示中需要保真的旧源或旧产物事实",
+      "subject": "capture",
+      "state": "提交封存",
+      "invariant": "提交时再次要求配方为活动状态",
+      "observable": "与退役竞争时只有符合提交条件的捕获落地",
+      "primary_mechanism": "batch_transaction",
+      "workflow_ids": [
+        "capture"
+      ],
+      "source_anchors": [
+        "keelsplice/storage.py",
+        "keelsplice/service.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/storage.py",
+          "keelsplice/service.py"
+        ],
+        "functions": [
+          "add_capture",
+          "execute"
+        ]
+      }
+    },
+    {
+      "id": "05-09",
+      "task_type": "依赖升级与迁移",
+      "capability_family": "目标表示中需要保真的旧源或旧产物事实",
+      "subject": "row",
+      "state": "根解析",
+      "invariant": "实际 SQLite 查找允许由规范值取代输入拼法",
+      "observable": "预览返回按输入序次排列的实际主键值",
+      "primary_mechanism": "snapshot_consistency",
+      "workflow_ids": [
+        "preview"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/recipe.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/recipe.py"
+        ],
+        "functions": [
+          "find",
+          "identity"
+        ]
+      }
+    },
+    {
+      "id": "05-11",
+      "task_type": "依赖升级与迁移",
+      "capability_family": "目标表示中需要保真的旧源或旧产物事实",
+      "subject": "edge",
+      "state": "采纳子行",
+      "invariant": "反向查询继承父键比较语义",
+      "observable": "复合 NOCASE 目标的两个测量行都可入选",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "preview"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "children",
+          "inspect"
+        ]
+      }
+    },
+    {
+      "id": "05-15",
+      "task_type": "依赖升级与迁移",
+      "capability_family": "目标表示中需要保真的旧源或旧产物事实",
+      "subject": "capture",
+      "state": "读快照",
+      "invariant": "模式检查及全部关系读取使用同一事务",
+      "observable": "捕获内容保持为一次源读，旧成果不随源更新",
+      "primary_mechanism": "snapshot_consistency",
+      "workflow_ids": [
+        "capture"
+      ],
+      "source_anchors": [
+        "keelsplice/service.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/service.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "execute",
+          "source"
+        ]
+      }
+    },
+    {
+      "id": "05-16",
+      "task_type": "依赖升级与迁移",
+      "capability_family": "目标表示中需要保真的旧源或旧产物事实",
+      "subject": "capture",
+      "state": "模式绑定",
+      "invariant": "现行摘要必须与登记时摘要一致",
+      "observable": "旧版本遇见 DDL 返回 schema_conflict",
+      "primary_mechanism": "versioning_audit",
+      "workflow_ids": [
+        "capture"
+      ],
+      "source_anchors": [
+        "keelsplice/service.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/service.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "execute",
+          "snapshot"
+        ]
+      }
+    },
+    {
+      "id": "05-17",
+      "task_type": "依赖升级与迁移",
+      "capability_family": "目标表示中需要保真的旧源或旧产物事实",
+      "subject": "witness",
+      "state": "行归因",
+      "invariant": "根位置、入边以及父依赖是独立事实",
+      "observable": "同一底盘既有根位置也有多条被指向的证据",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "trace"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "trace",
+          "load_capture"
+        ]
+      }
+    },
+    {
+      "id": "05-19",
+      "task_type": "依赖升级与迁移",
+      "capability_family": "目标表示中需要保真的旧源或旧产物事实",
+      "subject": "artifact",
+      "state": "重建 DDL",
+      "invariant": "普通表与显式索引从封存目录重建",
+      "observable": "独立数据库可读取同一模式与索引",
+      "primary_mechanism": "export_freeze",
+      "workflow_ids": [
+        "build"
+      ],
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/bundle.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "build",
+          "inspect"
+        ]
+      }
+    },
+    {
+      "id": "05-20",
+      "task_type": "依赖升级与迁移",
+      "capability_family": "目标表示中需要保真的旧源或旧产物事实",
+      "subject": "artifact",
+      "state": "回填行",
+      "invariant": "生成列由子库计算，数据列按原 SQLite 类型绑定",
+      "observable": "消费端读出实际生成值与 BLOB",
+      "primary_mechanism": "export_freeze",
+      "workflow_ids": [
+        "build"
+      ],
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/bundle.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "build",
+          "decode"
+        ]
+      }
+    },
+    {
+      "id": "05-21",
+      "task_type": "依赖升级与迁移",
+      "capability_family": "目标表示中需要保真的旧源或旧产物事实",
+      "subject": "artifact",
+      "state": "完整性提交",
+      "invariant": "环可装载而真正缺父会被 SQLite 完整性检查拒绝",
+      "observable": "能够保存合法循环库且无 FK 检查异常",
+      "primary_mechanism": "recovery_rollback",
+      "workflow_ids": [
+        "build"
+      ],
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/bundle.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "check_references",
+          "promote"
+        ]
+      }
+    },
+    {
+      "id": "05-22",
+      "task_type": "依赖升级与迁移",
+      "capability_family": "目标表示中需要保真的旧源或旧产物事实",
+      "subject": "certificate",
+      "state": "内容认证",
+      "invariant": "SQLite 结构正确与逐表类型化内容等价分别核验",
+      "observable": "认证响应绑定库字节、模式、捕获和表计数",
+      "primary_mechanism": "snapshot_consistency",
+      "workflow_ids": [
+        "certify"
+      ],
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/bundle.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "certify",
+          "row_values"
+        ]
+      }
+    },
+    {
+      "id": "05-23",
+      "task_type": "依赖升级与迁移",
+      "capability_family": "目标表示中需要保真的旧源或旧产物事实",
+      "subject": "certificate",
+      "state": "状态推进",
+      "invariant": "仅 built 能写认证标记，重试返回既有终态",
+      "observable": "重复请求读取同一证书且 sealed 认证失败",
+      "primary_mechanism": "idempotency",
+      "workflow_ids": [
+        "certify"
+      ],
+      "source_anchors": [
+        "keelsplice/service.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/service.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "certify",
+          "promote"
+        ]
+      }
+    },
+    {
+      "id": "05-24",
+      "task_type": "依赖升级与迁移",
+      "capability_family": "目标表示中需要保真的旧源或旧产物事实",
+      "subject": "row",
+      "state": "值差异",
+      "invariant": "相同模式下以类型化键区分新增、离开和更新",
+      "observable": "两捕获显示实际修改主键而无误报新增",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "compare"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "compare",
+          "key"
+        ]
+      }
+    },
+    {
+      "id": "05-25",
+      "task_type": "依赖升级与迁移",
+      "capability_family": "目标表示中需要保真的旧源或旧产物事实",
+      "subject": "artifact",
+      "state": "交接认证",
+      "invariant": "发送字节先与同一记录的证书摘要核对",
+      "observable": "响应 ETag 等于独立消费方重算摘要",
+      "primary_mechanism": "export_freeze",
+      "workflow_ids": [
+        "download"
+      ],
+      "source_anchors": [
+        "keelsplice/service.py",
+        "keelsplice/bundle.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/service.py",
+          "keelsplice/bundle.py"
+        ],
+        "functions": [
+          "download",
+          "digest_bytes"
+        ]
+      }
+    },
+    {
+      "id": "06-02",
+      "task_type": "质量保障",
+      "capability_family": "独立判据应覆盖的已声明现象",
+      "subject": "edge",
+      "state": "外键发现",
+      "invariant": "复合目标列按外键序号与父键次序解析",
+      "observable": "目录给出源列和目标列对应关系",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "catalog"
+      ],
+      "source_anchors": [
+        "keelsplice/catalog.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/catalog.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "inspect",
+          "quote"
+        ]
+      }
+    },
+    {
+      "id": "06-03",
+      "task_type": "质量保障",
+      "capability_family": "独立判据应覆盖的已声明现象",
+      "subject": "catalog_hash",
+      "state": "模式识别",
+      "invariant": "摘要绑定表定义、列信息、关系和显式索引",
+      "observable": "DDL 修改后目录摘要改变",
+      "primary_mechanism": "versioning_audit",
+      "workflow_ids": [
+        "catalog"
+      ],
+      "source_anchors": [
+        "keelsplice/catalog.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/catalog.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "snapshot",
+          "fingerprint"
+        ]
+      }
+    },
+    {
+      "id": "06-04",
+      "task_type": "质量保障",
+      "capability_family": "独立判据应覆盖的已声明现象",
+      "subject": "root",
+      "state": "登记",
+      "invariant": "根输入必须符合真实主键的维数和 SQLite 值类型",
+      "observable": "错误输入被拒绝，有效版本提供标准化表名",
+      "primary_mechanism": "policy_rules",
+      "workflow_ids": [
+        "recipe"
+      ],
+      "source_anchors": [
+        "keelsplice/recipe.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/recipe.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "identity",
+          "decode"
+        ]
+      }
+    },
+    {
+      "id": "06-07",
+      "task_type": "质量保障",
+      "capability_family": "独立判据应覆盖的已声明现象",
+      "subject": "recipe",
+      "state": "停用",
+      "invariant": "已停用版本可读但不能新增封存",
+      "observable": "浏览旧版本能读取内容，新捕获得到冲突",
+      "primary_mechanism": "state_machine",
+      "workflow_ids": [
+        "retire"
+      ],
+      "source_anchors": [
+        "keelsplice/storage.py",
+        "keelsplice/recipe.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/storage.py",
+          "keelsplice/recipe.py"
+        ],
+        "functions": [
+          "retire",
+          "describe"
+        ]
+      }
+    },
+    {
+      "id": "06-08",
+      "task_type": "质量保障",
+      "capability_family": "独立判据应覆盖的已声明现象",
+      "subject": "capture",
+      "state": "提交封存",
+      "invariant": "提交时再次要求配方为活动状态",
+      "observable": "与退役竞争时只有符合提交条件的捕获落地",
+      "primary_mechanism": "batch_transaction",
+      "workflow_ids": [
+        "capture"
+      ],
+      "source_anchors": [
+        "keelsplice/storage.py",
+        "keelsplice/service.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/storage.py",
+          "keelsplice/service.py"
+        ],
+        "functions": [
+          "add_capture",
+          "execute"
+        ]
+      }
+    },
+    {
+      "id": "06-09",
+      "task_type": "质量保障",
+      "capability_family": "独立判据应覆盖的已声明现象",
+      "subject": "row",
+      "state": "根解析",
+      "invariant": "实际 SQLite 查找允许由规范值取代输入拼法",
+      "observable": "预览返回按输入序次排列的实际主键值",
+      "primary_mechanism": "snapshot_consistency",
+      "workflow_ids": [
+        "preview"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/recipe.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/recipe.py"
+        ],
+        "functions": [
+          "find",
+          "identity"
+        ]
+      }
+    },
+    {
+      "id": "06-10",
+      "task_type": "质量保障",
+      "capability_family": "独立判据应覆盖的已声明现象",
+      "subject": "edge",
+      "state": "补齐父行",
+      "invariant": "任意 NULL 子键分量不触发父行补齐",
+      "observable": "汇总计数体现可空引用行为",
+      "primary_mechanism": "policy_rules",
+      "workflow_ids": [
+        "preview"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "parents",
+          "inspect"
+        ]
+      }
+    },
+    {
+      "id": "06-11",
+      "task_type": "质量保障",
+      "capability_family": "独立判据应覆盖的已声明现象",
+      "subject": "edge",
+      "state": "采纳子行",
+      "invariant": "反向查询继承父键比较语义",
+      "observable": "复合 NOCASE 目标的两个测量行都可入选",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "preview"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "children",
+          "inspect"
+        ]
+      }
+    },
+    {
+      "id": "06-12",
+      "task_type": "质量保障",
+      "capability_family": "独立判据应覆盖的已声明现象",
+      "subject": "row",
+      "state": "扩展",
+      "invariant": "已发现的实际行身份只入队一次",
+      "observable": "环中两个盒的行数有限而关系证据保留",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "preview"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "collect",
+          "key"
+        ]
+      }
+    },
+    {
+      "id": "06-13",
+      "task_type": "质量保障",
+      "capability_family": "独立判据应覆盖的已声明现象",
+      "subject": "budget",
+      "state": "容量判定",
+      "invariant": "根和补齐行共享整批行数上限",
+      "observable": "收紧上限时公开结果是 row_budget",
+      "primary_mechanism": "capacity",
+      "workflow_ids": [
+        "preview"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/recipe.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/recipe.py"
+        ],
+        "functions": [
+          "collect",
+          "validate"
+        ]
+      }
+    },
+    {
+      "id": "06-14",
+      "task_type": "质量保障",
+      "capability_family": "独立判据应覆盖的已声明现象",
+      "subject": "budget",
+      "state": "扫描中断",
+      "invariant": "源语句共用连接级 SQLite 工作预算",
+      "observable": "长扫描引发 scan_budget 且无封存",
+      "primary_mechanism": "capacity",
+      "workflow_ids": [
+        "capture"
+      ],
+      "source_anchors": [
+        "keelsplice/storage.py",
+        "keelsplice/service.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/storage.py",
+          "keelsplice/service.py"
+        ],
+        "functions": [
+          "source",
+          "execute"
+        ]
+      }
+    },
+    {
+      "id": "06-15",
+      "task_type": "质量保障",
+      "capability_family": "独立判据应覆盖的已声明现象",
+      "subject": "capture",
+      "state": "读快照",
+      "invariant": "模式检查及全部关系读取使用同一事务",
+      "observable": "捕获内容保持为一次源读，旧成果不随源更新",
+      "primary_mechanism": "snapshot_consistency",
+      "workflow_ids": [
+        "capture"
+      ],
+      "source_anchors": [
+        "keelsplice/service.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/service.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "execute",
+          "source"
+        ]
+      }
+    },
+    {
+      "id": "06-16",
+      "task_type": "质量保障",
+      "capability_family": "独立判据应覆盖的已声明现象",
+      "subject": "capture",
+      "state": "模式绑定",
+      "invariant": "现行摘要必须与登记时摘要一致",
+      "observable": "旧版本遇见 DDL 返回 schema_conflict",
+      "primary_mechanism": "versioning_audit",
+      "workflow_ids": [
+        "capture"
+      ],
+      "source_anchors": [
+        "keelsplice/service.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/service.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "execute",
+          "snapshot"
+        ]
+      }
+    },
+    {
+      "id": "06-17",
+      "task_type": "质量保障",
+      "capability_family": "独立判据应覆盖的已声明现象",
+      "subject": "witness",
+      "state": "行归因",
+      "invariant": "根位置、入边以及父依赖是独立事实",
+      "observable": "同一底盘既有根位置也有多条被指向的证据",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "trace"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "trace",
+          "load_capture"
+        ]
+      }
+    },
+    {
+      "id": "06-18",
+      "task_type": "质量保障",
+      "capability_family": "独立判据应覆盖的已声明现象",
+      "subject": "row",
+      "state": "按键追踪",
+      "invariant": "证据使用已封存的类型化主键身份",
+      "observable": "实际拼法可定位，别名拼法得到 404",
+      "primary_mechanism": "policy_rules",
+      "workflow_ids": [
+        "trace"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "trace",
+          "key"
+        ]
+      }
+    },
+    {
+      "id": "06-19",
+      "task_type": "质量保障",
+      "capability_family": "独立判据应覆盖的已声明现象",
+      "subject": "artifact",
+      "state": "重建 DDL",
+      "invariant": "普通表与显式索引从封存目录重建",
+      "observable": "独立数据库可读取同一模式与索引",
+      "primary_mechanism": "export_freeze",
+      "workflow_ids": [
+        "build"
+      ],
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/bundle.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "build",
+          "inspect"
+        ]
+      }
+    },
+    {
+      "id": "06-20",
+      "task_type": "质量保障",
+      "capability_family": "独立判据应覆盖的已声明现象",
+      "subject": "artifact",
+      "state": "回填行",
+      "invariant": "生成列由子库计算，数据列按原 SQLite 类型绑定",
+      "observable": "消费端读出实际生成值与 BLOB",
+      "primary_mechanism": "export_freeze",
+      "workflow_ids": [
+        "build"
+      ],
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/bundle.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "build",
+          "decode"
+        ]
+      }
+    },
+    {
+      "id": "06-21",
+      "task_type": "质量保障",
+      "capability_family": "独立判据应覆盖的已声明现象",
+      "subject": "artifact",
+      "state": "完整性提交",
+      "invariant": "环可装载而真正缺父会被 SQLite 完整性检查拒绝",
+      "observable": "能够保存合法循环库且无 FK 检查异常",
+      "primary_mechanism": "recovery_rollback",
+      "workflow_ids": [
+        "build"
+      ],
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/bundle.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "check_references",
+          "promote"
+        ]
+      }
+    },
+    {
+      "id": "06-22",
+      "task_type": "质量保障",
+      "capability_family": "独立判据应覆盖的已声明现象",
+      "subject": "certificate",
+      "state": "内容认证",
+      "invariant": "SQLite 结构正确与逐表类型化内容等价分别核验",
+      "observable": "认证响应绑定库字节、模式、捕获和表计数",
+      "primary_mechanism": "snapshot_consistency",
+      "workflow_ids": [
+        "certify"
+      ],
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/bundle.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "certify",
+          "row_values"
+        ]
+      }
+    },
+    {
+      "id": "06-23",
+      "task_type": "质量保障",
+      "capability_family": "独立判据应覆盖的已声明现象",
+      "subject": "certificate",
+      "state": "状态推进",
+      "invariant": "仅 built 能写认证标记，重试返回既有终态",
+      "observable": "重复请求读取同一证书且 sealed 认证失败",
+      "primary_mechanism": "idempotency",
+      "workflow_ids": [
+        "certify"
+      ],
+      "source_anchors": [
+        "keelsplice/service.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/service.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "certify",
+          "promote"
+        ]
+      }
+    },
+    {
+      "id": "06-24",
+      "task_type": "质量保障",
+      "capability_family": "独立判据应覆盖的已声明现象",
+      "subject": "row",
+      "state": "值差异",
+      "invariant": "相同模式下以类型化键区分新增、离开和更新",
+      "observable": "两捕获显示实际修改主键而无误报新增",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "compare"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "compare",
+          "key"
+        ]
+      }
+    },
+    {
+      "id": "06-25",
+      "task_type": "质量保障",
+      "capability_family": "独立判据应覆盖的已声明现象",
+      "subject": "artifact",
+      "state": "交接认证",
+      "invariant": "发送字节先与同一记录的证书摘要核对",
+      "observable": "响应 ETag 等于独立消费方重算摘要",
+      "primary_mechanism": "export_freeze",
+      "workflow_ids": [
+        "download"
+      ],
+      "source_anchors": [
+        "keelsplice/service.py",
+        "keelsplice/bundle.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/service.py",
+          "keelsplice/bundle.py"
+        ],
+        "functions": [
+          "download",
+          "digest_bytes"
+        ]
+      }
+    },
+    {
+      "id": "07-01",
+      "task_type": "项目维护",
+      "capability_family": "影响维护操作的状态或解释前置条件",
+      "subject": "table",
+      "state": "目录快照",
+      "invariant": "SQLite 主库普通表具有声明主键",
+      "observable": "目录返回有序主键、表类型和列元数据",
+      "primary_mechanism": "policy_rules",
+      "workflow_ids": [
+        "catalog"
+      ],
+      "source_anchors": [
+        "keelsplice/catalog.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/catalog.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "inspect",
+          "source"
+        ]
+      }
+    },
+    {
+      "id": "07-02",
+      "task_type": "项目维护",
+      "capability_family": "影响维护操作的状态或解释前置条件",
+      "subject": "edge",
+      "state": "外键发现",
+      "invariant": "复合目标列按外键序号与父键次序解析",
+      "observable": "目录给出源列和目标列对应关系",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "catalog"
+      ],
+      "source_anchors": [
+        "keelsplice/catalog.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/catalog.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "inspect",
+          "quote"
+        ]
+      }
+    },
+    {
+      "id": "07-03",
+      "task_type": "项目维护",
+      "capability_family": "影响维护操作的状态或解释前置条件",
+      "subject": "catalog_hash",
+      "state": "模式识别",
+      "invariant": "摘要绑定表定义、列信息、关系和显式索引",
+      "observable": "DDL 修改后目录摘要改变",
+      "primary_mechanism": "versioning_audit",
+      "workflow_ids": [
+        "catalog"
+      ],
+      "source_anchors": [
+        "keelsplice/catalog.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/catalog.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "snapshot",
+          "fingerprint"
+        ]
+      }
+    },
+    {
+      "id": "07-04",
+      "task_type": "项目维护",
+      "capability_family": "影响维护操作的状态或解释前置条件",
+      "subject": "root",
+      "state": "登记",
+      "invariant": "根输入必须符合真实主键的维数和 SQLite 值类型",
+      "observable": "错误输入被拒绝，有效版本提供标准化表名",
+      "primary_mechanism": "policy_rules",
+      "workflow_ids": [
+        "recipe"
+      ],
+      "source_anchors": [
+        "keelsplice/recipe.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/recipe.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "identity",
+          "decode"
+        ]
+      }
+    },
+    {
+      "id": "07-05",
+      "task_type": "项目维护",
+      "capability_family": "影响维护操作的状态或解释前置条件",
+      "subject": "edge",
+      "state": "配置反向边",
+      "invariant": "反向边由子表及 SQLite 外键编号共同定位",
+      "observable": "配方回读可查到规范化的反向选择",
+      "primary_mechanism": "policy_rules",
+      "workflow_ids": [
+        "recipe"
+      ],
+      "source_anchors": [
+        "keelsplice/recipe.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/recipe.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "validate",
+          "inspect"
+        ]
+      }
+    },
+    {
+      "id": "07-06",
+      "task_type": "项目维护",
+      "capability_family": "影响维护操作的状态或解释前置条件",
+      "subject": "recipe",
+      "state": "定版",
+      "invariant": "名称下版本递增，旧版本的根和模式绑定保留",
+      "observable": "HTTP 可分别取两个不同版本",
+      "primary_mechanism": "versioning_audit",
+      "workflow_ids": [
+        "recipe"
+      ],
+      "source_anchors": [
+        "keelsplice/storage.py",
+        "keelsplice/recipe.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/storage.py",
+          "keelsplice/recipe.py"
+        ],
+        "functions": [
+          "add_recipe",
+          "describe"
+        ]
+      }
+    },
+    {
+      "id": "07-07",
+      "task_type": "项目维护",
+      "capability_family": "影响维护操作的状态或解释前置条件",
+      "subject": "recipe",
+      "state": "停用",
+      "invariant": "已停用版本可读但不能新增封存",
+      "observable": "浏览旧版本能读取内容，新捕获得到冲突",
+      "primary_mechanism": "state_machine",
+      "workflow_ids": [
+        "retire"
+      ],
+      "source_anchors": [
+        "keelsplice/storage.py",
+        "keelsplice/recipe.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/storage.py",
+          "keelsplice/recipe.py"
+        ],
+        "functions": [
+          "retire",
+          "describe"
+        ]
+      }
+    },
+    {
+      "id": "07-08",
+      "task_type": "项目维护",
+      "capability_family": "影响维护操作的状态或解释前置条件",
+      "subject": "capture",
+      "state": "提交封存",
+      "invariant": "提交时再次要求配方为活动状态",
+      "observable": "与退役竞争时只有符合提交条件的捕获落地",
+      "primary_mechanism": "batch_transaction",
+      "workflow_ids": [
+        "capture"
+      ],
+      "source_anchors": [
+        "keelsplice/storage.py",
+        "keelsplice/service.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/storage.py",
+          "keelsplice/service.py"
+        ],
+        "functions": [
+          "add_capture",
+          "execute"
+        ]
+      }
+    },
+    {
+      "id": "07-09",
+      "task_type": "项目维护",
+      "capability_family": "影响维护操作的状态或解释前置条件",
+      "subject": "row",
+      "state": "根解析",
+      "invariant": "实际 SQLite 查找允许由规范值取代输入拼法",
+      "observable": "预览返回按输入序次排列的实际主键值",
+      "primary_mechanism": "snapshot_consistency",
+      "workflow_ids": [
+        "preview"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/recipe.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/recipe.py"
+        ],
+        "functions": [
+          "find",
+          "identity"
+        ]
+      }
+    },
+    {
+      "id": "07-13",
+      "task_type": "项目维护",
+      "capability_family": "影响维护操作的状态或解释前置条件",
+      "subject": "budget",
+      "state": "容量判定",
+      "invariant": "根和补齐行共享整批行数上限",
+      "observable": "收紧上限时公开结果是 row_budget",
+      "primary_mechanism": "capacity",
+      "workflow_ids": [
+        "preview"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/recipe.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/recipe.py"
+        ],
+        "functions": [
+          "collect",
+          "validate"
+        ]
+      }
+    },
+    {
+      "id": "07-14",
+      "task_type": "项目维护",
+      "capability_family": "影响维护操作的状态或解释前置条件",
+      "subject": "budget",
+      "state": "扫描中断",
+      "invariant": "源语句共用连接级 SQLite 工作预算",
+      "observable": "长扫描引发 scan_budget 且无封存",
+      "primary_mechanism": "capacity",
+      "workflow_ids": [
+        "capture"
+      ],
+      "source_anchors": [
+        "keelsplice/storage.py",
+        "keelsplice/service.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/storage.py",
+          "keelsplice/service.py"
+        ],
+        "functions": [
+          "source",
+          "execute"
+        ]
+      }
+    },
+    {
+      "id": "07-15",
+      "task_type": "项目维护",
+      "capability_family": "影响维护操作的状态或解释前置条件",
+      "subject": "capture",
+      "state": "读快照",
+      "invariant": "模式检查及全部关系读取使用同一事务",
+      "observable": "捕获内容保持为一次源读，旧成果不随源更新",
+      "primary_mechanism": "snapshot_consistency",
+      "workflow_ids": [
+        "capture"
+      ],
+      "source_anchors": [
+        "keelsplice/service.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/service.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "execute",
+          "source"
+        ]
+      }
+    },
+    {
+      "id": "07-16",
+      "task_type": "项目维护",
+      "capability_family": "影响维护操作的状态或解释前置条件",
+      "subject": "capture",
+      "state": "模式绑定",
+      "invariant": "现行摘要必须与登记时摘要一致",
+      "observable": "旧版本遇见 DDL 返回 schema_conflict",
+      "primary_mechanism": "versioning_audit",
+      "workflow_ids": [
+        "capture"
+      ],
+      "source_anchors": [
+        "keelsplice/service.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/service.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "execute",
+          "snapshot"
+        ]
+      }
+    },
+    {
+      "id": "07-17",
+      "task_type": "项目维护",
+      "capability_family": "影响维护操作的状态或解释前置条件",
+      "subject": "witness",
+      "state": "行归因",
+      "invariant": "根位置、入边以及父依赖是独立事实",
+      "observable": "同一底盘既有根位置也有多条被指向的证据",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "trace"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "trace",
+          "load_capture"
+        ]
+      }
+    },
+    {
+      "id": "07-18",
+      "task_type": "项目维护",
+      "capability_family": "影响维护操作的状态或解释前置条件",
+      "subject": "row",
+      "state": "按键追踪",
+      "invariant": "证据使用已封存的类型化主键身份",
+      "observable": "实际拼法可定位，别名拼法得到 404",
+      "primary_mechanism": "policy_rules",
+      "workflow_ids": [
+        "trace"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "trace",
+          "key"
+        ]
+      }
+    },
+    {
+      "id": "07-19",
+      "task_type": "项目维护",
+      "capability_family": "影响维护操作的状态或解释前置条件",
+      "subject": "artifact",
+      "state": "重建 DDL",
+      "invariant": "普通表与显式索引从封存目录重建",
+      "observable": "独立数据库可读取同一模式与索引",
+      "primary_mechanism": "export_freeze",
+      "workflow_ids": [
+        "build"
+      ],
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/bundle.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "build",
+          "inspect"
+        ]
+      }
+    },
+    {
+      "id": "07-20",
+      "task_type": "项目维护",
+      "capability_family": "影响维护操作的状态或解释前置条件",
+      "subject": "artifact",
+      "state": "回填行",
+      "invariant": "生成列由子库计算，数据列按原 SQLite 类型绑定",
+      "observable": "消费端读出实际生成值与 BLOB",
+      "primary_mechanism": "export_freeze",
+      "workflow_ids": [
+        "build"
+      ],
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/bundle.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "build",
+          "decode"
+        ]
+      }
+    },
+    {
+      "id": "07-22",
+      "task_type": "项目维护",
+      "capability_family": "影响维护操作的状态或解释前置条件",
+      "subject": "certificate",
+      "state": "内容认证",
+      "invariant": "SQLite 结构正确与逐表类型化内容等价分别核验",
+      "observable": "认证响应绑定库字节、模式、捕获和表计数",
+      "primary_mechanism": "snapshot_consistency",
+      "workflow_ids": [
+        "certify"
+      ],
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/bundle.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "certify",
+          "row_values"
+        ]
+      }
+    },
+    {
+      "id": "07-23",
+      "task_type": "项目维护",
+      "capability_family": "影响维护操作的状态或解释前置条件",
+      "subject": "certificate",
+      "state": "状态推进",
+      "invariant": "仅 built 能写认证标记，重试返回既有终态",
+      "observable": "重复请求读取同一证书且 sealed 认证失败",
+      "primary_mechanism": "idempotency",
+      "workflow_ids": [
+        "certify"
+      ],
+      "source_anchors": [
+        "keelsplice/service.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/service.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "certify",
+          "promote"
+        ]
+      }
+    },
+    {
+      "id": "07-24",
+      "task_type": "项目维护",
+      "capability_family": "影响维护操作的状态或解释前置条件",
+      "subject": "row",
+      "state": "值差异",
+      "invariant": "相同模式下以类型化键区分新增、离开和更新",
+      "observable": "两捕获显示实际修改主键而无误报新增",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "compare"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "compare",
+          "key"
+        ]
+      }
+    },
+    {
+      "id": "07-25",
+      "task_type": "项目维护",
+      "capability_family": "影响维护操作的状态或解释前置条件",
+      "subject": "artifact",
+      "state": "交接认证",
+      "invariant": "发送字节先与同一记录的证书摘要核对",
+      "observable": "响应 ETag 等于独立消费方重算摘要",
+      "primary_mechanism": "export_freeze",
+      "workflow_ids": [
+        "download"
+      ],
+      "source_anchors": [
+        "keelsplice/service.py",
+        "keelsplice/bundle.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/service.py",
+          "keelsplice/bundle.py"
+        ],
+        "functions": [
+          "download",
+          "digest_bytes"
+        ]
+      }
+    },
+    {
+      "id": "08-01",
+      "task_type": "技术讨论",
+      "capability_family": "数据库方案选择需要满足的当前承诺",
+      "subject": "table",
+      "state": "目录快照",
+      "invariant": "SQLite 主库普通表具有声明主键",
+      "observable": "目录返回有序主键、表类型和列元数据",
+      "primary_mechanism": "policy_rules",
+      "workflow_ids": [
+        "catalog"
+      ],
+      "source_anchors": [
+        "keelsplice/catalog.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/catalog.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "inspect",
+          "source"
+        ]
+      }
+    },
+    {
+      "id": "08-02",
+      "task_type": "技术讨论",
+      "capability_family": "数据库方案选择需要满足的当前承诺",
+      "subject": "edge",
+      "state": "外键发现",
+      "invariant": "复合目标列按外键序号与父键次序解析",
+      "observable": "目录给出源列和目标列对应关系",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "catalog"
+      ],
+      "source_anchors": [
+        "keelsplice/catalog.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/catalog.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "inspect",
+          "quote"
+        ]
+      }
+    },
+    {
+      "id": "08-03",
+      "task_type": "技术讨论",
+      "capability_family": "数据库方案选择需要满足的当前承诺",
+      "subject": "catalog_hash",
+      "state": "模式识别",
+      "invariant": "摘要绑定表定义、列信息、关系和显式索引",
+      "observable": "DDL 修改后目录摘要改变",
+      "primary_mechanism": "versioning_audit",
+      "workflow_ids": [
+        "catalog"
+      ],
+      "source_anchors": [
+        "keelsplice/catalog.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/catalog.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "snapshot",
+          "fingerprint"
+        ]
+      }
+    },
+    {
+      "id": "08-04",
+      "task_type": "技术讨论",
+      "capability_family": "数据库方案选择需要满足的当前承诺",
+      "subject": "root",
+      "state": "登记",
+      "invariant": "根输入必须符合真实主键的维数和 SQLite 值类型",
+      "observable": "错误输入被拒绝，有效版本提供标准化表名",
+      "primary_mechanism": "policy_rules",
+      "workflow_ids": [
+        "recipe"
+      ],
+      "source_anchors": [
+        "keelsplice/recipe.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/recipe.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "identity",
+          "decode"
+        ]
+      }
+    },
+    {
+      "id": "08-05",
+      "task_type": "技术讨论",
+      "capability_family": "数据库方案选择需要满足的当前承诺",
+      "subject": "edge",
+      "state": "配置反向边",
+      "invariant": "反向边由子表及 SQLite 外键编号共同定位",
+      "observable": "配方回读可查到规范化的反向选择",
+      "primary_mechanism": "policy_rules",
+      "workflow_ids": [
+        "recipe"
+      ],
+      "source_anchors": [
+        "keelsplice/recipe.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/recipe.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "validate",
+          "inspect"
+        ]
+      }
+    },
+    {
+      "id": "08-06",
+      "task_type": "技术讨论",
+      "capability_family": "数据库方案选择需要满足的当前承诺",
+      "subject": "recipe",
+      "state": "定版",
+      "invariant": "名称下版本递增，旧版本的根和模式绑定保留",
+      "observable": "HTTP 可分别取两个不同版本",
+      "primary_mechanism": "versioning_audit",
+      "workflow_ids": [
+        "recipe"
+      ],
+      "source_anchors": [
+        "keelsplice/storage.py",
+        "keelsplice/recipe.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/storage.py",
+          "keelsplice/recipe.py"
+        ],
+        "functions": [
+          "add_recipe",
+          "describe"
+        ]
+      }
+    },
+    {
+      "id": "08-08",
+      "task_type": "技术讨论",
+      "capability_family": "数据库方案选择需要满足的当前承诺",
+      "subject": "capture",
+      "state": "提交封存",
+      "invariant": "提交时再次要求配方为活动状态",
+      "observable": "与退役竞争时只有符合提交条件的捕获落地",
+      "primary_mechanism": "batch_transaction",
+      "workflow_ids": [
+        "capture"
+      ],
+      "source_anchors": [
+        "keelsplice/storage.py",
+        "keelsplice/service.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/storage.py",
+          "keelsplice/service.py"
+        ],
+        "functions": [
+          "add_capture",
+          "execute"
+        ]
+      }
+    },
+    {
+      "id": "08-10",
+      "task_type": "技术讨论",
+      "capability_family": "数据库方案选择需要满足的当前承诺",
+      "subject": "edge",
+      "state": "补齐父行",
+      "invariant": "任意 NULL 子键分量不触发父行补齐",
+      "observable": "汇总计数体现可空引用行为",
+      "primary_mechanism": "policy_rules",
+      "workflow_ids": [
+        "preview"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "parents",
+          "inspect"
+        ]
+      }
+    },
+    {
+      "id": "08-11",
+      "task_type": "技术讨论",
+      "capability_family": "数据库方案选择需要满足的当前承诺",
+      "subject": "edge",
+      "state": "采纳子行",
+      "invariant": "反向查询继承父键比较语义",
+      "observable": "复合 NOCASE 目标的两个测量行都可入选",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "preview"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "children",
+          "inspect"
+        ]
+      }
+    },
+    {
+      "id": "08-12",
+      "task_type": "技术讨论",
+      "capability_family": "数据库方案选择需要满足的当前承诺",
+      "subject": "row",
+      "state": "扩展",
+      "invariant": "已发现的实际行身份只入队一次",
+      "observable": "环中两个盒的行数有限而关系证据保留",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "preview"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "collect",
+          "key"
+        ]
+      }
+    },
+    {
+      "id": "08-13",
+      "task_type": "技术讨论",
+      "capability_family": "数据库方案选择需要满足的当前承诺",
+      "subject": "budget",
+      "state": "容量判定",
+      "invariant": "根和补齐行共享整批行数上限",
+      "observable": "收紧上限时公开结果是 row_budget",
+      "primary_mechanism": "capacity",
+      "workflow_ids": [
+        "preview"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/recipe.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/recipe.py"
+        ],
+        "functions": [
+          "collect",
+          "validate"
+        ]
+      }
+    },
+    {
+      "id": "08-14",
+      "task_type": "技术讨论",
+      "capability_family": "数据库方案选择需要满足的当前承诺",
+      "subject": "budget",
+      "state": "扫描中断",
+      "invariant": "源语句共用连接级 SQLite 工作预算",
+      "observable": "长扫描引发 scan_budget 且无封存",
+      "primary_mechanism": "capacity",
+      "workflow_ids": [
+        "capture"
+      ],
+      "source_anchors": [
+        "keelsplice/storage.py",
+        "keelsplice/service.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/storage.py",
+          "keelsplice/service.py"
+        ],
+        "functions": [
+          "source",
+          "execute"
+        ]
+      }
+    },
+    {
+      "id": "08-15",
+      "task_type": "技术讨论",
+      "capability_family": "数据库方案选择需要满足的当前承诺",
+      "subject": "capture",
+      "state": "读快照",
+      "invariant": "模式检查及全部关系读取使用同一事务",
+      "observable": "捕获内容保持为一次源读，旧成果不随源更新",
+      "primary_mechanism": "snapshot_consistency",
+      "workflow_ids": [
+        "capture"
+      ],
+      "source_anchors": [
+        "keelsplice/service.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/service.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "execute",
+          "source"
+        ]
+      }
+    },
+    {
+      "id": "08-16",
+      "task_type": "技术讨论",
+      "capability_family": "数据库方案选择需要满足的当前承诺",
+      "subject": "capture",
+      "state": "模式绑定",
+      "invariant": "现行摘要必须与登记时摘要一致",
+      "observable": "旧版本遇见 DDL 返回 schema_conflict",
+      "primary_mechanism": "versioning_audit",
+      "workflow_ids": [
+        "capture"
+      ],
+      "source_anchors": [
+        "keelsplice/service.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/service.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "execute",
+          "snapshot"
+        ]
+      }
+    },
+    {
+      "id": "08-17",
+      "task_type": "技术讨论",
+      "capability_family": "数据库方案选择需要满足的当前承诺",
+      "subject": "witness",
+      "state": "行归因",
+      "invariant": "根位置、入边以及父依赖是独立事实",
+      "observable": "同一底盘既有根位置也有多条被指向的证据",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "trace"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "trace",
+          "load_capture"
+        ]
+      }
+    },
+    {
+      "id": "08-19",
+      "task_type": "技术讨论",
+      "capability_family": "数据库方案选择需要满足的当前承诺",
+      "subject": "artifact",
+      "state": "重建 DDL",
+      "invariant": "普通表与显式索引从封存目录重建",
+      "observable": "独立数据库可读取同一模式与索引",
+      "primary_mechanism": "export_freeze",
+      "workflow_ids": [
+        "build"
+      ],
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/bundle.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "build",
+          "inspect"
+        ]
+      }
+    },
+    {
+      "id": "08-20",
+      "task_type": "技术讨论",
+      "capability_family": "数据库方案选择需要满足的当前承诺",
+      "subject": "artifact",
+      "state": "回填行",
+      "invariant": "生成列由子库计算，数据列按原 SQLite 类型绑定",
+      "observable": "消费端读出实际生成值与 BLOB",
+      "primary_mechanism": "export_freeze",
+      "workflow_ids": [
+        "build"
+      ],
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/bundle.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "build",
+          "decode"
+        ]
+      }
+    },
+    {
+      "id": "08-21",
+      "task_type": "技术讨论",
+      "capability_family": "数据库方案选择需要满足的当前承诺",
+      "subject": "artifact",
+      "state": "完整性提交",
+      "invariant": "环可装载而真正缺父会被 SQLite 完整性检查拒绝",
+      "observable": "能够保存合法循环库且无 FK 检查异常",
+      "primary_mechanism": "recovery_rollback",
+      "workflow_ids": [
+        "build"
+      ],
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/bundle.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "check_references",
+          "promote"
+        ]
+      }
+    },
+    {
+      "id": "08-22",
+      "task_type": "技术讨论",
+      "capability_family": "数据库方案选择需要满足的当前承诺",
+      "subject": "certificate",
+      "state": "内容认证",
+      "invariant": "SQLite 结构正确与逐表类型化内容等价分别核验",
+      "observable": "认证响应绑定库字节、模式、捕获和表计数",
+      "primary_mechanism": "snapshot_consistency",
+      "workflow_ids": [
+        "certify"
+      ],
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/bundle.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "certify",
+          "row_values"
+        ]
+      }
+    },
+    {
+      "id": "08-23",
+      "task_type": "技术讨论",
+      "capability_family": "数据库方案选择需要满足的当前承诺",
+      "subject": "certificate",
+      "state": "状态推进",
+      "invariant": "仅 built 能写认证标记，重试返回既有终态",
+      "observable": "重复请求读取同一证书且 sealed 认证失败",
+      "primary_mechanism": "idempotency",
+      "workflow_ids": [
+        "certify"
+      ],
+      "source_anchors": [
+        "keelsplice/service.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/service.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "certify",
+          "promote"
+        ]
+      }
+    },
+    {
+      "id": "08-25",
+      "task_type": "技术讨论",
+      "capability_family": "数据库方案选择需要满足的当前承诺",
+      "subject": "artifact",
+      "state": "交接认证",
+      "invariant": "发送字节先与同一记录的证书摘要核对",
+      "observable": "响应 ETag 等于独立消费方重算摘要",
+      "primary_mechanism": "export_freeze",
+      "workflow_ids": [
+        "download"
+      ],
+      "source_anchors": [
+        "keelsplice/service.py",
+        "keelsplice/bundle.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/service.py",
+          "keelsplice/bundle.py"
+        ],
+        "functions": [
+          "download",
+          "digest_bytes"
+        ]
+      }
+    },
+    {
+      "id": "09-01",
+      "task_type": "问题排查与诊断",
+      "capability_family": "用户经常混淆但可独立观测的数据库阶段",
+      "subject": "table",
+      "state": "目录快照",
+      "invariant": "SQLite 主库普通表具有声明主键",
+      "observable": "目录返回有序主键、表类型和列元数据",
+      "primary_mechanism": "policy_rules",
+      "workflow_ids": [
+        "catalog"
+      ],
+      "source_anchors": [
+        "keelsplice/catalog.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/catalog.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "inspect",
+          "source"
+        ]
+      }
+    },
+    {
+      "id": "09-02",
+      "task_type": "问题排查与诊断",
+      "capability_family": "用户经常混淆但可独立观测的数据库阶段",
+      "subject": "edge",
+      "state": "外键发现",
+      "invariant": "复合目标列按外键序号与父键次序解析",
+      "observable": "目录给出源列和目标列对应关系",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "catalog"
+      ],
+      "source_anchors": [
+        "keelsplice/catalog.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/catalog.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "inspect",
+          "quote"
+        ]
+      }
+    },
+    {
+      "id": "09-03",
+      "task_type": "问题排查与诊断",
+      "capability_family": "用户经常混淆但可独立观测的数据库阶段",
+      "subject": "catalog_hash",
+      "state": "模式识别",
+      "invariant": "摘要绑定表定义、列信息、关系和显式索引",
+      "observable": "DDL 修改后目录摘要改变",
+      "primary_mechanism": "versioning_audit",
+      "workflow_ids": [
+        "catalog"
+      ],
+      "source_anchors": [
+        "keelsplice/catalog.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/catalog.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "snapshot",
+          "fingerprint"
+        ]
+      }
+    },
+    {
+      "id": "09-04",
+      "task_type": "问题排查与诊断",
+      "capability_family": "用户经常混淆但可独立观测的数据库阶段",
+      "subject": "root",
+      "state": "登记",
+      "invariant": "根输入必须符合真实主键的维数和 SQLite 值类型",
+      "observable": "错误输入被拒绝，有效版本提供标准化表名",
+      "primary_mechanism": "policy_rules",
+      "workflow_ids": [
+        "recipe"
+      ],
+      "source_anchors": [
+        "keelsplice/recipe.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/recipe.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "identity",
+          "decode"
+        ]
+      }
+    },
+    {
+      "id": "09-05",
+      "task_type": "问题排查与诊断",
+      "capability_family": "用户经常混淆但可独立观测的数据库阶段",
+      "subject": "edge",
+      "state": "配置反向边",
+      "invariant": "反向边由子表及 SQLite 外键编号共同定位",
+      "observable": "配方回读可查到规范化的反向选择",
+      "primary_mechanism": "policy_rules",
+      "workflow_ids": [
+        "recipe"
+      ],
+      "source_anchors": [
+        "keelsplice/recipe.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/recipe.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "validate",
+          "inspect"
+        ]
+      }
+    },
+    {
+      "id": "09-07",
+      "task_type": "问题排查与诊断",
+      "capability_family": "用户经常混淆但可独立观测的数据库阶段",
+      "subject": "recipe",
+      "state": "停用",
+      "invariant": "已停用版本可读但不能新增封存",
+      "observable": "浏览旧版本能读取内容，新捕获得到冲突",
+      "primary_mechanism": "state_machine",
+      "workflow_ids": [
+        "retire"
+      ],
+      "source_anchors": [
+        "keelsplice/storage.py",
+        "keelsplice/recipe.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/storage.py",
+          "keelsplice/recipe.py"
+        ],
+        "functions": [
+          "retire",
+          "describe"
+        ]
+      }
+    },
+    {
+      "id": "09-09",
+      "task_type": "问题排查与诊断",
+      "capability_family": "用户经常混淆但可独立观测的数据库阶段",
+      "subject": "row",
+      "state": "根解析",
+      "invariant": "实际 SQLite 查找允许由规范值取代输入拼法",
+      "observable": "预览返回按输入序次排列的实际主键值",
+      "primary_mechanism": "snapshot_consistency",
+      "workflow_ids": [
+        "preview"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/recipe.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/recipe.py"
+        ],
+        "functions": [
+          "find",
+          "identity"
+        ]
+      }
+    },
+    {
+      "id": "09-10",
+      "task_type": "问题排查与诊断",
+      "capability_family": "用户经常混淆但可独立观测的数据库阶段",
+      "subject": "edge",
+      "state": "补齐父行",
+      "invariant": "任意 NULL 子键分量不触发父行补齐",
+      "observable": "汇总计数体现可空引用行为",
+      "primary_mechanism": "policy_rules",
+      "workflow_ids": [
+        "preview"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "parents",
+          "inspect"
+        ]
+      }
+    },
+    {
+      "id": "09-11",
+      "task_type": "问题排查与诊断",
+      "capability_family": "用户经常混淆但可独立观测的数据库阶段",
+      "subject": "edge",
+      "state": "采纳子行",
+      "invariant": "反向查询继承父键比较语义",
+      "observable": "复合 NOCASE 目标的两个测量行都可入选",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "preview"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "children",
+          "inspect"
+        ]
+      }
+    },
+    {
+      "id": "09-12",
+      "task_type": "问题排查与诊断",
+      "capability_family": "用户经常混淆但可独立观测的数据库阶段",
+      "subject": "row",
+      "state": "扩展",
+      "invariant": "已发现的实际行身份只入队一次",
+      "observable": "环中两个盒的行数有限而关系证据保留",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "preview"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "collect",
+          "key"
+        ]
+      }
+    },
+    {
+      "id": "09-13",
+      "task_type": "问题排查与诊断",
+      "capability_family": "用户经常混淆但可独立观测的数据库阶段",
+      "subject": "budget",
+      "state": "容量判定",
+      "invariant": "根和补齐行共享整批行数上限",
+      "observable": "收紧上限时公开结果是 row_budget",
+      "primary_mechanism": "capacity",
+      "workflow_ids": [
+        "preview"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/recipe.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/recipe.py"
+        ],
+        "functions": [
+          "collect",
+          "validate"
+        ]
+      }
+    },
+    {
+      "id": "09-14",
+      "task_type": "问题排查与诊断",
+      "capability_family": "用户经常混淆但可独立观测的数据库阶段",
+      "subject": "budget",
+      "state": "扫描中断",
+      "invariant": "源语句共用连接级 SQLite 工作预算",
+      "observable": "长扫描引发 scan_budget 且无封存",
+      "primary_mechanism": "capacity",
+      "workflow_ids": [
+        "capture"
+      ],
+      "source_anchors": [
+        "keelsplice/storage.py",
+        "keelsplice/service.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/storage.py",
+          "keelsplice/service.py"
+        ],
+        "functions": [
+          "source",
+          "execute"
+        ]
+      }
+    },
+    {
+      "id": "09-15",
+      "task_type": "问题排查与诊断",
+      "capability_family": "用户经常混淆但可独立观测的数据库阶段",
+      "subject": "capture",
+      "state": "读快照",
+      "invariant": "模式检查及全部关系读取使用同一事务",
+      "observable": "捕获内容保持为一次源读，旧成果不随源更新",
+      "primary_mechanism": "snapshot_consistency",
+      "workflow_ids": [
+        "capture"
+      ],
+      "source_anchors": [
+        "keelsplice/service.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/service.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "execute",
+          "source"
+        ]
+      }
+    },
+    {
+      "id": "09-16",
+      "task_type": "问题排查与诊断",
+      "capability_family": "用户经常混淆但可独立观测的数据库阶段",
+      "subject": "capture",
+      "state": "模式绑定",
+      "invariant": "现行摘要必须与登记时摘要一致",
+      "observable": "旧版本遇见 DDL 返回 schema_conflict",
+      "primary_mechanism": "versioning_audit",
+      "workflow_ids": [
+        "capture"
+      ],
+      "source_anchors": [
+        "keelsplice/service.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/service.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "execute",
+          "snapshot"
+        ]
+      }
+    },
+    {
+      "id": "09-17",
+      "task_type": "问题排查与诊断",
+      "capability_family": "用户经常混淆但可独立观测的数据库阶段",
+      "subject": "witness",
+      "state": "行归因",
+      "invariant": "根位置、入边以及父依赖是独立事实",
+      "observable": "同一底盘既有根位置也有多条被指向的证据",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "trace"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "trace",
+          "load_capture"
+        ]
+      }
+    },
+    {
+      "id": "09-18",
+      "task_type": "问题排查与诊断",
+      "capability_family": "用户经常混淆但可独立观测的数据库阶段",
+      "subject": "row",
+      "state": "按键追踪",
+      "invariant": "证据使用已封存的类型化主键身份",
+      "observable": "实际拼法可定位，别名拼法得到 404",
+      "primary_mechanism": "policy_rules",
+      "workflow_ids": [
+        "trace"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "trace",
+          "key"
+        ]
+      }
+    },
+    {
+      "id": "09-21",
+      "task_type": "问题排查与诊断",
+      "capability_family": "用户经常混淆但可独立观测的数据库阶段",
+      "subject": "artifact",
+      "state": "完整性提交",
+      "invariant": "环可装载而真正缺父会被 SQLite 完整性检查拒绝",
+      "observable": "能够保存合法循环库且无 FK 检查异常",
+      "primary_mechanism": "recovery_rollback",
+      "workflow_ids": [
+        "build"
+      ],
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/bundle.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "check_references",
+          "promote"
+        ]
+      }
+    },
+    {
+      "id": "09-22",
+      "task_type": "问题排查与诊断",
+      "capability_family": "用户经常混淆但可独立观测的数据库阶段",
+      "subject": "certificate",
+      "state": "内容认证",
+      "invariant": "SQLite 结构正确与逐表类型化内容等价分别核验",
+      "observable": "认证响应绑定库字节、模式、捕获和表计数",
+      "primary_mechanism": "snapshot_consistency",
+      "workflow_ids": [
+        "certify"
+      ],
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/bundle.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "certify",
+          "row_values"
+        ]
+      }
+    },
+    {
+      "id": "09-23",
+      "task_type": "问题排查与诊断",
+      "capability_family": "用户经常混淆但可独立观测的数据库阶段",
+      "subject": "certificate",
+      "state": "状态推进",
+      "invariant": "仅 built 能写认证标记，重试返回既有终态",
+      "observable": "重复请求读取同一证书且 sealed 认证失败",
+      "primary_mechanism": "idempotency",
+      "workflow_ids": [
+        "certify"
+      ],
+      "source_anchors": [
+        "keelsplice/service.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/service.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "certify",
+          "promote"
+        ]
+      }
+    },
+    {
+      "id": "09-24",
+      "task_type": "问题排查与诊断",
+      "capability_family": "用户经常混淆但可独立观测的数据库阶段",
+      "subject": "row",
+      "state": "值差异",
+      "invariant": "相同模式下以类型化键区分新增、离开和更新",
+      "observable": "两捕获显示实际修改主键而无误报新增",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "compare"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "compare",
+          "key"
+        ]
+      }
+    },
+    {
+      "id": "09-25",
+      "task_type": "问题排查与诊断",
+      "capability_family": "用户经常混淆但可独立观测的数据库阶段",
+      "subject": "artifact",
+      "state": "交接认证",
+      "invariant": "发送字节先与同一记录的证书摘要核对",
+      "observable": "响应 ETag 等于独立消费方重算摘要",
+      "primary_mechanism": "export_freeze",
+      "workflow_ids": [
+        "download"
+      ],
+      "source_anchors": [
+        "keelsplice/service.py",
+        "keelsplice/bundle.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/service.py",
+          "keelsplice/bundle.py"
+        ],
+        "functions": [
+          "download",
+          "digest_bytes"
+        ]
+      }
+    },
+    {
+      "id": "10-01",
+      "task_type": "部署运维",
+      "capability_family": "迁移或重新接入服务时的连续性检查",
+      "subject": "table",
+      "state": "目录快照",
+      "invariant": "SQLite 主库普通表具有声明主键",
+      "observable": "目录返回有序主键、表类型和列元数据",
+      "primary_mechanism": "policy_rules",
+      "workflow_ids": [
+        "catalog"
+      ],
+      "source_anchors": [
+        "keelsplice/catalog.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/catalog.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "inspect",
+          "source"
+        ]
+      }
+    },
+    {
+      "id": "10-03",
+      "task_type": "部署运维",
+      "capability_family": "迁移或重新接入服务时的连续性检查",
+      "subject": "catalog_hash",
+      "state": "模式识别",
+      "invariant": "摘要绑定表定义、列信息、关系和显式索引",
+      "observable": "DDL 修改后目录摘要改变",
+      "primary_mechanism": "versioning_audit",
+      "workflow_ids": [
+        "catalog"
+      ],
+      "source_anchors": [
+        "keelsplice/catalog.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/catalog.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "snapshot",
+          "fingerprint"
+        ]
+      }
+    },
+    {
+      "id": "10-06",
+      "task_type": "部署运维",
+      "capability_family": "迁移或重新接入服务时的连续性检查",
+      "subject": "recipe",
+      "state": "定版",
+      "invariant": "名称下版本递增，旧版本的根和模式绑定保留",
+      "observable": "HTTP 可分别取两个不同版本",
+      "primary_mechanism": "versioning_audit",
+      "workflow_ids": [
+        "recipe"
+      ],
+      "source_anchors": [
+        "keelsplice/storage.py",
+        "keelsplice/recipe.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/storage.py",
+          "keelsplice/recipe.py"
+        ],
+        "functions": [
+          "add_recipe",
+          "describe"
+        ]
+      }
+    },
+    {
+      "id": "10-07",
+      "task_type": "部署运维",
+      "capability_family": "迁移或重新接入服务时的连续性检查",
+      "subject": "recipe",
+      "state": "停用",
+      "invariant": "已停用版本可读但不能新增封存",
+      "observable": "浏览旧版本能读取内容，新捕获得到冲突",
+      "primary_mechanism": "state_machine",
+      "workflow_ids": [
+        "retire"
+      ],
+      "source_anchors": [
+        "keelsplice/storage.py",
+        "keelsplice/recipe.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/storage.py",
+          "keelsplice/recipe.py"
+        ],
+        "functions": [
+          "retire",
+          "describe"
+        ]
+      }
+    },
+    {
+      "id": "10-08",
+      "task_type": "部署运维",
+      "capability_family": "迁移或重新接入服务时的连续性检查",
+      "subject": "capture",
+      "state": "提交封存",
+      "invariant": "提交时再次要求配方为活动状态",
+      "observable": "与退役竞争时只有符合提交条件的捕获落地",
+      "primary_mechanism": "batch_transaction",
+      "workflow_ids": [
+        "capture"
+      ],
+      "source_anchors": [
+        "keelsplice/storage.py",
+        "keelsplice/service.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/storage.py",
+          "keelsplice/service.py"
+        ],
+        "functions": [
+          "add_capture",
+          "execute"
+        ]
+      }
+    },
+    {
+      "id": "10-09",
+      "task_type": "部署运维",
+      "capability_family": "迁移或重新接入服务时的连续性检查",
+      "subject": "row",
+      "state": "根解析",
+      "invariant": "实际 SQLite 查找允许由规范值取代输入拼法",
+      "observable": "预览返回按输入序次排列的实际主键值",
+      "primary_mechanism": "snapshot_consistency",
+      "workflow_ids": [
+        "preview"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/recipe.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/recipe.py"
+        ],
+        "functions": [
+          "find",
+          "identity"
+        ]
+      }
+    },
+    {
+      "id": "10-11",
+      "task_type": "部署运维",
+      "capability_family": "迁移或重新接入服务时的连续性检查",
+      "subject": "edge",
+      "state": "采纳子行",
+      "invariant": "反向查询继承父键比较语义",
+      "observable": "复合 NOCASE 目标的两个测量行都可入选",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "preview"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "children",
+          "inspect"
+        ]
+      }
+    },
+    {
+      "id": "10-13",
+      "task_type": "部署运维",
+      "capability_family": "迁移或重新接入服务时的连续性检查",
+      "subject": "budget",
+      "state": "容量判定",
+      "invariant": "根和补齐行共享整批行数上限",
+      "observable": "收紧上限时公开结果是 row_budget",
+      "primary_mechanism": "capacity",
+      "workflow_ids": [
+        "preview"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/recipe.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/recipe.py"
+        ],
+        "functions": [
+          "collect",
+          "validate"
+        ]
+      }
+    },
+    {
+      "id": "10-14",
+      "task_type": "部署运维",
+      "capability_family": "迁移或重新接入服务时的连续性检查",
+      "subject": "budget",
+      "state": "扫描中断",
+      "invariant": "源语句共用连接级 SQLite 工作预算",
+      "observable": "长扫描引发 scan_budget 且无封存",
+      "primary_mechanism": "capacity",
+      "workflow_ids": [
+        "capture"
+      ],
+      "source_anchors": [
+        "keelsplice/storage.py",
+        "keelsplice/service.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/storage.py",
+          "keelsplice/service.py"
+        ],
+        "functions": [
+          "source",
+          "execute"
+        ]
+      }
+    },
+    {
+      "id": "10-15",
+      "task_type": "部署运维",
+      "capability_family": "迁移或重新接入服务时的连续性检查",
+      "subject": "capture",
+      "state": "读快照",
+      "invariant": "模式检查及全部关系读取使用同一事务",
+      "observable": "捕获内容保持为一次源读，旧成果不随源更新",
+      "primary_mechanism": "snapshot_consistency",
+      "workflow_ids": [
+        "capture"
+      ],
+      "source_anchors": [
+        "keelsplice/service.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/service.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "execute",
+          "source"
+        ]
+      }
+    },
+    {
+      "id": "10-16",
+      "task_type": "部署运维",
+      "capability_family": "迁移或重新接入服务时的连续性检查",
+      "subject": "capture",
+      "state": "模式绑定",
+      "invariant": "现行摘要必须与登记时摘要一致",
+      "observable": "旧版本遇见 DDL 返回 schema_conflict",
+      "primary_mechanism": "versioning_audit",
+      "workflow_ids": [
+        "capture"
+      ],
+      "source_anchors": [
+        "keelsplice/service.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/service.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "execute",
+          "snapshot"
+        ]
+      }
+    },
+    {
+      "id": "10-17",
+      "task_type": "部署运维",
+      "capability_family": "迁移或重新接入服务时的连续性检查",
+      "subject": "witness",
+      "state": "行归因",
+      "invariant": "根位置、入边以及父依赖是独立事实",
+      "observable": "同一底盘既有根位置也有多条被指向的证据",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "trace"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "trace",
+          "load_capture"
+        ]
+      }
+    },
+    {
+      "id": "10-19",
+      "task_type": "部署运维",
+      "capability_family": "迁移或重新接入服务时的连续性检查",
+      "subject": "artifact",
+      "state": "重建 DDL",
+      "invariant": "普通表与显式索引从封存目录重建",
+      "observable": "独立数据库可读取同一模式与索引",
+      "primary_mechanism": "export_freeze",
+      "workflow_ids": [
+        "build"
+      ],
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/bundle.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "build",
+          "inspect"
+        ]
+      }
+    },
+    {
+      "id": "10-21",
+      "task_type": "部署运维",
+      "capability_family": "迁移或重新接入服务时的连续性检查",
+      "subject": "artifact",
+      "state": "完整性提交",
+      "invariant": "环可装载而真正缺父会被 SQLite 完整性检查拒绝",
+      "observable": "能够保存合法循环库且无 FK 检查异常",
+      "primary_mechanism": "recovery_rollback",
+      "workflow_ids": [
+        "build"
+      ],
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/bundle.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "check_references",
+          "promote"
+        ]
+      }
+    },
+    {
+      "id": "10-22",
+      "task_type": "部署运维",
+      "capability_family": "迁移或重新接入服务时的连续性检查",
+      "subject": "certificate",
+      "state": "内容认证",
+      "invariant": "SQLite 结构正确与逐表类型化内容等价分别核验",
+      "observable": "认证响应绑定库字节、模式、捕获和表计数",
+      "primary_mechanism": "snapshot_consistency",
+      "workflow_ids": [
+        "certify"
+      ],
+      "source_anchors": [
+        "keelsplice/bundle.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/bundle.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "certify",
+          "row_values"
+        ]
+      }
+    },
+    {
+      "id": "10-23",
+      "task_type": "部署运维",
+      "capability_family": "迁移或重新接入服务时的连续性检查",
+      "subject": "certificate",
+      "state": "状态推进",
+      "invariant": "仅 built 能写认证标记，重试返回既有终态",
+      "observable": "重复请求读取同一证书且 sealed 认证失败",
+      "primary_mechanism": "idempotency",
+      "workflow_ids": [
+        "certify"
+      ],
+      "source_anchors": [
+        "keelsplice/service.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/service.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "certify",
+          "promote"
+        ]
+      }
+    },
+    {
+      "id": "10-24",
+      "task_type": "部署运维",
+      "capability_family": "迁移或重新接入服务时的连续性检查",
+      "subject": "row",
+      "state": "值差异",
+      "invariant": "相同模式下以类型化键区分新增、离开和更新",
+      "observable": "两捕获显示实际修改主键而无误报新增",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "compare"
+      ],
+      "source_anchors": [
+        "keelsplice/capture.py",
+        "keelsplice/codec.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/capture.py",
+          "keelsplice/codec.py"
+        ],
+        "functions": [
+          "compare",
+          "key"
+        ]
+      }
+    },
+    {
+      "id": "10-25",
+      "task_type": "部署运维",
+      "capability_family": "迁移或重新接入服务时的连续性检查",
+      "subject": "artifact",
+      "state": "交接认证",
+      "invariant": "发送字节先与同一记录的证书摘要核对",
+      "observable": "响应 ETag 等于独立消费方重算摘要",
+      "primary_mechanism": "export_freeze",
+      "workflow_ids": [
+        "download"
+      ],
+      "source_anchors": [
+        "keelsplice/service.py",
+        "keelsplice/bundle.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/service.py",
+          "keelsplice/bundle.py"
+        ],
+        "functions": [
+          "download",
+          "digest_bytes"
+        ]
+      }
+    }
+  ]
+}

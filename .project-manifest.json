@@ -1,0 +1,252 @@
+{
+  "project_shape": "backend",
+  "modules": [
+    {
+      "id": "api",
+      "path": "keelsplice/api.py",
+      "responsibility": "传输、协议错误、JSON 与数据库响应"
+    },
+    {
+      "id": "service",
+      "path": "keelsplice/service.py",
+      "responsibility": "公开入口与持久生命周期协调"
+    },
+    {
+      "id": "storage",
+      "path": "keelsplice/storage.py",
+      "responsibility": "源路径只读入口、配方、捕获和成果持久状态"
+    },
+    {
+      "id": "catalog",
+      "path": "keelsplice/catalog.py",
+      "responsibility": "SQLite 模式、约束和标识符语义"
+    },
+    {
+      "id": "recipe",
+      "path": "keelsplice/recipe.py",
+      "responsibility": "根与反向关系声明、版本规范化和校验"
+    },
+    {
+      "id": "capture",
+      "path": "keelsplice/capture.py",
+      "responsibility": "沿入出关系选样、追踪和比较"
+    },
+    {
+      "id": "codec",
+      "path": "keelsplice/codec.py",
+      "responsibility": "SQLite 值类型、主键及稳定摘要"
+    },
+    {
+      "id": "bundle",
+      "path": "keelsplice/bundle.py",
+      "responsibility": "子库重建和内容认证"
+    }
+  ],
+  "workflows": [
+    {
+      "id": "catalog",
+      "name": "读取关系目录",
+      "entry": "GET /sources/{alias}/catalog",
+      "success": "从同一个读事务提取列、主键和外键目标，返回模式摘要",
+      "failure": "无表、缺少主键或不支持的表被明确拒绝",
+      "verification": "python3 -m examples.walkthrough catalog",
+      "steps": [
+        "接收请求 GET /sources/{alias}/catalog",
+        "从同一个读事务提取列、主键和外键目标，返回模式摘要"
+      ],
+      "module_ids": [
+        "api",
+        "service",
+        "catalog",
+        "storage"
+      ]
+    },
+    {
+      "id": "recipe",
+      "name": "创建配方版本",
+      "entry": "POST /recipes/{name}/versions",
+      "success": "现行目录参与校验，归档原配方与摘要并分配递增版本",
+      "failure": "无效列名、方向或种子形状不产生版本",
+      "verification": "python3 -m examples.walkthrough recipe",
+      "steps": [
+        "接收请求 POST /recipes/{name}/versions",
+        "现行目录参与校验，归档原配方与摘要并分配递增版本"
+      ],
+      "module_ids": [
+        "api",
+        "service",
+        "recipe",
+        "catalog",
+        "storage"
+      ]
+    },
+    {
+      "id": "retire",
+      "name": "停止投用配方",
+      "entry": "POST /recipes/{name}/versions/{number}/retire",
+      "success": "冻结版本的读取与既有捕获仍可用，新捕获被拒绝",
+      "failure": "未知版本不改已有配方",
+      "verification": "python3 -m examples.walkthrough retire",
+      "steps": [
+        "接收请求 POST /recipes/{name}/versions/{number}/retire",
+        "冻结版本的读取与既有捕获仍可用，新捕获被拒绝"
+      ],
+      "module_ids": [
+        "api",
+        "service",
+        "storage",
+        "recipe"
+      ]
+    },
+    {
+      "id": "preview",
+      "name": "试算关系闭包",
+      "entry": "POST /preview",
+      "success": "报告在锚点及可选反向边下的容量与图形统计",
+      "failure": "预算不足不留下捕获记录",
+      "verification": "python3 -m examples.walkthrough preview",
+      "steps": [
+        "接收请求 POST /preview",
+        "报告在锚点及可选反向边下的容量与图形统计"
+      ],
+      "module_ids": [
+        "api",
+        "service",
+        "capture",
+        "catalog",
+        "recipe"
+      ]
+    },
+    {
+      "id": "capture",
+      "name": "封存一次提取",
+      "entry": "POST /captures",
+      "success": "保存同一事务内的模式、行和入选证据；通过状态接口读取",
+      "failure": "模式漂移或悬空引用拒绝封存",
+      "verification": "python3 -m examples.walkthrough capture",
+      "steps": [
+        "接收请求 POST /captures",
+        "保存同一事务内的模式、行和入选证据；通过状态接口读取"
+      ],
+      "module_ids": [
+        "api",
+        "service",
+        "capture",
+        "catalog",
+        "storage",
+        "codec"
+      ]
+    },
+    {
+      "id": "trace",
+      "name": "查询入选证据",
+      "entry": "POST /captures/{id}/trace",
+      "success": "主键定位后返回根标记及指向该行的边和依赖",
+      "failure": "未知类型或行没有伪造的路径",
+      "verification": "python3 -m examples.walkthrough trace",
+      "steps": [
+        "接收请求 POST /captures/{id}/trace",
+        "主键定位后返回根标记及指向该行的边和依赖"
+      ],
+      "module_ids": [
+        "api",
+        "service",
+        "capture",
+        "storage",
+        "codec"
+      ]
+    },
+    {
+      "id": "build",
+      "name": "从捕获重建子库",
+      "entry": "POST /captures/{id}/build",
+      "success": "对完整目录重建约束、回填数据并通过外键检查",
+      "failure": "返回错误并保留 sealed 状态，不向下载暴露半成品",
+      "verification": "python3 -m examples.walkthrough build",
+      "steps": [
+        "接收请求 POST /captures/{id}/build",
+        "对完整目录重建约束、回填数据并通过外键检查"
+      ],
+      "module_ids": [
+        "api",
+        "service",
+        "bundle",
+        "catalog",
+        "codec",
+        "storage"
+      ]
+    },
+    {
+      "id": "certify",
+      "name": "认证子库内容",
+      "entry": "POST /captures/{id}/certify",
+      "success": "重开生成的 SQLite 文件并核对模式、行内容和外键，保存证明",
+      "failure": "未生成的捕获拒绝认证",
+      "verification": "python3 -m examples.walkthrough certify",
+      "steps": [
+        "接收请求 POST /captures/{id}/certify",
+        "重开生成的 SQLite 文件并核对模式、行内容和外键，保存证明"
+      ],
+      "module_ids": [
+        "api",
+        "service",
+        "bundle",
+        "catalog",
+        "codec",
+        "storage"
+      ]
+    },
+    {
+      "id": "compare",
+      "name": "比较两个封存捕获",
+      "entry": "POST /compare",
+      "success": "同模式下按类型化主键比较加入、离开或修改",
+      "failure": "模式摘要不同拒绝直接比较",
+      "verification": "python3 -m examples.walkthrough compare",
+      "steps": [
+        "接收请求 POST /compare",
+        "同模式下按类型化主键比较加入、离开或修改"
+      ],
+      "module_ids": [
+        "api",
+        "service",
+        "capture",
+        "storage",
+        "codec"
+      ]
+    },
+    {
+      "id": "download",
+      "name": "交接已认证成果",
+      "entry": "GET /captures/{id}/database",
+      "success": "输出已认证库字节与摘要，响应同一个认证记录",
+      "failure": "未认证捕获拒绝下载",
+      "verification": "python3 -m examples.walkthrough download",
+      "steps": [
+        "接收请求 GET /captures/{id}/database",
+        "输出已认证库字节与摘要，响应同一个认证记录"
+      ],
+      "module_ids": [
+        "api",
+        "service",
+        "storage",
+        "bundle"
+      ]
+    }
+  ],
+  "complexity": {
+    "mechanisms": [
+      "state_machine",
+      "resource_lifecycle",
+      "error_propagation",
+      "versioning_audit",
+      "recovery_rollback",
+      "batch_transaction",
+      "export_freeze",
+      "capacity",
+      "idempotency",
+      "lineage",
+      "snapshot_consistency"
+    ]
+  }
+}

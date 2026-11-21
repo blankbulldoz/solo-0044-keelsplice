@@ -1,0 +1,51 @@
+{
+  "language": "Python 3.11+",
+  "project_shape": "backend",
+  "source_extensions": [
+    ".py"
+  ],
+  "testing": "deferred",
+  "build_command": "python3 -m compileall -q keelsplice examples",
+  "workflow_checks": [
+    {
+      "workflow_id": "catalog",
+      "command": "python3 -m examples.walkthrough catalog"
+    },
+    {
+      "workflow_id": "recipe",
+      "command": "python3 -m examples.walkthrough recipe"
+    },
+    {
+      "workflow_id": "retire",
+      "command": "python3 -m examples.walkthrough retire"
+    },
+    {
+      "workflow_id": "preview",
+      "command": "python3 -m examples.walkthrough preview"
+    },
+    {
+      "workflow_id": "capture",
+      "command": "python3 -m examples.walkthrough capture"
+    },
+    {
+      "workflow_id": "trace",
+      "command": "python3 -m examples.walkthrough trace"
+    },
+    {
+      "workflow_id": "build",
+      "command": "python3 -m examples.walkthrough build"
+    },
+    {
+      "workflow_id": "certify",
+      "command": "python3 -m examples.walkthrough certify"
+    },
+    {
+      "workflow_id": "compare",
+      "command": "python3 -m examples.walkthrough compare"
+    },
+    {
+      "workflow_id": "download",
+      "command": "python3 -m examples.walkthrough download"
+    }
+  ]
+}
