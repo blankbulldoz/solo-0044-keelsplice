@@ -114,7 +114,8 @@ def trace(sealed, address):
         raise Fault('row_not_captured', 'Use the actual typed key stored in the capture', 404)
     return {'row': target, 'roots': [i for i, root in enumerate(result['roots']) if root == target],
             'causes': [arc for arc in result['arcs'] if arc['target'] == target],
-            'dependencies': [arc for arc in result['arcs'] if arc['origin'] == target and arc['direction'] == 'parent']}
+            'dependencies': [arc for arc in result['arcs'] if arc['origin'] == target and arc['direction'] == 'parent'],
+            'children': [arc for arc in result['arcs'] if arc['origin'] == target and arc['direction'] == 'child']}
 
 
 def compare(left, right):

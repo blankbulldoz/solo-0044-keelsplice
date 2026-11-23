@@ -3,7 +3,7 @@
 import re
 import sqlite3
 
-from . import bundle, capture, catalog, recipe
+from . import bundle, capture, catalog, recipe, route
 from .codec import Fault
 
 NAME = re.compile(r'[a-z][a-z0-9_-]{0,63}\Z')
@@ -68,6 +68,9 @@ class Workbench:
 
     def trace(self, capture_id, body):
         return capture.trace(self.repository.load_capture(capture_id)['sealed'], body)
+
+    def trace_route(self, capture_id, body):
+        return route.trace(self.repository.load_capture(capture_id)['sealed'], body)
 
     def compare(self, body):
         recipe.fields(body, ('left', 'right'))

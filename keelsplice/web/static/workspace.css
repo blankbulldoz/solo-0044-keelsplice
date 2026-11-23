@@ -50,6 +50,9 @@ tbody tr:last-child > * { border-bottom: 0; }
 .data-list, .key-list { padding-left: 24px; overflow-wrap: anywhere; }
 .data-list li, .key-list li { margin-bottom: 6px; }
 .key-list span { color: var(--secondary); margin-left: 6px; }
+.route-path li { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+tr.chosen { background: var(--brand-soft); }
+.hint { color: var(--secondary); font-size: 13px; margin: 4px 0 12px; }
 @media (max-width: 720px) {
   .topbar { gap: 8px 18px; padding: 12px 15px; flex-wrap: wrap; }
   .topbar nav { order: 3; width: 100%; gap: 2px; }

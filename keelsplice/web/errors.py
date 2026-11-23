@@ -19,6 +19,7 @@ MESSAGES = {
     'schema_conflict': '模式摘要不一致，无法沿用当前配方或直接比较这两次捕获。',
     'unknown_capture': '找不到指定的捕获。',
     'row_not_captured': '封存结果中没有这个实存主键，请核对类型与拼写。',
+    'invalid_route': '路线数据无法识别，请回到捕获详情重新追踪。',
     'fixture_not_built': '需先构建子库。',
     'fixture_not_certified': '需先认证子库。',
     'artifact_integrity': '实存文件与证书摘要不一致。',

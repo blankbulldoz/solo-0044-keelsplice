@@ -1,6 +1,13 @@
 <div class="content">
   <header class="pagehead"><div><p class="breadcrumb"><a href="$base">捕获详情</a> / 追踪</p><h1>入选证据</h1></div></header>
-  <dl class="facts"><div><dt>表</dt><dd>$table</dd></div><div><dt>实存主键</dt><dd>$key</dd></div><div><dt>根序号</dt><dd>$occurrences</dd></div></dl>
+  <dl class="facts"><div><dt>表</dt><dd>$table</dd></div><div><dt>实存主键</dt><dd>$key</dd></div><div><dt>根序号</dt><dd>$occurrences</dd></div><div><dt>路径位置</dt><dd>$position</dd></div></dl>
+  $loop_notice
+  <section><h2>本标签页路线</h2>
+    <p class="hint">每个标签页独立保留路线；回到任一位置会恢复当时选择的有向边与回环判定，另开标签页访问同一捕获不会覆盖此路线。</p>
+    $route_path
+    <div class="actions">$reset</div>
+  </section>
   <section><h2>直接入选原因</h2><div class="scroll"><table><thead><tr><th scope="col">类型</th><th scope="col">外键</th><th scope="col">来源行</th><th scope="col">操作</th></tr></thead><tbody>$causes</tbody></table></div></section>
   <section><h2>指向的必需父行</h2><div class="scroll"><table><thead><tr><th scope="col">类型</th><th scope="col">外键</th><th scope="col">目标行</th><th scope="col">操作</th></tr></thead><tbody>$dependencies</tbody></table></div></section>
+  <section><h2>配方反向纳入的子行</h2><div class="scroll"><table><thead><tr><th scope="col">类型</th><th scope="col">外键</th><th scope="col">目标行</th><th scope="col">操作</th></tr></thead><tbody>$children</tbody></table></div></section>
 </div>

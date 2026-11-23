@@ -36,6 +36,17 @@ def html(base, path, payload=None, expected=200, origin=None):
     return path, body.decode('utf-8')
 
 
+def forms_with(body, label):
+    from html import unescape
+    from urllib.parse import unquote
+    found = []
+    for fragment in re.findall(r'<form .*?</form>', body, re.S):
+        if label in fragment:
+            found.append({name: unescape(unquote(value)) for name, value in
+                          re.findall(r'name="([^"]+)" value="([^"]*)"', fragment)})
+    return found
+
+
 def run(base, source, root):
     path, directory = html(base, '/')
     assert path == '/workbench' and '外键关系' in directory
@@ -67,6 +78,28 @@ def run(base, source, root):
     assert '直接入选原因' in evidence and 'S-01' in evidence
     assert '实存主键' in html(base, first + '/trace',
                             {'table': 'substrate', 'key': '["east","MICA"]'}, expected=404)[1]
+
+    # 路线在标签页内自包含：保留有向边、路径位置与逐分支回环判定，不同标签页互不覆盖。
+    _, start = html(base, first + '/trace', {'table': 'cassette', 'key': '[11]'})
+    assert '当前节点是本分支首次到达' in start and '1 / 1' in start
+    walk = next(item for item in forms_with(start, '沿此边继续')
+                if item['edge_table'] == 'cassette' and item['direction'] == 'parent')
+    assert walk['route'] == '[]'
+    _, middle = html(base, first + '/trace', walk)
+    assert '2 / 2' in middle and '本路线所选' in middle and '当前节点是本分支首次到达' in middle
+    next_walk = next(item for item in forms_with(middle, '沿此边继续')
+                     if item['edge_table'] == 'cassette' and item['direction'] == 'parent')
+    _, closed = html(base, first + '/trace', next_walk)
+    assert '3 / 3' in closed and '回到已见节点' in closed and '第 1 个位置首次到达' in closed
+    back = next(item for item in forms_with(closed, '') if item.get('back') == '0')
+    _, restored = html(base, first + '/trace', back)
+    assert '1 / 1' in restored and '当前节点是本分支首次到达' in restored
+    assert forms_with(restored, '沿此边继续')[0]['route'] == '[]'
+    _, other_tab = html(base, first + '/trace', {'table': 'cassette', 'key': '[12]'})
+    assert '1 / 1' in other_tab and '当前节点是本分支首次到达' in other_tab
+    tampered = dict(walk, route='[{"edge":["cassette",9],"direction":"parent","table":"cassette","key":[99]}]')
+    assert '路线数据无法识别' in html(base, first + '/trace', tampered, expected=400)[1]
+
     assert '需先认证' in html(base, first + '/database', expected=409)[1]
 
     with closing(sqlite3.connect(source)) as conn, conn:
