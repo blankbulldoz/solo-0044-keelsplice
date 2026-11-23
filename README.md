@@ -1,19 +1,10 @@
-# Keelsplice
+# Keelsplice 关系样本工作台
 
-Keelsplice is a Python HTTP service that turns a selection of SQLite rows into a self-contained relational fixture. Give it primary-key roots and the relationships whose child rows you want to include. It resolves required parents, records why each row was included, and hands off a standalone SQLite file after verifying its contents.
+从已注册的 SQLite 源库提取可独立打开的关系子库。数据库工程人员在浏览器里查看主键和外键、登记配方、确认入选行与直接证据，然后构建、认证并下载子库。
 
-## Run locally
+## 本地启动
 
-Requirements are Python 3.11+ with SQLite 3.37+ and an available loopback port. The service uses the Python standard library. The same command works with multiple `--source ALIAS=FILE` options. The state directory must already exist. Use a disposable example or an operator-managed source file.
-
-```sh
-python3 -m compileall -q keelsplice
-python3 -m examples.walkthrough all
-```
-
-The walkthrough starts a temporary service, loads `examples/microscope.sql` and visits the public HTTP routes. It exports a fixture and independently opens it with SQLite, including after a later source update. You can run a single stage by replacing `all` with its name. Automated tests are deferred.
-
-To run a persistent local instance, first create a sample database in a new directory and then start the service from the project root:
+需要 Python 3.11+ 和 SQLite 3.37+。Python 后端使用标准库，HTML 由服务端渲染。
 
 ```sh
 mkdir keelsplice-local
@@ -22,36 +13,41 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
   --source microscope=keelsplice-local/microscope.sqlite --port 8794
 ```
 
-## HTTP flow
+浏览器打开 <http://127.0.0.1:8794/workbench>。同一进程可用多个 `--source 别名=文件` 注册不同源库。工作台仅用于受信任的本机操作人员，服务监听回环地址。源文件必须与状态库分开，状态库所在目录须可写。
 
-| Method and route | Input and result |
+## 从配方到交付
+
+1. 在「关系目录」选源和表。主键顺序用于填写根，外键映射用于判断哪些子行需要反向纳入。
+2. 登记配方，填写一个或多个根及封存行上限。样例可填 `[{"table":"substrate","key":["east","MICA"]}]`，再选 `substrate → assay`。
+3. 试算查看逐表计数和实存根。点「封存当前样本」时服务重新读取源。配方绑定的模式有变化时，需要重新核对目录。
+4. 在捕获详情按实存主键追踪。可从直接入选原因或必需父行继续查看相关记录。对比页面按实存带类型主键显示两个同模式捕获的新增、移除和修改。
+5. 构建后再认证。认证后可下载文件并用其 SHA-256 或独立 SQLite 连接核对。停用配方后，既有捕获仍可完成这些操作。
+
+## JSON 接口
+
+同一后端继续提供既有接口。JSON 请求使用 `Content-Type: application/json`。捕获 ID 是不透明字符串。
+
+| 方法与路径 | 请求与结果 |
 | --- | --- |
-| `GET /sources/{alias}/catalog` | Lists tables, ordered PKs, edges and indexes with the pinned schema digest. |
-| `POST /recipes/{name}/versions` | Registers a recipe and allocates an immutable version. |
-| `GET /recipes/{name}/versions/{version}` | Reads the recipe and its active status. |
-| `POST /recipes/{name}/versions/{version}/retire` | Accepts `{}`. Stops future captures; existing captures are available. |
-| `POST /preview` | Takes `{"name":"swatch","version":1}`. Runs the selection and returns counts and canonical roots. |
-| `POST /captures` | Takes the same version reference. Stores the sealed result and returns its opaque ID. |
-| `GET /captures/{id}` | Returns state, schema digest, canonical roots, counts and any certificate. |
-| `POST /captures/{id}/trace` | Takes `{"table":"substrate","key":["East","Mica"]}` with the exact stored key. Returns direct causes and parent references, along with zero-based root indexes. |
-| `POST /captures/{id}/build` | Accepts `{}`. Rebuilds SQLite from the stored selection. |
-| `POST /captures/{id}/certify` | Accepts `{}`. Reads the file independently and certifies counts, schema, sealed result digest and file bytes. |
-| `POST /compare` | Takes `{"left":"id-a","right":"id-b"}`. Lists typed primary-key tuples per table marked added, removed or modified. |
-| `GET /captures/{id}/database` | Returns certified SQLite file bytes and the quoted SHA-256 `ETag`. |
+| `GET /sources/{alias}/catalog` | 读取表、列、关系、索引和模式摘要 |
+| `POST /recipes/{name}/versions` | 登记 `source`、`roots`，以及可选的 `follow_children`、`row_limit` |
+| `GET /recipes/{name}/versions/{version}` | 读取版本及其投用状态 |
+| `POST /recipes/{name}/versions/{version}/retire` | 接收空对象并停用版本 |
+| `POST /preview`、`POST /captures` | 接收 `{"name":"swatch","version":1}`，分别试算和封存 |
+| `GET /captures/{id}` | 读取捕获状态、实存根、计数和证书 |
+| `POST /captures/{id}/trace` | 接收如 `{"table":"substrate","key":["East","Mica"]}`，返回直接证据和从零开始的根序号 |
+| `POST /captures/{id}/build`、`POST /captures/{id}/certify` | 接收空对象，构建或认证该捕获的子库 |
+| `POST /compare` | 接收 `{"left":"id-a","right":"id-b"}`，按表报告带类型主键的差异 |
+| `GET /captures/{id}/database` | 返回已认证 SQLite 字节，`ETag` 为带引号的 SHA-256 |
 
-For example, register a composite-key selection and enable the assay relationship back toward matching child rows:
+根记录中的键按目录的列顺序填写。整数为有符号 64 位 JSON 数字。字节用 `{"blob":"AAD/"}`，实数用 `{"real":"0x1.a000000000000p+1"}`，文本用 JSON 字符串。配方可以用不同拼写定位同一个 NOCASE 根，封存与追踪使用实存键。结果中的行去重，输入根出现项保留顺序。工作台近期列表显示最后登记的 50 个配方版本和最后封存的 50 次捕获，历史详情地址依然可访问。
 
-```json
-{
-  "source": "microscope",
-  "roots": [{"table": "substrate", "key": ["east", "MICA"]}],
-  "follow_children": [{"child": "assay", "id": 0}],
-  "row_limit": 20
-}
+## 复跑
+
+```sh
+python3 -m compileall -q keelsplice examples
+python3 -m examples.walkthrough all
+python3 -m examples.browser_walkthrough
 ```
 
-Send bodies as `application/json`. Key order is the catalog PK order. Integers are signed 64-bit JSON numbers. Use `{"blob":"AAD/"}` for bytes and `{"real":"0x1.a000000000000p+1"}` for a real. Strings remain text. The initial lookup uses SQLite comparison rules, so the canonical root can differ from the supplied spelling or storage class. Capture and trace use the canonical identity. Arrays are retained in input order for roots. Results collapse repeated row identities but preserve root occurrences.
-
-A preview represents one current SQLite read. A later capture reads the source again. A schema change requires a new recipe version even when row values match. The fixed point always includes every selected row's parent dependencies. The `follow_children` list permits traversal toward children on specific foreign keys. See the specification for supported schemas. Sources may use WAL and must remain readable by SQLite in normal read-only mode. The service is meant for an operator-controlled local process and accepts registered source aliases. A fixture contains original selected values.
-
-Requests are limited to 256 KiB. Each recipe can name up to 256 roots and 256 child edge entries with a row limit of 1–5,000. Source query work, witness count and the encoded selection size are also bounded. An over-budget or unavailable source returns an error and leaves capture state untouched. Build or certification retries preserve the stage already reached. Errors return a stable `error` identifier and a human-readable `message`.
+两份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。独立自动化测试套件延后。

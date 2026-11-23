@@ -1,8 +1,11 @@
 {
-  "language": "Python 3.11+",
-  "project_shape": "backend",
+  "language": "Python 3.11+ / HTML / CSS",
+  "project_shape": "fullstack",
   "source_extensions": [
-    ".py"
+    ".py",
+    ".html",
+    ".css",
+    ".sql"
   ],
   "testing": "deferred",
   "build_command": "python3 -m compileall -q keelsplice examples",
@@ -46,6 +49,10 @@
     {
       "workflow_id": "download",
       "command": "python3 -m examples.walkthrough download"
+    },
+    {
+      "workflow_id": "workbench",
+      "command": "python3 -m examples.browser_walkthrough"
     }
   ]
 }

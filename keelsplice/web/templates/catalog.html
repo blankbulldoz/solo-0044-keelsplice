@@ -1,0 +1,30 @@
+<div class="workspace">
+  <aside class="rail" aria-label="关系表目录">
+    <form class="source-picker" method="get" action="/workbench">
+      <label for="source">SQLite 数据源</label>
+      <div class="inline"><select id="source" name="source">$options</select><button>打开</button></div>
+    </form>
+    <div class="rail-label"><span>数据表</span><span>$table_count</span></div>
+    <nav class="table-links" aria-label="数据表">$table_links</nav>
+  </aside>
+  <div class="workarea">
+    <header class="pagehead">
+      <div><p class="breadcrumb">关系目录 / $alias</p><h1>$selected</h1></div>
+      <a class="button primary" href="$recipe">登记配方</a>
+    </header>
+    <dl class="facts">
+      <div><dt>有序主键</dt><dd>$pk</dd></div>
+      <div><dt>列数</dt><dd>$column_count</dd></div>
+      <div class="wide"><dt>模式摘要</dt><dd><code>$digest</code></dd></div>
+    </dl>
+    <section aria-labelledby="columns">
+      <h2 id="columns">列定义</h2>
+      <div class="scroll"><table><thead><tr><th scope="col">列</th><th scope="col">声明类型</th><th scope="col">主键顺序</th><th scope="col">允许空值</th><th scope="col">值来源</th></tr></thead><tbody>$columns</tbody></table></div>
+    </section>
+    <section aria-labelledby="relations">
+      <h2 id="relations">外键关系</h2>
+      <div class="scroll"><table><thead><tr><th scope="col">相对方向</th><th scope="col">子表 → 父表</th><th scope="col">列映射</th><th scope="col">外键编号</th></tr></thead><tbody>$edges</tbody></table></div>
+    </section>
+    <details><summary>索引与建表语句</summary><ul class="indexes">$indexes</ul><pre>$ddl</pre></details>
+  </div>
+</div>

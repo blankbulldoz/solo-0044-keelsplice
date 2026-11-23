@@ -1,28 +1,31 @@
-# Keelsplice
+# Keelsplice 关系样本工作台
 
-Keelsplice is a local Python HTTP service for preparing self-contained relational fixtures from existing SQLite databases. A database engineer gives it named tables and typed primary-key tuples, chooses which foreign keys to traverse in reverse, and receives a standalone SQLite subdatabase with a traceable selection and a certificate. Parent dependencies are always followed. The default deployment binds to loopback and reads only administrator-registered database files.
+Keelsplice 面向需要从既有 SQLite 数据库准备关系验证样本的工程人员。输入是本机登记的源文件、带类型的主键根、可反向遍历的外键和行预算。输出是带入选证据和证书的独立 SQLite 子库。操作人员可走浏览器表单或原 JSON 接口。
 
-## Workflows
+## 工作流和职责
 
-1. Inspect a registered source to see canonical table and column names, primary-key order, and resolved foreign keys.
-2. Register a named immutable recipe version against that source schema. Versions pin schema content and seed specification.
-3. Retire a version to stop new captures while retaining its description and captures.
-4. Preview the relationship closure and budget usage without storing rows.
-5. Capture DDL, selected row values and witnesses inside one source read transaction and seal the record.
-6. Trace one captured row to its direct causes, original seed positions and outgoing dependencies.
-7. Build an empty destination schema, insert the saved rows, and check foreign keys before storing the artifact.
-8. Reopen and certify the resulting artifact against the sealed schema and typed row contents.
-9. Compare two captures with identical schema, reporting row additions, removals and modifications.
-10. Deliver the certified SQLite bytes with their SHA-256 digest.
+| 工作流 | 一致性边界 |
+| --- | --- |
+| 关系目录 | 在单个源读事务中解释列、主键顺序、外键目标和索引，由工作台渲染选定表。 |
+| 登记配方 | 浏览器携带目录摘要，服务按实际模式校验根、关系和预算，状态库保存不可变版本。 |
+| 停止投用 | 版本停止新捕获，历史配方和成果仍可查看。封存事务重新检查投用状态。 |
+| 闭包试算 | 以当前读事务计算实存根与闭包计数，页面区分试算与已封存记录。 |
+| 封存选样 | 把同一快照的结构、入选行和直接关系证据写入状态库。超预算或模式漂移时没有部分捕获。 |
+| 行证据 | 通过实存主键读取直接原因、根位置及必需父行，相关行继续使用同次捕获的键。 |
+| 捕获对比 | 读取两个封存结果。相同模式下用带类型主键归类差异，异模式拒绝。 |
+| 重建子库 | 从封存结构重建并回填行，交付之前检查外键。 |
+| 认证子库 | 在独立 SQLite 连接校验结构与行内容，记录字节和摘要。 |
+| 下载交接 | 读取与证书匹配的字节，浏览器只展示当前阶段可执行的操作。 |
 
-The HTTP transport invokes the service coordinator. Storage owns read-only source transactions and writable local recipe/artifact state. Catalog inspection follows SQLite's primary-key and foreign-key naming semantics. The recipe module normalizes request inputs. Capture owns graph traversal and snapshot provenance. The value codec preserves SQLite storage classes and typed identities. Bundle rebuilds a database from captured facts and provides independent post-build checks.
+HTTP 传输层负责请求形状和响应。工作台独立处理 HTML 视图、表单和本地访问，调用共享业务服务。业务服务协调目录、配方、捕获和成果生命周期。存储模块管理源读事务及状态库写事务。类型编解码负责主键、SQLite 存储类型及稳定摘要。
 
-## Domain contracts
+## 数据契约
 
-- The source is a main-schema SQLite file containing ordinary tables with declared primary keys. Selected rows need non-NULL primary-key components. SQL views and triggers are outside the handoff contract. Virtual/shadow tables and main databases with no ordinary tables are rejected. Use built-in SQLite affinity, collations and generated expressions.
-- Partial and expression indexes are preserved when their SQL uses SQLite built-ins. PK and UNIQUE constraints declared in tables, and separately created indexes, are preserved. Tables with no selected rows retain their definitions.
-- Parent lookup resolves composite and implicit targets using SQLite comparison semantics. A child key with any NULL component creates no required dependency. Explicit traversal toward children repeats to a fixed point over the requested edge set. Each row is expanded once and all direct witnesses are retained.
-- A capture is sealed only after the graph and row budgets succeed. Its recipe version and source schema identity are part of the stored result. Source writes can resume without changing an already sealed result.
-- Rebuilding and certifying may be retried. Only certified bytes are exposed by download. Certification checks the destination file's structure and rows against sealed data. It doesn't make the service a backup of SQLite metadata, deleted pages, triggers or live application side effects.
+- 支持 SQLite 主库中有声明主键的普通表。被选中的行必须有完整实存主键。视图和触发器不属子库交付范围。虚拟表、影子表和无普通表的源会被拒绝。
+- 保留表定义、声明的约束及显式索引，包含未入选任何行的表。使用 SQLite 内置排序规则、类型亲和性及生成表达式。
+- 父键查找使用 SQLite 比较语义。复合子键任一分量为 NULL 时无必需父行。反向遍历只走明确选择的外键，直到不再发现新行。每个行身份只展开一次，同时保留直接关系证据。
+- 同一实际根可由不同输入拼写命中。试算和捕获保留输入位置对应的实存根。浏览器以源 JSON 文本传递类型化键，服务端解码。已封存的行、关系和结构不随源后续更新而变化。
+- 试算结果只对应本次读快照。封存发起独立读取。配方及试算都不代表未来封存的数据内容。
+- 构建和认证可重试。认证同时核对结构、行和文件字节。成果供接收方查询和验证，范围为被选中的数据、结构约束和已承诺的证据。
 
-The examples exercise the production route with disposable source and repository files. Automated tests are deferred for this baseline.
+生产验证使用 `examples/microscope.sql` 的复合 NOCASE 键、可空边、生成列、BLOB 和环关系。JSON 与浏览器演练的说明见 README。独立自动化测试套件延后。

@@ -81,6 +81,21 @@ class Repository:
             raise Fault('unknown_recipe', 'Recipe version is unknown', 404)
         return dict(row) | {'recipe': loads(row['recipe']), 'active': bool(row['active'])}
 
+    def recent_recipes(self):
+        with self.session() as conn:
+            rows = conn.execute("""
+                SELECT name, version, active, schema_digest, recipe
+                FROM recipes ORDER BY rowid DESC LIMIT 50
+            """).fetchall()
+        return [dict(row) | {'source': loads(row['recipe'])['source']} for row in rows]
+
+    def recent_captures(self):
+        with self.session() as conn:
+            rows = conn.execute("""
+                SELECT id, name, version, state FROM captures ORDER BY rowid DESC LIMIT 50
+            """).fetchall()
+        return [dict(row) for row in rows]
+
     def retire(self, name, number):
         with self.session(write=True) as conn:
             update = conn.execute('UPDATE recipes SET active=0 WHERE name=? AND version=?', (name, number))

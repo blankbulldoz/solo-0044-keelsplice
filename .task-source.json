@@ -26,7 +26,9 @@
         "keelsplice/codec.py",
         "keelsplice/recipe.py",
         "keelsplice/service.py",
-        "keelsplice/storage.py"
+        "keelsplice/storage.py",
+        "keelsplice/web/http.py",
+        "examples/browser_walkthrough.py"
       ]
     },
     "功能优化": {
@@ -39,7 +41,9 @@
         "keelsplice/codec.py",
         "keelsplice/recipe.py",
         "keelsplice/service.py",
-        "keelsplice/storage.py"
+        "keelsplice/storage.py",
+        "keelsplice/web/http.py",
+        "examples/browser_walkthrough.py"
       ]
     },
     "泛Agent需求": {
@@ -52,7 +56,9 @@
         "keelsplice/codec.py",
         "keelsplice/recipe.py",
         "keelsplice/service.py",
-        "keelsplice/storage.py"
+        "keelsplice/storage.py",
+        "keelsplice/web/http.py",
+        "examples/browser_walkthrough.py"
       ]
     },
     "代码重构": {
@@ -65,7 +71,9 @@
         "keelsplice/codec.py",
         "keelsplice/recipe.py",
         "keelsplice/service.py",
-        "keelsplice/storage.py"
+        "keelsplice/storage.py",
+        "keelsplice/web/http.py",
+        "examples/browser_walkthrough.py"
       ]
     },
     "依赖升级与迁移": {
@@ -91,7 +99,9 @@
         "keelsplice/codec.py",
         "keelsplice/recipe.py",
         "keelsplice/service.py",
-        "keelsplice/storage.py"
+        "keelsplice/storage.py",
+        "keelsplice/web/http.py",
+        "examples/browser_walkthrough.py"
       ]
     },
     "项目维护": {
@@ -104,7 +114,9 @@
         "keelsplice/codec.py",
         "keelsplice/recipe.py",
         "keelsplice/service.py",
-        "keelsplice/storage.py"
+        "keelsplice/storage.py",
+        "keelsplice/web/http.py",
+        "examples/browser_walkthrough.py"
       ]
     },
     "技术讨论": {
@@ -117,7 +129,9 @@
         "keelsplice/codec.py",
         "keelsplice/recipe.py",
         "keelsplice/service.py",
-        "keelsplice/storage.py"
+        "keelsplice/storage.py",
+        "keelsplice/web/http.py",
+        "examples/browser_walkthrough.py"
       ]
     },
     "问题排查与诊断": {
@@ -130,7 +144,9 @@
         "keelsplice/codec.py",
         "keelsplice/recipe.py",
         "keelsplice/service.py",
-        "keelsplice/storage.py"
+        "keelsplice/storage.py",
+        "keelsplice/web/http.py",
+        "examples/browser_walkthrough.py"
       ]
     },
     "部署运维": {
@@ -143,7 +159,9 @@
         "keelsplice/codec.py",
         "keelsplice/recipe.py",
         "keelsplice/service.py",
-        "keelsplice/storage.py"
+        "keelsplice/storage.py",
+        "keelsplice/web/http.py",
+        "examples/browser_walkthrough.py"
       ]
     },
     "Bugfix": {
@@ -608,6 +626,55 @@
       "entry": "POST /captures",
       "distinct_outcome": "既有封存协调",
       "mechanism": "batch_transaction"
+    },
+    {
+      "id": "workbench-catalog-browser",
+      "anchor": "directory.show catalog.snapshot",
+      "entry": "/workbench",
+      "distinct_outcome": "浏览器显示相同模式下的列映射",
+      "mechanism": "policy_rules"
+    },
+    {
+      "id": "workbench-browser-preserved-key",
+      "anchor": "evidence.show capture.trace",
+      "entry": "/workbench",
+      "distinct_outcome": "浏览直接原因时用同一捕获的精确键访问相关行",
+      "mechanism": "lineage"
+    },
+    {
+      "id": "workbench-handoff-browser",
+      "anchor": "handoff.certificate service.download",
+      "entry": "/workbench",
+      "distinct_outcome": "重开下载文件检验计数与外键",
+      "mechanism": "export_freeze"
+    },
+    {
+      "id": "workbench-stale-browser-draft",
+      "anchor": "selection.register service.register",
+      "entry": "/workbench",
+      "distinct_outcome": "模式漂移后拒绝提交旧表单",
+      "mechanism": "versioning_audit"
+    },
+    {
+      "id": "workbench-browse-recent",
+      "anchor": "versions.index storage.recent_recipes",
+      "entry": "/workbench",
+      "distinct_outcome": "重启后近期表与原详情一致",
+      "mechanism": "state_machine"
+    },
+    {
+      "id": "workbench-compare-screen",
+      "anchor": "comparison.show capture.compare",
+      "entry": "/workbench",
+      "distinct_outcome": "模式冲突留有输入，同模式列出带类型主键",
+      "mechanism": "snapshot_consistency"
+    },
+    {
+      "id": "workbench-browser-verify",
+      "anchor": "handoff.actions bundle.certify",
+      "entry": "/workbench",
+      "distinct_outcome": "实际文件外键校验和摘要一致",
+      "mechanism": "export_freeze"
     }
   ],
   "tension_points": [
@@ -660,6 +727,11 @@
       "workflow_id": "download",
       "description": "交接凭据必须与真正交给消费者的字节绑定",
       "observable_failure": "未认证捕获拒绝下载"
+    },
+    {
+      "workflow_id": "workbench",
+      "description": "浏览器的配方编辑依赖当时的 SQLite 主键顺序和外键编号",
+      "observable_failure": "提交后端目录摘要变化的表单被拒绝，不能按新目录偷偷重解读"
     }
   ],
   "prompt_anchors": [
@@ -6409,6 +6481,198 @@
         "functions": [
           "download",
           "digest_bytes"
+        ]
+      }
+    },
+    {
+      "id": "workbench-catalog-browser",
+      "task_type": "功能开发",
+      "capability_family": "浏览器关系样本",
+      "subject": "目录选择",
+      "state": "当前列及关联关系",
+      "invariant": "表切换由同一源目录中显式关系事实决定",
+      "observable": "浏览器显示相同模式下的列映射",
+      "primary_mechanism": "policy_rules",
+      "workflow_ids": [
+        "workbench"
+      ],
+      "source_anchors": [
+        "keelsplice/web/directory.py",
+        "keelsplice/catalog.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/web/directory.py",
+          "keelsplice/catalog.py"
+        ],
+        "functions": [
+          "show",
+          "snapshot"
+        ]
+      },
+      "extension_seam_id": "workbench-catalog-browser"
+    },
+    {
+      "id": "workbench-browser-preserved-key",
+      "task_type": "功能开发",
+      "capability_family": "浏览器关系样本",
+      "subject": "类型化追踪",
+      "state": "封存后的直接证据",
+      "invariant": "页面隐藏字段保留实存键的每个分量类型",
+      "observable": "浏览直接原因时用同一捕获的精确键访问相关行",
+      "primary_mechanism": "lineage",
+      "workflow_ids": [
+        "workbench"
+      ],
+      "source_anchors": [
+        "keelsplice/web/evidence.py",
+        "keelsplice/capture.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/web/evidence.py",
+          "keelsplice/capture.py"
+        ],
+        "functions": [
+          "show",
+          "trace"
+        ]
+      },
+      "extension_seam_id": "workbench-browser-preserved-key"
+    },
+    {
+      "id": "workbench-handoff-browser",
+      "task_type": "功能开发",
+      "capability_family": "浏览器关系样本",
+      "subject": "认证下载",
+      "state": "可交接状态",
+      "invariant": "证书展示及下载摘要来自同一次封存",
+      "observable": "重开下载文件检验计数与外键",
+      "primary_mechanism": "export_freeze",
+      "workflow_ids": [
+        "workbench"
+      ],
+      "source_anchors": [
+        "keelsplice/web/handoff.py",
+        "keelsplice/service.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/web/handoff.py",
+          "keelsplice/service.py"
+        ],
+        "functions": [
+          "certificate",
+          "download"
+        ]
+      },
+      "extension_seam_id": "workbench-handoff-browser"
+    },
+    {
+      "id": "workbench-stale-browser-draft",
+      "task_type": "功能优化",
+      "capability_family": "浏览器关系样本",
+      "subject": "配方编辑",
+      "state": "打开目录至提交之间",
+      "invariant": "编辑页的外键编号绑定同一次模式摘要",
+      "observable": "模式漂移后拒绝提交旧表单",
+      "primary_mechanism": "versioning_audit",
+      "workflow_ids": [
+        "workbench"
+      ],
+      "source_anchors": [
+        "keelsplice/web/selection.py",
+        "keelsplice/service.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/web/selection.py",
+          "keelsplice/service.py"
+        ],
+        "functions": [
+          "register",
+          "catalog"
+        ]
+      }
+    },
+    {
+      "id": "workbench-browse-recent",
+      "task_type": "功能优化",
+      "capability_family": "浏览器关系样本",
+      "subject": "历史配方浏览",
+      "state": "持久列表",
+      "invariant": "近期窗口依赖分配顺序且旧版本仍可读",
+      "observable": "重启后近期表与原详情一致",
+      "primary_mechanism": "state_machine",
+      "workflow_ids": [
+        "workbench"
+      ],
+      "source_anchors": [
+        "keelsplice/web/versions.py",
+        "keelsplice/storage.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/web/versions.py",
+          "keelsplice/storage.py"
+        ],
+        "functions": [
+          "index",
+          "recent_recipes"
+        ]
+      }
+    },
+    {
+      "id": "workbench-compare-screen",
+      "task_type": "功能优化",
+      "capability_family": "浏览器关系样本",
+      "subject": "比较页面",
+      "state": "同源模式门槛",
+      "invariant": "显示的方向及两边选择与实际封存差异一致",
+      "observable": "模式冲突留有输入，同模式列出带类型主键",
+      "primary_mechanism": "snapshot_consistency",
+      "workflow_ids": [
+        "workbench"
+      ],
+      "source_anchors": [
+        "keelsplice/web/comparison.py",
+        "keelsplice/capture.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/web/comparison.py",
+          "keelsplice/capture.py"
+        ],
+        "functions": [
+          "show",
+          "compare"
+        ]
+      }
+    },
+    {
+      "id": "workbench-browser-verify",
+      "task_type": "泛Agent需求",
+      "capability_family": "浏览器关系样本",
+      "subject": "样本交接",
+      "state": "认证后复读",
+      "invariant": "SQLite 独立连接可复核认证产物和封存值",
+      "observable": "实际文件外键校验和摘要一致",
+      "primary_mechanism": "export_freeze",
+      "workflow_ids": [
+        "workbench"
+      ],
+      "source_anchors": [
+        "keelsplice/web/handoff.py",
+        "keelsplice/bundle.py"
+      ],
+      "existing_touch_points": {
+        "files": [
+          "keelsplice/web/handoff.py",
+          "keelsplice/bundle.py"
+        ],
+        "functions": [
+          "actions",
+          "certify"
         ]
       }
     }

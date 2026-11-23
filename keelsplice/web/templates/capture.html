@@ -1,0 +1,16 @@
+<div class="content">
+  <header class="pagehead"><div><p class="breadcrumb"><a href="/workbench/captures">封存捕获</a> / 详情</p><h1>捕获详情</h1></div>$stage</header>
+  <dl class="facts"><div><dt>入选行</dt><dd>$rows</dd></div><div><dt>关系见证</dt><dd>$witnesses</dd></div>
+    <div class="wide"><dt>捕获编号</dt><dd><code>$id</code></dd></div>
+    <div><dt>源配方</dt><dd><a href="$recipe">$name · 版本 $number</a></dd></div>
+    <div class="wide"><dt>封存模式摘要</dt><dd><code>$digest</code></dd></div></dl>
+  <div class="actions">$actions</div>
+  $certificate
+  <div class="editor-grid">
+    <section><h2>源库实存根</h2><ol class="data-list">$roots</ol></section>
+    <section><h2>逐表计数</h2><div class="scroll"><table><thead><tr><th scope="col">表</th><th scope="col">入选行</th></tr></thead><tbody>$counts</tbody></table></div></section>
+  </div>
+  <section><h2>按实存主键追踪</h2><form class="trace-form" method="post" action="$base/trace">
+    <label>表名<input required name="table"></label><label>主键元组（JSON）<input required name="key" placeholder='["East","Mica"]'></label><button>查看证据</button>
+  </form></section>
+</div>

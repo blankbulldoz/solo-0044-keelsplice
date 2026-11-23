@@ -1,0 +1,32 @@
+button, .button, select, input:not([type="checkbox"]), textarea {
+  font: inherit;
+  color: var(--ink);
+  border: 1px solid #aab8c3;
+  border-radius: 5px;
+  background: var(--paper);
+  min-height: 36px;
+  padding: 5px 10px;
+}
+button, .button { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; font-weight: 650; cursor: pointer; }
+button:hover, .button:hover { background: #eef3f7; }
+button.primary, .button.primary { background: var(--brand); color: white; border-color: var(--brand); }
+button.primary:hover, .button.primary:hover { background: #0a5237; }
+button.quiet { min-height: 28px; padding: 2px 8px; font-size: 13px; }
+textarea { width: 100%; resize: vertical; font-family: var(--mono); }
+label { display: block; font-weight: 600; }
+label > input:not([type="checkbox"]), label > select, label[for="roots"] + textarea { display: block; width: 100%; margin-top: 5px; }
+.inline, .actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.actions, .source-toolbar { margin: 16px 0 24px; }
+.form-grid, .compare-form, .trace-form { display: flex; align-items: end; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+.form-grid > label, .compare-form > label, .trace-form > label { min-width: 0; flex: 1 1 220px; }
+fieldset { border: 1px solid var(--line); padding: 12px; min-width: 0; }
+legend { font-weight: 650; }
+.edge-grid { display: grid; gap: 8px; grid-template-columns: repeat(auto-fit, minmax(min(265px, 100%), 1fr)); }
+.edge-choice { overflow-wrap: anywhere; }
+.notice { margin: 14px 0; padding: 10px 12px; border-left: 3px solid currentColor; background: var(--error-bg); color: var(--error); }
+.notice.info { background: var(--warning-bg); color: var(--warning); }
+.status { display: inline-block; font-size: 13px; padding: 3px 8px; border-radius: 4px; white-space: nowrap; }
+.status.ready { background: var(--brand-soft); color: var(--brand); }
+.status.pending { background: var(--warning-bg); color: var(--warning); }
+.status.muted { background: #e7ebef; }
+.certificate { border-left: 3px solid var(--brand); padding-left: 12px; }

@@ -17,11 +17,13 @@ class Workbench:
         with self.repository.source(alias) as conn:
             return catalog.snapshot(conn)
 
-    def register(self, name, body):
+    def register(self, name, body, *, expected_schema=None):
         if not NAME.fullmatch(name):
             raise Fault('invalid_name', 'Expected an ASCII recipe name')
         recipe.fields(body, ('source', 'roots'), ('follow_children', 'row_limit'))
         disclosed = self.catalog(body['source'])
+        if expected_schema is not None and expected_schema != disclosed['schema_digest']:
+            raise Fault('browser_schema', '目录已变化，请重新打开配方编辑页核对主键和外键。', 409)
         normalized = recipe.validate(disclosed['schema'], body)
         return recipe.describe(self.repository.add_recipe(name, disclosed['schema_digest'], normalized))
 

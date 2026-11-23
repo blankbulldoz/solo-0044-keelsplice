@@ -10,6 +10,7 @@ from .codec import Fault, dumps
 from .recipe import fields
 from .service import Workbench
 from .storage import Repository
+from .web import http as web
 
 MAX_REQUEST_BYTES = 256 * 1024
 VERSION = re.compile('[1-9][0-9]{0,18}')
@@ -94,6 +95,8 @@ class RequestHandler(BaseHTTPRequestHandler):
         self.wfile.write(data)
 
     def handle_request(self):
+        if self.path in ('/', '/workbench') or self.path.startswith(('/workbench/', '/workbench?')):
+            return web.handle(self)
         try:
             status, payload = self.route_request()
         except Fault as exc:
