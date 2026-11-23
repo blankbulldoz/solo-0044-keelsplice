@@ -14,6 +14,7 @@ from .web import http as web
 
 MAX_REQUEST_BYTES = 256 * 1024
 VERSION = re.compile('[1-9][0-9]{0,18}')
+JOB_ID = re.compile('[0-9a-f]{32}\\Z')
 
 
 class FixtureHTTPServer(ThreadingHTTPServer):
@@ -62,6 +63,13 @@ class RequestHandler(BaseHTTPRequestHandler):
                 return 200, bench.retire(name, int(number))
             case 'POST', ['preview']:
                 return 200, bench.preview(body)
+            case 'POST', ['preview', 'jobs']:
+                return 202, bench.start_preview(body)
+            case 'GET', ['preview', 'jobs', job_id] if JOB_ID.fullmatch(job_id or ''):
+                return 200, bench.preview_status(job_id)
+            case 'POST', ['preview', 'jobs', job_id, 'cancel'] if JOB_ID.fullmatch(job_id or ''):
+                fields(body)
+                return 200, bench.cancel_preview(job_id)
             case 'POST', ['captures']:
                 return 201, bench.capture(body)
             case 'GET', ['captures', capture_id]:

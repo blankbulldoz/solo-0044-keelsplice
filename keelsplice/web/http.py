@@ -4,10 +4,10 @@ import re
 import sqlite3
 from urllib.parse import urlsplit
 
-from . import assets, captures, comparison, directory, evidence, preview, selection, versions
+from . import assets, captures, comparison, directory, evidence, previews, preview, selection, versions
 from .errors import invalid_route, message
 from .forms import MAX_BYTES, decode_form, field, version
-from .render import page, segment, text
+from .render import page, redirect, segment, text
 from ..codec import Fault
 
 LOOPBACK_HOST = re.compile(r'(?:127\.0\.0\.1|localhost)(?::[0-9]{1,5})?\Z')
@@ -27,10 +27,6 @@ def form(handler):
     if length and handler.headers.get_content_type() != 'application/x-www-form-urlencoded':
         raise Fault('browser_form', '请使用工作台表单格式。', 415)
     return decode_form(handler.rfile.read(length))
-
-
-def redirect(path):
-    return 303, b'', 'text/plain; charset=utf-8', {'Location': path}
 
 
 def route(handler, path):
@@ -62,7 +58,7 @@ def route(handler, path):
             number = version(number)
             base = f'/workbench/recipes/{segment(name)}/{number}'
             if action == 'preview':
-                status, body = preview.show(bench, name, number)
+                return previews.start(bench, name, number)
             elif action == 'capture':
                 capture = bench.capture(dict(name=name, version=number))
                 return redirect(f'/workbench/captures/{segment(capture["id"])}')
@@ -71,6 +67,12 @@ def route(handler, path):
                 return redirect(base)
             else:
                 raise invalid_route()
+        case 'GET', ['workbench', 'previews']:
+            status, body = previews.index(bench)
+        case 'GET', ['workbench', 'previews', job_id]:
+            status, body = previews.detail(bench, job_id)
+        case 'POST', ['workbench', 'previews', job_id, 'cancel']:
+            return previews.cancel(bench, job_id)
         case 'GET', ['workbench', 'captures']:
             status, body = captures.index(bench)
         case 'GET', ['workbench', 'captures', capture_id]:

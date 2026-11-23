@@ -36,6 +36,15 @@ def html(base, path, payload=None, expected=200, origin=None):
     return path, body.decode('utf-8')
 
 
+def wait_for_preview(base, job_path):
+    """Follow the running job page until it reaches a durable terminal state."""
+    for _ in range(100):
+        path, page = html(base, job_path)
+        if '试算进行中' not in page:
+            return path, page
+    raise AssertionError(f'preview job never settled: {job_path}')
+
+
 def run(base, source, root):
     path, directory = html(base, '/')
     assert path == '/workbench' and '外键关系' in directory
@@ -58,8 +67,11 @@ def run(base, source, root):
     assert version.endswith('/1') and '投用中' in page
     assert 'browser-swatch' in html(base, '/workbench/recipes')[1]
 
-    _, preview = html(base, version + '/preview', {})
-    assert '未封存' in preview and 'East' in preview and 'Mica' in preview
+    job_path, _ = html(base, version + '/preview', {})
+    assert job_path.startswith('/workbench/previews/'), job_path
+    _, preview = wait_for_preview(base, job_path)
+    assert '试算完成' in preview and 'East' in preview and 'Mica' in preview
+    assert job_path in html(base, '/workbench/previews')[1]
     first, sealed = html(base, version + '/capture', {})
     assert '已封存' in sealed and '下载认证子库' not in sealed
     assert first in html(base, '/workbench/captures')[1]

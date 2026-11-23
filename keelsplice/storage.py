@@ -18,7 +18,17 @@ CREATE TABLE IF NOT EXISTS captures (
     artifact BLOB, certificate TEXT,
     FOREIGN KEY(name, version) REFERENCES recipes(name, version)
 );
+CREATE TABLE IF NOT EXISTS preview_jobs (
+    id TEXT PRIMARY KEY, name TEXT NOT NULL, version INTEGER NOT NULL,
+    state TEXT NOT NULL CHECK(state IN ('running','completed','cancelled','inconclusive','failed')),
+    detail TEXT, created TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+    updated TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
 '''
+
+# Preview states recorded while the process that owns the read transaction is alive.
+# 'inconclusive' is assigned at startup to jobs left running by a previous process.
+PREVIEW_TERMINAL = ('completed', 'cancelled', 'inconclusive', 'failed')
 
 
 class Repository:
@@ -31,6 +41,15 @@ class Repository:
             raise ValueError('Source files must not alias the repository')
         with self.session() as conn:
             conn.executescript(REPOSITORY_DDL)
+            self.recover_previews(conn)
+
+    def recover_previews(self, conn):
+        """Jobs still running when the previous process ended have no durable conclusion."""
+        conn.execute("""
+            UPDATE preview_jobs SET state='inconclusive',
+                updated=strftime('%Y-%m-%dT%H:%M:%fZ','now')
+            WHERE state='running'
+        """)
 
     @contextmanager
     def session(self, write=False):
@@ -43,7 +62,8 @@ class Repository:
                 yield conn
 
     @contextmanager
-    def source(self, alias):
+    def source(self, alias, *, cancel=None):
+        """Open one independent read transaction; ``cancel`` interrupts only this connection."""
         if not isinstance(alias, str) or alias not in self.sources:
             raise Fault('unknown_source', 'Source alias is not registered', 404)
         work = 0
@@ -60,13 +80,23 @@ class Repository:
             conn.execute('PRAGMA trusted_schema=OFF')
             conn.setlimit(sqlite3.SQLITE_LIMIT_LENGTH, 8 * 1024 * 1024)
             conn.set_progress_handler(check_work, 1000)
+            # A cooperative gate runs between SQL steps; interrupt() additionally aborts a
+            # single long-running statement on this connection without touching other jobs.
+            if cancel is not None:
+                conn.set_progress_handler(cancel.progress(check_work), 1000)
+                cancel.bind(conn.interrupt)
             conn.execute('BEGIN')
             try:
                 yield conn
             except sqlite3.OperationalError as exc:
+                if cancel is not None and cancel.is_set():
+                    raise Fault('preview_cancelled', 'Preview read transaction was cancelled', 499) from exc
                 if work > 5000:
                     raise Fault('scan_budget', 'Source query work exceeded the snapshot budget') from exc
                 raise
+            finally:
+                if cancel is not None:
+                    cancel.release()
 
     def add_recipe(self, name, schema_digest, recipe):
         with self.session(write=True) as conn:
@@ -131,3 +161,55 @@ class Repository:
                 conn.execute("UPDATE captures SET state='certified',certificate=? WHERE id=? AND state='built'",
                              (dumps(certificate), capture_id))
         return self.load_capture(capture_id)
+
+    def add_preview(self, name, number):
+        job_id = uuid4().hex
+        with self.session(write=True) as conn:
+            conn.execute("INSERT INTO preview_jobs (id,name,version,state) VALUES (?,?,?,'running')",
+                         (job_id, name, number))
+        return job_id
+
+    def load_preview(self, job_id):
+        if not isinstance(job_id, str) or len(job_id) != 32:
+            raise Fault('unknown_preview', 'Preview job does not exist', 404)
+        with self.session() as conn:
+            row = conn.execute('SELECT * FROM preview_jobs WHERE id=?', (job_id,)).fetchone()
+        if row is None:
+            raise Fault('unknown_preview', 'Preview job does not exist', 404)
+        record = dict(row)
+        record['detail'] = loads(row['detail']) if row['detail'] else None
+        return record
+
+    def recent_previews(self):
+        with self.session() as conn:
+            rows = conn.execute("""
+                SELECT id,name,version,state FROM preview_jobs ORDER BY rowid DESC LIMIT 50
+            """).fetchall()
+        return [dict(row) for row in rows]
+
+    def finish_preview(self, job_id, state, detail=None):
+        """Conditional terminal transition: a settled job never changes, so a late cancel cannot win."""
+        if state not in PREVIEW_TERMINAL:
+            raise ValueError('finish_preview requires a terminal state')
+        with self.session(write=True) as conn:
+            updated = conn.execute("""
+                UPDATE preview_jobs
+                SET state=?, detail=COALESCE(?, detail),
+                    updated=strftime('%Y-%m-%dT%H:%M:%fZ','now')
+                WHERE id=? AND state='running'
+            """, (state, dumps(detail) if detail is not None else None, job_id))
+            if updated.rowcount != 1:
+                return self.load_preview(job_id)
+        return self.load_preview(job_id)
+
+    def request_preview_cancel(self, job_id):
+        """Mark cancellation only while the job is still running; otherwise keep its settled state."""
+        with self.session(write=True) as conn:
+            updated = conn.execute("""
+                UPDATE preview_jobs SET state='cancelled',
+                    updated=strftime('%Y-%m-%dT%H:%M:%fZ','now')
+                WHERE id=? AND state='running'
+            """, (job_id,))
+            if updated.rowcount != 1:
+                return self.load_preview(job_id)
+        return self.load_preview(job_id)

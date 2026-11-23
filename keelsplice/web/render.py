@@ -12,6 +12,7 @@ DIRECTORY = Path(__file__).parent
 NAVIGATION = (
     ('catalog', '关系目录', '/workbench'),
     ('recipe', '配方版本', '/workbench/recipes'),
+    ('preview', '试算任务', '/workbench/previews'),
     ('capture', '封存捕获', '/workbench/captures'),
     ('compare', '捕获对比', '/workbench/compare'),
 )
@@ -40,6 +41,10 @@ def segment(value):
     return quote(str(value), safe='')
 
 
+def redirect(path):
+    return 303, b'', 'text/plain; charset=utf-8', {'Location': path}
+
+
 def code(value):
     return f'<code>{text(value)}</code>'
 
@@ -60,5 +65,7 @@ def page(title, section, content, **fields):
         '<a href="{}"{}>{}</a>'.format(path, ' aria-current="page"' if key == section else '', label)
         for key, label, path in NAVIGATION
     )
-    return template('layout', title=text(title), navigation=navigation,
-                    main=template(content, **fields)).encode('utf-8')
+    fields.setdefault('refresh', '')
+    main = template(content, **fields)
+    return template('layout', title=text(title), navigation=navigation, refresh=fields['refresh'],
+                    main=main).encode('utf-8')
