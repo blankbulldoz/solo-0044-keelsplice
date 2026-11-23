@@ -1,0 +1,1706 @@
+{
+  "catalog": {
+    "edges": [
+      {
+        "child": "assay",
+        "child_cols": [
+          "region",
+          "code"
+        ],
+        "id": 0,
+        "parent": "substrate",
+        "parent_cols": [
+          "region",
+          "code"
+        ]
+      },
+      {
+        "child": "assay",
+        "child_cols": [
+          "cassette"
+        ],
+        "id": 1,
+        "parent": "cassette",
+        "parent_cols": [
+          "serial"
+        ]
+      },
+      {
+        "child": "cassette",
+        "child_cols": [
+          "prior"
+        ],
+        "id": 0,
+        "parent": "cassette",
+        "parent_cols": [
+          "serial"
+        ]
+      },
+      {
+        "child": "frame",
+        "child_cols": [
+          "mark"
+        ],
+        "id": 0,
+        "parent": "assay",
+        "parent_cols": [
+          "mark"
+        ]
+      }
+    ],
+    "primary_keys": {
+      "assay": [
+        "mark"
+      ],
+      "cassette": [
+        "serial"
+      ],
+      "frame": [
+        "frame_id"
+      ],
+      "substrate": [
+        "region",
+        "code"
+      ]
+    },
+    "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e"
+  },
+  "generated_at_utc": "2026-11-23T23:00:12Z",
+  "independent_sql": {
+    "assay_rows_matching_east_mica_nocase": [
+      "S-01",
+      "S-02"
+    ],
+    "assay_s03_region_code_cassette": [
+      "West",
+      null,
+      13
+    ],
+    "cassette_serial_prior_pairs": [
+      [
+        11,
+        12
+      ],
+      [
+        12,
+        11
+      ],
+      [
+        13,
+        null
+      ]
+    ],
+    "frame_id_mark_pairs": [
+      [
+        101,
+        "S-01"
+      ],
+      [
+        102,
+        "S-02"
+      ],
+      [
+        103,
+        "S-02"
+      ],
+      [
+        104,
+        null
+      ]
+    ],
+    "sqlite_page_size": 4096
+  },
+  "scenarios": [
+    {
+      "follow_children_on": [
+        {
+          "child": "assay",
+          "id": 0
+        }
+      ],
+      "id": "A",
+      "off": {
+        "capture_id": "330ed4be3cd7486d89ad0fe66dc4a0cc",
+        "certificate": {
+          "bytes": 32768,
+          "capture_digest": "cad0e4c66c8f46a435b8355bbb7f481d9d19341848a59dfd0031d8ee1fe0f0e3",
+          "counts": {
+            "assay": 0,
+            "cassette": 0,
+            "frame": 0,
+            "substrate": 1
+          },
+          "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+          "sha256": "042b6ade17d06654f5bad0cf0990cd90a2cbf501a19304345b4a7df2230a72bd"
+        },
+        "recipe_version": 1,
+        "roots": [
+          [
+            "substrate",
+            [
+              "East",
+              "Mica"
+            ]
+          ]
+        ],
+        "summary": {
+          "counts": {
+            "assay": 0,
+            "cassette": 0,
+            "frame": 0,
+            "substrate": 1
+          },
+          "root_occurrences": 1,
+          "rows": 1,
+          "witnesses": 0
+        },
+        "traces": {
+          "assay_S-01": {
+            "body": {
+              "error": "row_not_captured",
+              "message": "Use the actual typed key stored in the capture"
+            },
+            "http_status": 404
+          },
+          "assay_S-02": {
+            "body": {
+              "error": "row_not_captured",
+              "message": "Use the actual typed key stored in the capture"
+            },
+            "http_status": 404
+          },
+          "cassette_11": {
+            "body": {
+              "error": "row_not_captured",
+              "message": "Use the actual typed key stored in the capture"
+            },
+            "http_status": 404
+          },
+          "cassette_12": {
+            "body": {
+              "error": "row_not_captured",
+              "message": "Use the actual typed key stored in the capture"
+            },
+            "http_status": 404
+          },
+          "substrate_East_Mica": {
+            "body": {
+              "causes": [],
+              "dependencies": [],
+              "roots": [
+                0
+              ],
+              "row": [
+                "substrate",
+                [
+                  "East",
+                  "Mica"
+                ]
+              ]
+            },
+            "http_status": 200
+          }
+        }
+      },
+      "on": {
+        "capture_id": "7791be27ad814825b50e6dc123e1cea1",
+        "certificate": {
+          "bytes": 32768,
+          "capture_digest": "1a4fe5bfa4658c1c32d8153fb1fa9c37ae707f5a61460331b5d115cabb72b9e6",
+          "counts": {
+            "assay": 2,
+            "cassette": 2,
+            "frame": 0,
+            "substrate": 1
+          },
+          "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+          "sha256": "a55b2cffc863cc6745184cad1a91e4e9b62617c49d3641f54537be404cc393a0"
+        },
+        "recipe_version": 1,
+        "roots": [
+          [
+            "substrate",
+            [
+              "East",
+              "Mica"
+            ]
+          ]
+        ],
+        "summary": {
+          "counts": {
+            "assay": 2,
+            "cassette": 2,
+            "frame": 0,
+            "substrate": 1
+          },
+          "root_occurrences": 1,
+          "rows": 5,
+          "witnesses": 8
+        },
+        "traces": {
+          "assay_S-01": {
+            "body": {
+              "causes": [
+                {
+                  "direction": "child",
+                  "edge": [
+                    "assay",
+                    0
+                  ],
+                  "origin": [
+                    "substrate",
+                    [
+                      "East",
+                      "Mica"
+                    ]
+                  ],
+                  "target": [
+                    "assay",
+                    [
+                      "S-01"
+                    ]
+                  ]
+                }
+              ],
+              "dependencies": [
+                {
+                  "direction": "parent",
+                  "edge": [
+                    "assay",
+                    0
+                  ],
+                  "origin": [
+                    "assay",
+                    [
+                      "S-01"
+                    ]
+                  ],
+                  "target": [
+                    "substrate",
+                    [
+                      "East",
+                      "Mica"
+                    ]
+                  ]
+                },
+                {
+                  "direction": "parent",
+                  "edge": [
+                    "assay",
+                    1
+                  ],
+                  "origin": [
+                    "assay",
+                    [
+                      "S-01"
+                    ]
+                  ],
+                  "target": [
+                    "cassette",
+                    [
+                      11
+                    ]
+                  ]
+                }
+              ],
+              "roots": [],
+              "row": [
+                "assay",
+                [
+                  "S-01"
+                ]
+              ]
+            },
+            "http_status": 200
+          },
+          "assay_S-02": {
+            "body": {
+              "causes": [
+                {
+                  "direction": "child",
+                  "edge": [
+                    "assay",
+                    0
+                  ],
+                  "origin": [
+                    "substrate",
+                    [
+                      "East",
+                      "Mica"
+                    ]
+                  ],
+                  "target": [
+                    "assay",
+                    [
+                      "S-02"
+                    ]
+                  ]
+                }
+              ],
+              "dependencies": [
+                {
+                  "direction": "parent",
+                  "edge": [
+                    "assay",
+                    0
+                  ],
+                  "origin": [
+                    "assay",
+                    [
+                      "S-02"
+                    ]
+                  ],
+                  "target": [
+                    "substrate",
+                    [
+                      "East",
+                      "Mica"
+                    ]
+                  ]
+                },
+                {
+                  "direction": "parent",
+                  "edge": [
+                    "assay",
+                    1
+                  ],
+                  "origin": [
+                    "assay",
+                    [
+                      "S-02"
+                    ]
+                  ],
+                  "target": [
+                    "cassette",
+                    [
+                      12
+                    ]
+                  ]
+                }
+              ],
+              "roots": [],
+              "row": [
+                "assay",
+                [
+                  "S-02"
+                ]
+              ]
+            },
+            "http_status": 200
+          },
+          "cassette_11": {
+            "body": {
+              "causes": [
+                {
+                  "direction": "parent",
+                  "edge": [
+                    "assay",
+                    1
+                  ],
+                  "origin": [
+                    "assay",
+                    [
+                      "S-01"
+                    ]
+                  ],
+                  "target": [
+                    "cassette",
+                    [
+                      11
+                    ]
+                  ]
+                },
+                {
+                  "direction": "parent",
+                  "edge": [
+                    "cassette",
+                    0
+                  ],
+                  "origin": [
+                    "cassette",
+                    [
+                      12
+                    ]
+                  ],
+                  "target": [
+                    "cassette",
+                    [
+                      11
+                    ]
+                  ]
+                }
+              ],
+              "dependencies": [
+                {
+                  "direction": "parent",
+                  "edge": [
+                    "cassette",
+                    0
+                  ],
+                  "origin": [
+                    "cassette",
+                    [
+                      11
+                    ]
+                  ],
+                  "target": [
+                    "cassette",
+                    [
+                      12
+                    ]
+                  ]
+                }
+              ],
+              "roots": [],
+              "row": [
+                "cassette",
+                [
+                  11
+                ]
+              ]
+            },
+            "http_status": 200
+          },
+          "cassette_12": {
+            "body": {
+              "causes": [
+                {
+                  "direction": "parent",
+                  "edge": [
+                    "assay",
+                    1
+                  ],
+                  "origin": [
+                    "assay",
+                    [
+                      "S-02"
+                    ]
+                  ],
+                  "target": [
+                    "cassette",
+                    [
+                      12
+                    ]
+                  ]
+                },
+                {
+                  "direction": "parent",
+                  "edge": [
+                    "cassette",
+                    0
+                  ],
+                  "origin": [
+                    "cassette",
+                    [
+                      11
+                    ]
+                  ],
+                  "target": [
+                    "cassette",
+                    [
+                      12
+                    ]
+                  ]
+                }
+              ],
+              "dependencies": [
+                {
+                  "direction": "parent",
+                  "edge": [
+                    "cassette",
+                    0
+                  ],
+                  "origin": [
+                    "cassette",
+                    [
+                      12
+                    ]
+                  ],
+                  "target": [
+                    "cassette",
+                    [
+                      11
+                    ]
+                  ]
+                }
+              ],
+              "roots": [],
+              "row": [
+                "cassette",
+                [
+                  12
+                ]
+              ]
+            },
+            "http_status": 200
+          },
+          "substrate_East_Mica": {
+            "body": {
+              "causes": [
+                {
+                  "direction": "parent",
+                  "edge": [
+                    "assay",
+                    0
+                  ],
+                  "origin": [
+                    "assay",
+                    [
+                      "S-01"
+                    ]
+                  ],
+                  "target": [
+                    "substrate",
+                    [
+                      "East",
+                      "Mica"
+                    ]
+                  ]
+                },
+                {
+                  "direction": "parent",
+                  "edge": [
+                    "assay",
+                    0
+                  ],
+                  "origin": [
+                    "assay",
+                    [
+                      "S-02"
+                    ]
+                  ],
+                  "target": [
+                    "substrate",
+                    [
+                      "East",
+                      "Mica"
+                    ]
+                  ]
+                }
+              ],
+              "dependencies": [],
+              "roots": [
+                0
+              ],
+              "row": [
+                "substrate",
+                [
+                  "East",
+                  "Mica"
+                ]
+              ]
+            },
+            "http_status": 200
+          }
+        }
+      },
+      "roots_recipe": [
+        {
+          "key": [
+            "east",
+            "MICA"
+          ],
+          "table": "substrate"
+        }
+      ],
+      "title": "单根 substrate(East,Mica)，争议边 assay→substrate 反向开关",
+      "verdicts": [
+        {
+          "basis": "关闭反向后 trace 返回 404；该根下 assay 只可能由反向 child 见证进入",
+          "present_with_reverse": true,
+          "present_without_reverse": false,
+          "target": [
+            "assay",
+            [
+              "S-01"
+            ]
+          ],
+          "verdict": "necessary"
+        },
+        {
+          "basis": "关闭反向后 trace 返回 404；该根下 assay 只可能由反向 child 见证进入",
+          "present_with_reverse": true,
+          "present_without_reverse": false,
+          "target": [
+            "assay",
+            [
+              "S-02"
+            ]
+          ],
+          "verdict": "necessary"
+        },
+        {
+          "basis": "cassette 由 assay 的父依赖带入；没有反向就没有 assay，连带消失（父见证存在不代表反向无关）",
+          "present_with_reverse": true,
+          "present_without_reverse": false,
+          "target": [
+            "cassette",
+            [
+              11
+            ]
+          ],
+          "verdict": "necessary_transitively"
+        }
+      ]
+    },
+    {
+      "follow_children_on": [
+        {
+          "child": "assay",
+          "id": 0
+        }
+      ],
+      "id": "B",
+      "off": {
+        "capture_id": "36a5123379134a798cdb08c715fed73c",
+        "certificate": {
+          "bytes": 32768,
+          "capture_digest": "81bb9ca2c817e1605045f60ebe2e4d9daba05c50c3c62678e3bafc3b35035bd0",
+          "counts": {
+            "assay": 1,
+            "cassette": 2,
+            "frame": 0,
+            "substrate": 1
+          },
+          "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+          "sha256": "eda06e3df4ea256d6842a9f2d2879324f916b3b6b9f043e77de45b5c5761edc8"
+        },
+        "recipe_version": 1,
+        "roots": [
+          [
+            "substrate",
+            [
+              "East",
+              "Mica"
+            ]
+          ],
+          [
+            "assay",
+            [
+              "S-01"
+            ]
+          ]
+        ],
+        "summary": {
+          "counts": {
+            "assay": 1,
+            "cassette": 2,
+            "frame": 0,
+            "substrate": 1
+          },
+          "root_occurrences": 2,
+          "rows": 4,
+          "witnesses": 4
+        },
+        "traces": {
+          "assay_S-01": {
+            "body": {
+              "causes": [],
+              "dependencies": [
+                {
+                  "direction": "parent",
+                  "edge": [
+                    "assay",
+                    0
+                  ],
+                  "origin": [
+                    "assay",
+                    [
+                      "S-01"
+                    ]
+                  ],
+                  "target": [
+                    "substrate",
+                    [
+                      "East",
+                      "Mica"
+                    ]
+                  ]
+                },
+                {
+                  "direction": "parent",
+                  "edge": [
+                    "assay",
+                    1
+                  ],
+                  "origin": [
+                    "assay",
+                    [
+                      "S-01"
+                    ]
+                  ],
+                  "target": [
+                    "cassette",
+                    [
+                      11
+                    ]
+                  ]
+                }
+              ],
+              "roots": [
+                1
+              ],
+              "row": [
+                "assay",
+                [
+                  "S-01"
+                ]
+              ]
+            },
+            "http_status": 200
+          },
+          "assay_S-02": {
+            "body": {
+              "error": "row_not_captured",
+              "message": "Use the actual typed key stored in the capture"
+            },
+            "http_status": 404
+          },
+          "substrate_East_Mica": {
+            "body": {
+              "causes": [
+                {
+                  "direction": "parent",
+                  "edge": [
+                    "assay",
+                    0
+                  ],
+                  "origin": [
+                    "assay",
+                    [
+                      "S-01"
+                    ]
+                  ],
+                  "target": [
+                    "substrate",
+                    [
+                      "East",
+                      "Mica"
+                    ]
+                  ]
+                }
+              ],
+              "dependencies": [],
+              "roots": [
+                0
+              ],
+              "row": [
+                "substrate",
+                [
+                  "East",
+                  "Mica"
+                ]
+              ]
+            },
+            "http_status": 200
+          }
+        }
+      },
+      "on": {
+        "capture_id": "bd1cd773810a41f6b0633034c7a8e9f8",
+        "certificate": {
+          "bytes": 32768,
+          "capture_digest": "7f2a093815fc8340649601c28d7e366172bd3acd11c62eeb7c1de40dabc38ab2",
+          "counts": {
+            "assay": 2,
+            "cassette": 2,
+            "frame": 0,
+            "substrate": 1
+          },
+          "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+          "sha256": "a55b2cffc863cc6745184cad1a91e4e9b62617c49d3641f54537be404cc393a0"
+        },
+        "recipe_version": 1,
+        "roots": [
+          [
+            "substrate",
+            [
+              "East",
+              "Mica"
+            ]
+          ],
+          [
+            "assay",
+            [
+              "S-01"
+            ]
+          ]
+        ],
+        "summary": {
+          "counts": {
+            "assay": 2,
+            "cassette": 2,
+            "frame": 0,
+            "substrate": 1
+          },
+          "root_occurrences": 2,
+          "rows": 5,
+          "witnesses": 8
+        },
+        "traces": {
+          "assay_S-01": {
+            "body": {
+              "causes": [
+                {
+                  "direction": "child",
+                  "edge": [
+                    "assay",
+                    0
+                  ],
+                  "origin": [
+                    "substrate",
+                    [
+                      "East",
+                      "Mica"
+                    ]
+                  ],
+                  "target": [
+                    "assay",
+                    [
+                      "S-01"
+                    ]
+                  ]
+                }
+              ],
+              "dependencies": [
+                {
+                  "direction": "parent",
+                  "edge": [
+                    "assay",
+                    0
+                  ],
+                  "origin": [
+                    "assay",
+                    [
+                      "S-01"
+                    ]
+                  ],
+                  "target": [
+                    "substrate",
+                    [
+                      "East",
+                      "Mica"
+                    ]
+                  ]
+                },
+                {
+                  "direction": "parent",
+                  "edge": [
+                    "assay",
+                    1
+                  ],
+                  "origin": [
+                    "assay",
+                    [
+                      "S-01"
+                    ]
+                  ],
+                  "target": [
+                    "cassette",
+                    [
+                      11
+                    ]
+                  ]
+                }
+              ],
+              "roots": [
+                1
+              ],
+              "row": [
+                "assay",
+                [
+                  "S-01"
+                ]
+              ]
+            },
+            "http_status": 200
+          },
+          "assay_S-02": {
+            "body": {
+              "causes": [
+                {
+                  "direction": "child",
+                  "edge": [
+                    "assay",
+                    0
+                  ],
+                  "origin": [
+                    "substrate",
+                    [
+                      "East",
+                      "Mica"
+                    ]
+                  ],
+                  "target": [
+                    "assay",
+                    [
+                      "S-02"
+                    ]
+                  ]
+                }
+              ],
+              "dependencies": [
+                {
+                  "direction": "parent",
+                  "edge": [
+                    "assay",
+                    0
+                  ],
+                  "origin": [
+                    "assay",
+                    [
+                      "S-02"
+                    ]
+                  ],
+                  "target": [
+                    "substrate",
+                    [
+                      "East",
+                      "Mica"
+                    ]
+                  ]
+                },
+                {
+                  "direction": "parent",
+                  "edge": [
+                    "assay",
+                    1
+                  ],
+                  "origin": [
+                    "assay",
+                    [
+                      "S-02"
+                    ]
+                  ],
+                  "target": [
+                    "cassette",
+                    [
+                      12
+                    ]
+                  ]
+                }
+              ],
+              "roots": [],
+              "row": [
+                "assay",
+                [
+                  "S-02"
+                ]
+              ]
+            },
+            "http_status": 200
+          },
+          "substrate_East_Mica": {
+            "body": {
+              "causes": [
+                {
+                  "direction": "parent",
+                  "edge": [
+                    "assay",
+                    0
+                  ],
+                  "origin": [
+                    "assay",
+                    [
+                      "S-01"
+                    ]
+                  ],
+                  "target": [
+                    "substrate",
+                    [
+                      "East",
+                      "Mica"
+                    ]
+                  ]
+                },
+                {
+                  "direction": "parent",
+                  "edge": [
+                    "assay",
+                    0
+                  ],
+                  "origin": [
+                    "assay",
+                    [
+                      "S-02"
+                    ]
+                  ],
+                  "target": [
+                    "substrate",
+                    [
+                      "East",
+                      "Mica"
+                    ]
+                  ]
+                }
+              ],
+              "dependencies": [],
+              "roots": [
+                0
+              ],
+              "row": [
+                "substrate",
+                [
+                  "East",
+                  "Mica"
+                ]
+              ]
+            },
+            "http_status": 200
+          }
+        }
+      },
+      "roots_recipe": [
+        {
+          "key": [
+            "east",
+            "MICA"
+          ],
+          "table": "substrate"
+        },
+        {
+          "key": [
+            "S-01"
+          ],
+          "table": "assay"
+        }
+      ],
+      "title": "双根 substrate(East,Mica)+assay(S-01)，同一争议边反向开关（另一个根改变结论）",
+      "verdicts": [
+        {
+          "basis": "S-01 本身是第 2 个根（trace.roots=[1]）；关掉反向仍在，只是丢失 child 见证",
+          "present_with_reverse": true,
+          "present_without_reverse": true,
+          "target": [
+            "assay",
+            [
+              "S-01"
+            ]
+          ],
+          "verdict": "not_necessary_root_witness"
+        },
+        {
+          "basis": "S-02 不是根，关闭反向后 404；同一条边对不同目标行结论不同",
+          "present_with_reverse": true,
+          "present_without_reverse": false,
+          "target": [
+            "assay",
+            [
+              "S-02"
+            ]
+          ],
+          "verdict": "necessary"
+        }
+      ]
+    },
+    {
+      "follow_children_on": [
+        {
+          "child": "cassette",
+          "id": 0
+        }
+      ],
+      "id": "C",
+      "off": {
+        "capture_id": "c644beeb63f54b60b50bd48dc86b9046",
+        "certificate": {
+          "bytes": 32768,
+          "capture_digest": "361913521b9d085eb346219c89ca2daede2c601a2c8740dffd4df06e0526d878",
+          "counts": {
+            "assay": 0,
+            "cassette": 2,
+            "frame": 0,
+            "substrate": 0
+          },
+          "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+          "sha256": "b2719d59e1e484f79dbabed2e5fb15a5f03a1b99d0ee8e11f3518faf76d027f2"
+        },
+        "recipe_version": 1,
+        "roots": [
+          [
+            "cassette",
+            [
+              11
+            ]
+          ]
+        ],
+        "summary": {
+          "counts": {
+            "assay": 0,
+            "cassette": 2,
+            "frame": 0,
+            "substrate": 0
+          },
+          "root_occurrences": 1,
+          "rows": 2,
+          "witnesses": 2
+        },
+        "traces": {
+          "cassette_11": {
+            "body": {
+              "causes": [
+                {
+                  "direction": "parent",
+                  "edge": [
+                    "cassette",
+                    0
+                  ],
+                  "origin": [
+                    "cassette",
+                    [
+                      12
+                    ]
+                  ],
+                  "target": [
+                    "cassette",
+                    [
+                      11
+                    ]
+                  ]
+                }
+              ],
+              "dependencies": [
+                {
+                  "direction": "parent",
+                  "edge": [
+                    "cassette",
+                    0
+                  ],
+                  "origin": [
+                    "cassette",
+                    [
+                      11
+                    ]
+                  ],
+                  "target": [
+                    "cassette",
+                    [
+                      12
+                    ]
+                  ]
+                }
+              ],
+              "roots": [
+                0
+              ],
+              "row": [
+                "cassette",
+                [
+                  11
+                ]
+              ]
+            },
+            "http_status": 200
+          },
+          "cassette_12": {
+            "body": {
+              "causes": [
+                {
+                  "direction": "parent",
+                  "edge": [
+                    "cassette",
+                    0
+                  ],
+                  "origin": [
+                    "cassette",
+                    [
+                      11
+                    ]
+                  ],
+                  "target": [
+                    "cassette",
+                    [
+                      12
+                    ]
+                  ]
+                }
+              ],
+              "dependencies": [
+                {
+                  "direction": "parent",
+                  "edge": [
+                    "cassette",
+                    0
+                  ],
+                  "origin": [
+                    "cassette",
+                    [
+                      12
+                    ]
+                  ],
+                  "target": [
+                    "cassette",
+                    [
+                      11
+                    ]
+                  ]
+                }
+              ],
+              "roots": [],
+              "row": [
+                "cassette",
+                [
+                  12
+                ]
+              ]
+            },
+            "http_status": 200
+          }
+        }
+      },
+      "on": {
+        "capture_id": "c010751dbc0242439c02b69cab5c895e",
+        "certificate": {
+          "bytes": 32768,
+          "capture_digest": "c5215278fae5cda0d09bce2353014d02920cb93b372e566ef037a67971eb48bc",
+          "counts": {
+            "assay": 0,
+            "cassette": 2,
+            "frame": 0,
+            "substrate": 0
+          },
+          "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+          "sha256": "b2719d59e1e484f79dbabed2e5fb15a5f03a1b99d0ee8e11f3518faf76d027f2"
+        },
+        "recipe_version": 1,
+        "roots": [
+          [
+            "cassette",
+            [
+              11
+            ]
+          ]
+        ],
+        "summary": {
+          "counts": {
+            "assay": 0,
+            "cassette": 2,
+            "frame": 0,
+            "substrate": 0
+          },
+          "root_occurrences": 1,
+          "rows": 2,
+          "witnesses": 4
+        },
+        "traces": {
+          "cassette_11": {
+            "body": {
+              "causes": [
+                {
+                  "direction": "child",
+                  "edge": [
+                    "cassette",
+                    0
+                  ],
+                  "origin": [
+                    "cassette",
+                    [
+                      12
+                    ]
+                  ],
+                  "target": [
+                    "cassette",
+                    [
+                      11
+                    ]
+                  ]
+                },
+                {
+                  "direction": "parent",
+                  "edge": [
+                    "cassette",
+                    0
+                  ],
+                  "origin": [
+                    "cassette",
+                    [
+                      12
+                    ]
+                  ],
+                  "target": [
+                    "cassette",
+                    [
+                      11
+                    ]
+                  ]
+                }
+              ],
+              "dependencies": [
+                {
+                  "direction": "parent",
+                  "edge": [
+                    "cassette",
+                    0
+                  ],
+                  "origin": [
+                    "cassette",
+                    [
+                      11
+                    ]
+                  ],
+                  "target": [
+                    "cassette",
+                    [
+                      12
+                    ]
+                  ]
+                }
+              ],
+              "roots": [
+                0
+              ],
+              "row": [
+                "cassette",
+                [
+                  11
+                ]
+              ]
+            },
+            "http_status": 200
+          },
+          "cassette_12": {
+            "body": {
+              "causes": [
+                {
+                  "direction": "child",
+                  "edge": [
+                    "cassette",
+                    0
+                  ],
+                  "origin": [
+                    "cassette",
+                    [
+                      11
+                    ]
+                  ],
+                  "target": [
+                    "cassette",
+                    [
+                      12
+                    ]
+                  ]
+                },
+                {
+                  "direction": "parent",
+                  "edge": [
+                    "cassette",
+                    0
+                  ],
+                  "origin": [
+                    "cassette",
+                    [
+                      11
+                    ]
+                  ],
+                  "target": [
+                    "cassette",
+                    [
+                      12
+                    ]
+                  ]
+                }
+              ],
+              "dependencies": [
+                {
+                  "direction": "parent",
+                  "edge": [
+                    "cassette",
+                    0
+                  ],
+                  "origin": [
+                    "cassette",
+                    [
+                      12
+                    ]
+                  ],
+                  "target": [
+                    "cassette",
+                    [
+                      11
+                    ]
+                  ]
+                }
+              ],
+              "roots": [],
+              "row": [
+                "cassette",
+                [
+                  12
+                ]
+              ]
+            },
+            "http_status": 200
+          }
+        }
+      },
+      "roots_recipe": [
+        {
+          "key": [
+            11
+          ],
+          "table": "cassette"
+        }
+      ],
+      "title": "根 cassette(11)，自引用边 cassette→cassette 反向开关（环改变结论）",
+      "verdicts": [
+        {
+          "basis": "11.prior=12 的父向闭包无论反向开关都纳入 12；环上反向只多一条 child 见证",
+          "present_with_reverse": true,
+          "present_without_reverse": true,
+          "target": [
+            "cassette",
+            [
+              12
+            ]
+          ],
+          "verdict": "not_necessary_cycle_parent_closure"
+        }
+      ]
+    },
+    {
+      "follow_children_on": [],
+      "id": "D",
+      "off": {
+        "capture_id": "dd0e6ad67863401b97fc6e50c6317c0a",
+        "certificate": {
+          "bytes": 32768,
+          "capture_digest": "149db21e42f485c5acb8e2ccdc1f52ec3be4f28d53c1ba6f940412f9f37fe049",
+          "counts": {
+            "assay": 1,
+            "cassette": 1,
+            "frame": 0,
+            "substrate": 0
+          },
+          "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+          "sha256": "4b1dca6ed125ab0f6947b435ae66c8dae40a95b66d8793c1dc6b3734633f0fb7"
+        },
+        "recipe_version": 1,
+        "roots": [
+          [
+            "assay",
+            [
+              "S-03"
+            ]
+          ]
+        ],
+        "summary": {
+          "counts": {
+            "assay": 1,
+            "cassette": 1,
+            "frame": 0,
+            "substrate": 0
+          },
+          "root_occurrences": 1,
+          "rows": 2,
+          "witnesses": 1
+        },
+        "traces": {
+          "assay_S-03": {
+            "body": {
+              "causes": [],
+              "dependencies": [
+                {
+                  "direction": "parent",
+                  "edge": [
+                    "assay",
+                    1
+                  ],
+                  "origin": [
+                    "assay",
+                    [
+                      "S-03"
+                    ]
+                  ],
+                  "target": [
+                    "cassette",
+                    [
+                      13
+                    ]
+                  ]
+                }
+              ],
+              "roots": [
+                0
+              ],
+              "row": [
+                "assay",
+                [
+                  "S-03"
+                ]
+              ]
+            },
+            "http_status": 200
+          },
+          "cassette_13": {
+            "body": {
+              "causes": [
+                {
+                  "direction": "parent",
+                  "edge": [
+                    "assay",
+                    1
+                  ],
+                  "origin": [
+                    "assay",
+                    [
+                      "S-03"
+                    ]
+                  ],
+                  "target": [
+                    "cassette",
+                    [
+                      13
+                    ]
+                  ]
+                }
+              ],
+              "dependencies": [],
+              "roots": [],
+              "row": [
+                "cassette",
+                [
+                  13
+                ]
+              ]
+            },
+            "http_status": 200
+          }
+        }
+      },
+      "on": {
+        "capture_id": "bad4b56887254ef6867db3d9ae50c178",
+        "certificate": {
+          "bytes": 32768,
+          "capture_digest": "149db21e42f485c5acb8e2ccdc1f52ec3be4f28d53c1ba6f940412f9f37fe049",
+          "counts": {
+            "assay": 1,
+            "cassette": 1,
+            "frame": 0,
+            "substrate": 0
+          },
+          "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+          "sha256": "4b1dca6ed125ab0f6947b435ae66c8dae40a95b66d8793c1dc6b3734633f0fb7"
+        },
+        "recipe_version": 1,
+        "roots": [
+          [
+            "assay",
+            [
+              "S-03"
+            ]
+          ]
+        ],
+        "summary": {
+          "counts": {
+            "assay": 1,
+            "cassette": 1,
+            "frame": 0,
+            "substrate": 0
+          },
+          "root_occurrences": 1,
+          "rows": 2,
+          "witnesses": 1
+        },
+        "traces": {
+          "assay_S-03": {
+            "body": {
+              "causes": [],
+              "dependencies": [
+                {
+                  "direction": "parent",
+                  "edge": [
+                    "assay",
+                    1
+                  ],
+                  "origin": [
+                    "assay",
+                    [
+                      "S-03"
+                    ]
+                  ],
+                  "target": [
+                    "cassette",
+                    [
+                      13
+                    ]
+                  ]
+                }
+              ],
+              "roots": [
+                0
+              ],
+              "row": [
+                "assay",
+                [
+                  "S-03"
+                ]
+              ]
+            },
+            "http_status": 200
+          },
+          "cassette_13": {
+            "body": {
+              "causes": [
+                {
+                  "direction": "parent",
+                  "edge": [
+                    "assay",
+                    1
+                  ],
+                  "origin": [
+                    "assay",
+                    [
+                      "S-03"
+                    ]
+                  ],
+                  "target": [
+                    "cassette",
+                    [
+                      13
+                    ]
+                  ]
+                }
+              ],
+              "dependencies": [],
+              "roots": [],
+              "row": [
+                "cassette",
+                [
+                  13
+                ]
+              ]
+            },
+            "http_status": 200
+          }
+        }
+      },
+      "roots_recipe": [
+        {
+          "key": [
+            "S-03"
+          ],
+          "table": "assay"
+        }
+      ],
+      "title": "根 assay(S-03)，复合外键含 NULL，不选任何反向边（见证边界补充）",
+      "verdicts": [
+        {
+          "basis": "根行 causes=[]；复合外键 code 分量为 NULL，按约定无 substrate 父行，只能断言当前无直接纳入见证",
+          "present_with_reverse": true,
+          "present_without_reverse": true,
+          "target": [
+            "assay",
+            [
+              "S-03"
+            ]
+          ],
+          "verdict": "root_only_witness_boundary"
+        }
+      ]
+    }
+  ],
+  "source": {
+    "seeded_database_sha256": "a6a7aa2c4def63036d9872b7bd40a45593268541e94a393060f474ebbc8cb885",
+    "sql_file": "examples/microscope.sql"
+  }
+}
