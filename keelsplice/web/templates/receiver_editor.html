@@ -1,0 +1,20 @@
+<div class="content">
+  <header class="pagehead"><div><p class="breadcrumb"><a href="/workbench/receivers">接收设备登记</a> / 新设备</p>
+    <h1>登记接收能力</h1></div></header>
+  $error
+  <form method="post" action="/workbench/receivers/new" class="editor-form">
+    <label>设备名<input name="name" required maxlength="64" value="$name"></label>
+    <label>中继方式<select name="relay" required>$relay_options</select></label>
+    <fieldset><legend>可承载的 SQLite 存储类型</legend>
+      <div class="edge-grid">
+        <label class="edge-choice"><input type="checkbox" name="classes" value="integer"> 64 位整数</label>
+        <label class="edge-choice"><input type="checkbox" name="classes" value="real"> 实数</label>
+        <label class="edge-choice"><input type="checkbox" name="classes" value="text"> 文本</label>
+        <label class="edge-choice"><input type="checkbox" name="classes" value="blob"> BLOB</label>
+        <label class="edge-choice"><input type="checkbox" name="classes" value="null"> NULL</label>
+      </div>
+    </fieldset>
+    <label>说明<textarea name="notes" maxlength="512" rows="3">$notes</textarea></label>
+    <div class="actions"><button class="primary">登记设备</button></div>
+  </form>
+</div>

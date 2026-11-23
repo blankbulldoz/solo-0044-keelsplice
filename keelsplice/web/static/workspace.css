@@ -47,6 +47,8 @@ thead { color: var(--secondary); background: #edf1f5; }
 tbody tr:last-child > * { border-bottom: 0; }
 .empty, .muted { color: var(--secondary); }
 .editor-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+.editor-form { display: grid; gap: 16px; max-width: 720px; }
+.editor-form label { font-weight: 650; }
 .data-list, .key-list { padding-left: 24px; overflow-wrap: anywhere; }
 .data-list li, .key-list li { margin-bottom: 6px; }
 .key-list span { color: var(--secondary); margin-left: 6px; }

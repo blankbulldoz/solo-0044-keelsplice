@@ -36,6 +36,12 @@ MESSAGES = {
     'artifact_reference': '子库的外键复核失败。',
     'artifact_schema': '子库模式与封存模式不一致。',
     'artifact_content': '子库行内容与封存内容不一致。',
+    'invalid_receiver': '接收设备能力声明不符合要求。',
+    'receiver_exists': '同名接收设备已经登记。',
+    'unknown_receiver': '接收设备尚未登记。',
+    'receiver_capability': '该设备缺少承载某类 SQLite 存储值的能力。',
+    'unknown_trial': '找不到这次实物试交付。',
+    'invalid_relay_payload': '中继载荷不是合法的 SQLite 值编码。',
     'unknown_route': '找不到指定页面。',
 }
 

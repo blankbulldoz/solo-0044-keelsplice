@@ -1,0 +1,52 @@
+<div class="content">
+  <header class="pagehead"><div><p class="breadcrumb"><a href="/workbench/captures">封存捕获</a> / 试交付</p>
+    <h1>实物试交付报告</h1></div>$verdict</header>
+
+  <dl class="facts">
+    <div><dt>接收设备</dt><dd><code>$device</code></dd></div>
+    <div><dt>中继方式</dt><dd><code>$relay</code></dd></div>
+    <div><dt>完整性检查</dt><dd>$integrity</dd></div>
+    <div><dt>模式指纹</dt><dd>$schema</dd></div>
+    <div><dt>行数判定</dt><dd>$count_match</dd></div>
+    <div class="wide"><dt>接收库 SHA-256</dt><dd><code>$sha</code></dd></div>
+    <div><dt>接收库字节</dt><dd>$bytes</dd></div>
+    <div class="wide"><dt>可导入载荷 SHA-256</dt><dd><code>$payload_sha</code></dd></div>
+  </dl>
+  <div class="actions">
+    <a class="button" href="/workbench/trials/$id/payload">下载双方可导入的中继载荷</a>
+    <a class="button" href="/workbench/trials/$id/database">下载该设备实际导入后的 SQLite 库</a>
+  </div>
+
+  <section><h2>逐表计数（仅作参考，不作为交付成功依据）</h2>
+    <div class="scroll"><table><thead><tr><th scope="col">表</th><th scope="col">封存行数</th>
+      <th scope="col">重开行数</th></tr></thead><tbody>$counts</tbody></table></div></section>
+
+  <section><h2>被接收库拒绝的行</h2>
+    <div class="scroll"><table><thead><tr><th scope="col">表</th><th scope="col">行序号</th>
+      <th scope="col">请求主键</th><th scope="col">SQLite 原因</th></tr></thead><tbody>$rejected</tbody></table></div></section>
+
+  <section><h2>重新打开后的主键可区分性</h2>
+    <div class="scroll"><table><thead><tr><th scope="col">表</th><th scope="col">丢失的主键</th>
+      <th scope="col">坍缩的身份</th></tr></thead><tbody>$pk</tbody></table></div></section>
+
+  <section><h2>复合外键与原父行解析</h2>
+    <div class="scroll"><table><thead><tr><th scope="col">外键</th><th scope="col">子行主键</th>
+      <th scope="col">影响</th><th scope="col">说明</th></tr></thead><tbody>$rel</tbody></table></div></section>
+
+  <section><h2>接收库外键复核（PRAGMA foreign_key_check）</h2>
+    <div class="scroll"><table><thead><tr><th scope="col">子表</th><th scope="col">rowid</th>
+      <th scope="col">父表</th><th scope="col">外键编号</th></tr></thead><tbody>$fk</tbody></table></div></section>
+
+  <section><h2>设备无法承载的单元格</h2>
+    <div class="scroll"><table><thead><tr><th scope="col">表</th><th scope="col">列</th>
+      <th scope="col">存储类型</th><th scope="col">原值</th></tr></thead><tbody>$unsupported</tbody></table></div></section>
+
+  <section><h2>受表示变化影响的关系</h2>
+    <div class="scroll"><table><thead><tr><th scope="col">外键</th><th scope="col">受影响分量</th>
+      <th scope="col">关系影响</th></tr></thead><tbody>$impacted</tbody></table></div></section>
+
+  <section><h2>负零、空值与各类型值保真</h2>
+    <div class="scroll"><table><thead><tr><th scope="col">检查项</th><th scope="col">位置</th>
+      <th scope="col">主键</th><th scope="col">封存值</th><th scope="col">重开值</th>
+      <th scope="col">说明</th></tr></thead><tbody>$values</tbody></table></div></section>
+</div>

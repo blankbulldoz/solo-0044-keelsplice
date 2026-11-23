@@ -18,6 +18,16 @@ CREATE TABLE IF NOT EXISTS captures (
     artifact BLOB, certificate TEXT,
     FOREIGN KEY(name, version) REFERENCES recipes(name, version)
 );
+CREATE TABLE IF NOT EXISTS receivers (
+    name TEXT PRIMARY KEY, builtin INTEGER NOT NULL, profile TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS trials (
+    id TEXT PRIMARY KEY, capture_id TEXT NOT NULL, device TEXT NOT NULL,
+    verdict TEXT NOT NULL CHECK(verdict IN ('passed','degraded','failed')),
+    report TEXT NOT NULL, payload_sha256 TEXT NOT NULL, payload_bytes INTEGER NOT NULL,
+    FOREIGN KEY(capture_id) REFERENCES captures(id),
+    FOREIGN KEY(device) REFERENCES receivers(name)
+);
 '''
 
 
@@ -131,3 +141,77 @@ class Repository:
                 conn.execute("UPDATE captures SET state='certified',certificate=? WHERE id=? AND state='built'",
                              (dumps(certificate), capture_id))
         return self.load_capture(capture_id)
+
+    def ensure_builtin_receivers(self, profiles):
+        with self.session(write=True) as conn:
+            for profile in profiles:
+                conn.execute(
+                    'INSERT OR IGNORE INTO receivers (name, builtin, profile) VALUES (?,1,?)',
+                    (profile['name'], dumps(profile)))
+
+    def list_receivers(self):
+        with self.session() as conn:
+            rows = conn.execute('SELECT name, builtin, profile FROM receivers ORDER BY builtin DESC, name').fetchall()
+        return [dict(name=row['name'], builtin=bool(row['builtin']), profile=loads(row['profile'])) for row in rows]
+
+    def receiver(self, name):
+        with self.session() as conn:
+            row = conn.execute('SELECT profile FROM receivers WHERE name=?', (name,)).fetchone()
+        if row is None:
+            raise Fault('unknown_receiver', 'Receiving device is not registered', 404)
+        return loads(row['profile'])
+
+    def add_receiver(self, profile):
+        with self.session(write=True) as conn:
+            inserted = conn.execute(
+                'INSERT OR IGNORE INTO receivers (name, builtin, profile) VALUES (?,0,?)',
+                (profile['name'], dumps(profile)))
+        if inserted.rowcount != 1:
+            raise Fault('receiver_exists', 'A device with this name is already registered', 409)
+        return dict(name=profile['name'], builtin=False, profile=profile)
+
+    def trial_directory(self):
+        directory = self.path.parent / f'{self.path.name}-trials'
+        directory.mkdir(exist_ok=True)
+        return directory
+
+    def add_trial(self, capture_id, profile, report, payload, encoded, database):
+        from .receivers import MAX_PAYLOAD_BYTES
+        if len(encoded) > MAX_PAYLOAD_BYTES:
+            raise Fault('payload_budget', 'Relay payload exceeds the 8 MiB trial budget')
+        trial_id = uuid4().hex
+        with self.session(write=True) as conn:
+            inserted = conn.execute(
+                "INSERT INTO trials (id,capture_id,device,verdict,report,payload_sha256,payload_bytes) "
+                "SELECT ?,?,?,?,?,?,? WHERE EXISTS (SELECT 1 FROM captures WHERE id=?)",
+                (trial_id, capture_id, profile['name'], report['verdict'], dumps(report),
+                 report['payload_sha256'], len(encoded), capture_id))
+        if inserted.rowcount != 1:
+            raise Fault('unknown_capture', 'Capture does not exist', 404)
+        directory = self.trial_directory()
+        (directory / f'{trial_id}.json').write_bytes(encoded)
+        (directory / f'{trial_id}.sqlite').write_bytes(database)
+        return trial_id
+
+    def load_trial(self, trial_id, with_payload=False, with_database=False):
+        with self.session() as conn:
+            row = conn.execute('SELECT * FROM trials WHERE id=?', (trial_id,)).fetchone()
+        if row is None:
+            raise Fault('unknown_trial', 'Trial delivery does not exist', 404)
+        result = dict(row) | {'report': loads(row['report'])}
+        directory = self.trial_directory()
+        if with_payload:
+            result['payload_bytes'] = (directory / f'{trial_id}.json').read_bytes()
+        if with_database:
+            result['database_bytes'] = (directory / f'{trial_id}.sqlite').read_bytes()
+        return result
+
+    def recent_trials(self, capture_id=None):
+        with self.session() as conn:
+            if capture_id is None:
+                rows = conn.execute('SELECT id,capture_id,device,verdict FROM trials ORDER BY rowid DESC LIMIT 50').fetchall()
+            else:
+                rows = conn.execute(
+                    'SELECT id,capture_id,device,verdict FROM trials WHERE capture_id=? ORDER BY rowid DESC LIMIT 50',
+                    (capture_id,)).fetchall()
+        return [dict(row) for row in rows]

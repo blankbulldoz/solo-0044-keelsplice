@@ -76,6 +76,21 @@ class RequestHandler(BaseHTTPRequestHandler):
                 return 200, bench.certify(capture_id)
             case 'POST', ['compare']:
                 return 200, bench.compare(body)
+            case 'GET', ['receivers']:
+                return 200, {'receivers': bench.list_receivers()}
+            case 'POST', ['receivers']:
+                return 201, bench.register_receiver(body)
+            case 'POST', ['captures', capture_id, 'trials']:
+                trial_id, report = bench.deliver_trial(capture_id, body)
+                return 201, {'id': trial_id, 'report': report}
+            case 'GET', ['trials', trial_id]:
+                return 200, bench.trial(trial_id)
+            case 'GET', ['trials', trial_id, 'payload']:
+                data, record = bench.trial_payload(trial_id)
+                return 200, (data, {'id': trial_id, 'report': record['report']})
+            case 'GET', ['trials', trial_id, 'database']:
+                data, record = bench.trial_database(trial_id)
+                return 200, (data, {'kind': 'trial_database', 'id': trial_id, 'report': record['report']})
             case 'GET', ['captures', capture_id, 'database']:
                 return 200, bench.download(capture_id)
         raise Fault('unknown_route', 'Unknown endpoint', 404)
@@ -84,9 +99,20 @@ class RequestHandler(BaseHTTPRequestHandler):
         self.send_response(status)
         if isinstance(payload, tuple):
             data, sha = payload
-            self.send_header('Content-Type', 'application/vnd.sqlite3')
-            self.send_header('Content-Disposition', 'attachment; filename="keelsplice-fixture.sqlite"')
-            self.send_header('ETag', f'"{sha}"')
+            if isinstance(sha, dict) and sha.get('kind') == 'trial_database':
+                self.send_header('Content-Type', 'application/vnd.sqlite3')
+                self.send_header('Content-Disposition',
+                                 f'attachment; filename="keelsplice-trial-{sha["id"]}.sqlite"')
+                self.send_header('ETag', f'"{sha["report"]["sha256"]}"')
+            elif isinstance(sha, dict):
+                self.send_header('Content-Type', 'application/json')
+                self.send_header('Content-Disposition',
+                                 f'attachment; filename="keelsplice-trial-{sha["id"]}.json"')
+                self.send_header('ETag', f'"{sha["report"]["payload_sha256"]}"')
+            else:
+                self.send_header('Content-Type', 'application/vnd.sqlite3')
+                self.send_header('Content-Disposition', 'attachment; filename="keelsplice-fixture.sqlite"')
+                self.send_header('ETag', f'"{sha}"')
         else:
             data = dumps(payload).encode('ascii')
             self.send_header('Content-Type', 'application/json')

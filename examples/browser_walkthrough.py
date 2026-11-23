@@ -2,6 +2,7 @@
 
 import argparse
 import hashlib
+import json
 import re
 import sqlite3
 from contextlib import closing
@@ -86,7 +87,28 @@ def run(base, source, root):
     with closing(sqlite3.connect(handoff)) as conn:
         assert conn.execute("SELECT length_um FROM assay WHERE mark='S-01'").fetchone() == (3.25,)
         assert conn.execute('PRAGMA foreign_key_check').fetchall() == []
-    print('浏览器端到端检查通过：目录、配方、试算、捕获、证据、对比、停用、构建、认证、下载')
+
+    # 接收设备登记与实物试交付。
+    _, registry = html(base, '/workbench/receivers')
+    assert 'typed-relay' in registry and 'text-relay' in registry and '接收设备登记' in registry
+    _, editor = html(base, '/workbench/receivers/new')
+    assert '中继方式' in editor
+    register_form = {'name': 'browser-hex', 'relay': 'text', 'classes': ['text', 'null', 'blob'],
+                     'notes': '浏览器登记的十六进制 BLOB 文本设备'}
+    _, created = html(base, '/workbench/receivers/new', register_form)
+    assert 'browser-hex' in created
+    trial_form = {'device': 'typed-relay'}
+    _, trial_page = html(base, first + '/trials', trial_form)
+    assert '实物试交付报告' in trial_page and '通过' in trial_page
+    assert '主键仍可区分' in trial_page and '复合外键' in trial_page
+    trial_path = re.search(r'href="(/workbench/trials/[0-9a-f]+/payload)"', trial_page)[1]
+    _, trial_headers, payload = open_page(base, trial_path)
+    assert trial_headers.get_content_type() == 'application/json' and json.loads(payload)['profile']
+    text_form = {'device': 'text-relay'}
+    _, text_page = html(base, first + '/trials', text_form)
+    assert '未通过' in text_page and '不能仅凭行数判定成功' in text_page
+    assert '外键' in text_page and '负零' in text_page
+    print('浏览器端到端检查通过：目录、配方、试算、捕获、证据、对比、停用、构建、认证、下载、接收登记与试交付')
 
 
 def main():

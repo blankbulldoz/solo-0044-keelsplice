@@ -3,8 +3,8 @@
 import re
 import sqlite3
 
-from . import bundle, capture, catalog, recipe
-from .codec import Fault
+from . import bundle, capture, catalog, receivers, recipe
+from .codec import Fault, digest
 
 NAME = re.compile(r'[a-z][a-z0-9_-]{0,63}\Z')
 
@@ -106,3 +106,60 @@ class Workbench:
         if bundle.digest_bytes(data) != sha:
             raise Fault('artifact_integrity', 'Stored fixture bytes do not match the certificate', 409)
         return data, sha
+
+    # ------------------------------------------------------------------ #
+    # Receiving-device registration and physical trial delivery
+    # ------------------------------------------------------------------ #
+
+    def ensure_receivers(self):
+        self.repository.ensure_builtin_receivers(receivers.BUILTINS)
+
+    def list_receivers(self):
+        self.ensure_receivers()
+        return self.repository.list_receivers()
+
+    def register_receiver(self, body):
+        recipe.fields(body, ('name', 'relay', 'storage_classes'),
+                      ('real_format', 'null_sentinel', 'blob_carrier', 'notes'))
+        profile = receivers.validate_profile(body)
+        self.ensure_receivers()
+        return self.repository.add_receiver(profile)
+
+    def receiver(self, name):
+        self.ensure_receivers()
+        return self.repository.receiver(name)
+
+    def deliver_trial(self, capture_id, body):
+        recipe.fields(body, ('device',))
+        if not isinstance(body['device'], str):
+            raise Fault('invalid_receiver', 'Supply a registered device name', 400)
+        self.ensure_receivers()
+        profile = self.repository.receiver(body['device'])
+        record = self.repository.load_capture(capture_id)
+        sealed = record['sealed']
+        report, database, payload, encoded = receivers.run_trial(sealed, profile)
+        if digest(encoded) != report['payload_sha256']:
+            raise Fault('artifact_integrity', 'Relay payload digest does not match the trial report')
+        trial_id = self.repository.add_trial(capture_id, profile, report, payload, encoded, database)
+        return trial_id, report
+
+    def trial(self, trial_id):
+        return self.repository.load_trial(trial_id)
+
+    def trial_payload(self, trial_id):
+        record = self.repository.load_trial(trial_id, with_payload=True)
+        data = record['payload_bytes']
+        if digest(data) != record['report']['payload_sha256']:
+            raise Fault('artifact_integrity', 'Stored payload does not match the trial digest', 409)
+        return data, record
+
+    def trial_database(self, trial_id):
+        record = self.repository.load_trial(trial_id, with_database=True)
+        data = record['database_bytes']
+        if digest(data) != record['report']['sha256']:
+            raise Fault('artifact_integrity', 'Stored trial database does not match the report digest', 409)
+        return data, record
+
+    def trials_for(self, capture_id):
+        self.ensure_receivers()
+        return self.repository.recent_trials(capture_id)

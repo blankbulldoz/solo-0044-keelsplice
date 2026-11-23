@@ -4,7 +4,7 @@ import re
 import sqlite3
 from urllib.parse import urlsplit
 
-from . import assets, captures, comparison, directory, evidence, preview, selection, versions
+from . import assets, captures, comparison, directory, evidence, preview, receivers, selection, versions
 from .errors import invalid_route, message
 from .forms import MAX_BYTES, decode_form, field, version
 from .render import page, segment, text
@@ -87,12 +87,34 @@ def route(handler, path):
             elif action in ('build', 'certify'):
                 (bench.build if action == 'build' else bench.certify)(capture_id)
                 return redirect(f'/workbench/captures/{segment(capture_id)}')
+            elif action == 'trials':
+                return redirect(receivers.start(bench, capture_id, values))
             else:
                 raise invalid_route()
         case 'GET', ['workbench', 'compare']:
             status, body = comparison.show(bench)
         case 'POST', ['workbench', 'compare']:
             status, body = comparison.show(bench, values)
+        case 'GET', ['workbench', 'receivers']:
+            status, body = receivers.index(bench)
+        case 'GET', ['workbench', 'receivers', 'new']:
+            status, body = receivers.register(bench, None)
+        case 'POST', ['workbench', 'receivers', 'new']:
+            status, body = receivers.register(bench, values)
+        case 'GET', ['workbench', 'trials', trial_id]:
+            status, body = receivers.detail(bench, trial_id)
+        case 'GET', ['workbench', 'trials', trial_id, 'payload']:
+            data, record = bench.trial_payload(trial_id)
+            return 200, data, 'application/json', {
+                'Content-Disposition': f'attachment; filename="keelsplice-trial-{segment(trial_id)}.json"',
+                'ETag': f'"{record["report"]["payload_sha256"]}"',
+            }
+        case 'GET', ['workbench', 'trials', trial_id, 'database']:
+            data, record = bench.trial_database(trial_id)
+            return 200, data, 'application/vnd.sqlite3', {
+                'Content-Disposition': f'attachment; filename="keelsplice-trial-{segment(trial_id)}.sqlite"',
+                'ETag': f'"{record["report"]["sha256"]}"',
+            }
         case _:
             raise invalid_route()
     return status, body, 'text/html; charset=utf-8', {}
