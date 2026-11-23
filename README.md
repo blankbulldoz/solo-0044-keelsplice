@@ -20,7 +20,9 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 1. 在「关系目录」选源和表。主键顺序用于填写根，外键映射用于判断哪些子行需要反向纳入。
 2. 登记配方，填写一个或多个根及封存行上限。样例可填 `[{"table":"substrate","key":["east","MICA"]}]`，再选 `substrate → assay`。
 3. 试算查看逐表计数和实存根。点「封存当前样本」时服务重新读取源。配方绑定的模式有变化时，需要重新核对目录。
-4. 在捕获详情按实存主键追踪。可从直接入选原因或必需父行继续查看相关记录。对比页面按实存带类型主键显示两个同模式捕获的新增、移除和修改。
+   试算页还可预先勾选检查项（逐表计数、实存根、某个生成列、某条外键），点「保留本次观察」为这次读取留痕。观察只保存这些项的证据，不保存整份生产值，也不是封存；交付仍按第 5 步单独封存、构建和认证。
+4. 在捕获详情按实存主键追踪。可从直接入选原因或必需父行继续查看相关记录。对比页面按实存带类型化主键显示两个同模式捕获的新增、移除和修改。
+   「试算观察」页列出留痕记录；其复查页选两条观察逐项比对，得到一致、具体不同或未知（未同时保留证据的检查项）。
 5. 构建后再认证。认证后可下载文件并用其 SHA-256 或独立 SQLite 连接核对。停用配方后，既有捕获仍可完成这些操作。
 
 ## JSON 接口
@@ -29,18 +31,23 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 
 | 方法与路径 | 请求与结果 |
 | --- | --- |
-| `GET /sources/{alias}/catalog` | 读取表、列、关系、索引和模式摘要 |
+| `GET /sources/{alias}/catalog` | 读取表、列、关系、索引、模式摘要和可复查的检查项 |
 | `POST /recipes/{name}/versions` | 登记 `source`、`roots`，以及可选的 `follow_children`、`row_limit` |
 | `GET /recipes/{name}/versions/{version}` | 读取版本及其投用状态 |
 | `POST /recipes/{name}/versions/{version}/retire` | 接收空对象并停用版本 |
 | `POST /preview`、`POST /captures` | 接收 `{"name":"swatch","version":1}`，分别试算和封存 |
+| `POST /observations` | 接收 `name`、`version` 和可选 `checks`，按本次试算留痕；缺省只留逐表计数与实存根 |
+| `GET /observations`、`GET /observations/{id}` | 列出最近的观察，或读取其保留的检查项与摘要 |
+| `POST /observations/recheck` | 接收 `{"left":"id-a","right":"id-b"}`，逐项给出一致、不同或未知 |
 | `GET /captures/{id}` | 读取捕获状态、实存根、计数和证书 |
 | `POST /captures/{id}/trace` | 接收如 `{"table":"substrate","key":["East","Mica"]}`，返回直接证据和从零开始的根序号 |
 | `POST /captures/{id}/build`、`POST /captures/{id}/certify` | 接收空对象，构建或认证该捕获的子库 |
 | `POST /compare` | 接收 `{"left":"id-a","right":"id-b"}`，按表报告带类型主键的差异 |
 | `GET /captures/{id}/database` | 返回已认证 SQLite 字节，`ETag` 为带引号的 SHA-256 |
 
-根记录中的键按目录的列顺序填写。整数为有符号 64 位 JSON 数字。字节用 `{"blob":"AAD/"}`，实数用 `{"real":"0x1.a000000000000p+1"}`，文本用 JSON 字符串。配方可以用不同拼写定位同一个 NOCASE 根，封存与追踪使用实存键。结果中的行去重，输入根出现项保留顺序。工作台近期列表显示最后登记的 50 个配方版本和最后封存的 50 次捕获，历史详情地址依然可访问。
+根记录中的键按目录的列顺序填写。整数为有符号 64 位 JSON 数字。字节用 `{"blob":"AAD/"}`，实数用 `{"real":"0x1.a000000000000p+1"}`，文本用 JSON 字符串。配方可以用不同拼写定位同一个 NOCASE 根，封存与追踪使用实存键。结果中的行去重，输入根出现项保留顺序。工作台近期列表显示最后登记的 50 个配方版本、最后封存的 50 次捕获和最后保留的 50 条观察，历史详情地址依然可访问。
+
+观察的 `checks` 是检查项数组，每项形如 `{"kind":"counts"}`、`{"kind":"roots"}`、`{"kind":"generated","table":"assay","column":"doubled"}` 或 `{"kind":"relation","child":"assay","id":1}`。生成值项只保留每行该列的值摘要，关系项只保留该外键下每个子行的指向，均非整份行值。复查只比较两条观察都保留的检查项；任一侧缺失即标为未知，模式摘要不同则拒绝复查。
 
 ## 复跑
 
@@ -50,4 +57,4 @@ python3 -m examples.walkthrough all
 python3 -m examples.browser_walkthrough
 ```
 
-两份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。独立自动化测试套件延后。
+两份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。JSON 演练还包含 `observe` 工作流，覆盖两次观察的一致、不同与未知三种复查结论。独立自动化测试套件延后。

@@ -13,6 +13,7 @@ NAVIGATION = (
     ('catalog', '关系目录', '/workbench'),
     ('recipe', '配方版本', '/workbench/recipes'),
     ('capture', '封存捕获', '/workbench/captures'),
+    ('observe', '试算观察', '/workbench/observations'),
     ('compare', '捕获对比', '/workbench/compare'),
 )
 

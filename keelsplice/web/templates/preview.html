@@ -6,5 +6,13 @@
     <section><h2>源库实存根</h2><ol class="data-list">$roots</ol></section>
     <section><h2>逐表计数</h2><div class="scroll"><table><thead><tr><th scope="col">表</th><th scope="col">入选行</th></tr></thead><tbody>$counts</tbody></table></div></section>
   </div>
-  <form class="actions" method="post" action="$recipe/capture"><button class="primary">封存当前样本</button></form>
+  <form method="post" action="$recipe/observe">
+    <input type="hidden" name="name" value="$name"><input type="hidden" name="version" value="$number">
+    <fieldset><legend>为本次试算保留证据的检查项</legend>
+      <p class="muted">预先勾选要复查的检查项。只保留这些项的证据；保留时会重新读取一次源库，不保存整份生产值，也不作为正式封存，交付仍需单独封存、构建与认证。</p>
+      <div class="edge-grid">$check_choices</div>
+    </fieldset>
+    <div class="actions"><button class="primary">保留本次观察</button></div>
+  </form>
+  <form class="actions" method="post" action="$recipe/capture"><button>封存当前样本</button></form>
 </div>

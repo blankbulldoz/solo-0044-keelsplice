@@ -36,3 +36,27 @@ def typed_json(value):
         return json.loads(value)
     except (ValueError, RecursionError) as exc:
         raise Fault('invalid_json', '请输入有效的 JSON。', 400) from exc
+
+
+def checks(values):
+    """Decode the check items a browser picked before reading the source."""
+    picked = []
+    for value in values.get('check', []):
+        try:
+            picked.append(json.loads(value))
+        except (ValueError, RecursionError) as exc:
+            raise Fault('invalid_check', '检查项编码无效。', 400) from exc
+    return picked
+
+
+def observation_body(values):
+    """Recipe identity plus the chosen checks for a post-preview observation."""
+    body = {}
+    if 'name' in values:
+        body['name'] = field(values, 'name')
+    if 'version' in values:
+        body['version'] = version(field(values, 'version'))
+    picked = checks(values)
+    if picked:
+        body['checks'] = picked
+    return body

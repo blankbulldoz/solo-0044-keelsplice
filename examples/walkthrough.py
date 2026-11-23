@@ -13,7 +13,8 @@ from urllib.request import Request, urlopen
 
 from keelsplice.api import create_server
 
-WORKFLOWS = ('catalog', 'recipe', 'retire', 'preview', 'capture', 'trace', 'build', 'certify', 'compare', 'download')
+WORKFLOWS = ('catalog', 'recipe', 'retire', 'preview', 'observe', 'capture', 'trace', 'build', 'certify',
+             'compare', 'download')
 
 
 def seed(file):
@@ -77,6 +78,30 @@ def walkthrough(base, selected, source, root):
     request('/recipes/tight/versions', body | {'row_limit': 1}, 201)
     assert request('/preview', {'name': 'tight','version': 1}, 422)['error'] == 'row_budget'
     if observe('preview', preview['summary']):
+        return
+
+    checks = [{'kind': 'counts'}, {'kind': 'roots'},
+              {'kind': 'generated', 'table': 'assay', 'column': 'doubled'},
+              {'kind': 'relation', 'child': 'assay', 'id': 1}]
+    before = request('/observations', lookup | {'checks': checks}, 201)
+    assert before['checks'] == checks and before['summary']['count'] == 4
+    with closing(sqlite3.connect(source)) as conn, conn:
+        conn.execute("UPDATE assay SET length_um=4.75, cassette=12 WHERE mark='S-01'")
+    after = request('/observations', lookup | {'checks': checks}, 201)
+    recheck = request('/observations/recheck', {'left': before['id'], 'right': after['id']})['result']
+    assert recheck['verdict'] == 'different' and recheck['summary'] == {'consistent': 2, 'different': 2, 'unknown': 0}
+    statuses = {item['kind']: item['status'] for item in recheck['checks']}
+    assert statuses == {'counts': 'consistent', 'roots': 'consistent',
+                        'generated': 'different', 'relation': 'different'}
+    partial = request('/observations', lookup | {'checks': [{'kind': 'counts'}]}, 201)
+    gap = request('/observations/recheck', {'left': before['id'], 'right': partial['id']})['result']
+    assert gap['verdict'] == 'unknown' and gap['summary'] == {'consistent': 1, 'different': 0, 'unknown': 3}
+    assert request('/observations', lookup | {'checks': [{'kind': 'generated', 'table': 'substrate',
+                                                         'column': 'region'}]}, 422)['error'] == 'invalid_check'
+    assert request('/observations/absent', status=404)['error'] == 'unknown_observation'
+    with closing(sqlite3.connect(source)) as conn, conn:
+        conn.execute("UPDATE assay SET length_um=3.25, cassette=11 WHERE mark='S-01'")
+    if observe('observe', recheck):
         return
 
     cap = request('/captures', lookup, 201)

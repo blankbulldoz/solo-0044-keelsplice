@@ -3,7 +3,7 @@
 import re
 import sqlite3
 
-from . import bundle, capture, catalog, recipe
+from . import bundle, capture, catalog, observation, recipe
 from .codec import Fault
 
 NAME = re.compile(r'[a-z][a-z0-9_-]{0,63}\Z')
@@ -15,7 +15,8 @@ class Workbench:
 
     def catalog(self, alias):
         with self.repository.source(alias) as conn:
-            return catalog.snapshot(conn)
+            disclosed = catalog.snapshot(conn)
+        return disclosed | {'checks': observation.available(disclosed['schema'])}
 
     def register(self, name, body, *, expected_schema=None):
         if not NAME.fullmatch(name):
@@ -52,7 +53,34 @@ class Workbench:
     def preview(self, body):
         name, number, sealed = self.execute(body)
         return {'name': name, 'version': number, 'schema_digest': sealed['schema_digest'],
-                'summary': capture.summarize(sealed['result']), 'roots': sealed['result']['roots']}
+                'summary': capture.summarize(sealed['result']), 'roots': sealed['result']['roots'],
+                'checks': observation.available(sealed['schema'])}
+
+    def observe(self, body):
+        recipe.fields(body, ('name', 'version'), ('checks',))
+        name, number, sealed = self.execute({k: body[k] for k in ('name', 'version')})
+        checks = observation.selections(sealed['schema'], body.get('checks'))
+        trace = observation.trace(sealed, checks)
+        record = self.repository.add_observation(name, number, trace, observation.summarize(trace))
+        return self.describe_observation(record)
+
+    def describe_observation(self, record):
+        return {'id': record['id'], 'name': record['name'], 'version': record['version'],
+                'created': record['created'], 'schema_digest': record['trace']['schema_digest'],
+                'checks': record['trace']['checks'], 'summary': record['summary']}
+
+    def observation(self, observation_id):
+        return self.describe_observation(self.repository.load_observation(observation_id))
+
+    def observations(self):
+        return [self.describe_observation(record) for record in self.repository.recent_observations()]
+
+    def recheck(self, body):
+        recipe.fields(body, ('left', 'right'))
+        if any(not isinstance(body[k], str) for k in ('left', 'right')):
+            raise Fault('invalid_observation', 'Supply two observation identifiers')
+        left, right = (self.repository.load_observation(body[k])['trace'] for k in ('left', 'right'))
+        return {'left': body['left'], 'right': body['right'], 'result': observation.recheck(left, right)}
 
     def capture(self, body):
         name, number, sealed = self.execute(body)

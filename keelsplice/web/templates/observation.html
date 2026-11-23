@@ -1,0 +1,14 @@
+<div class="content">
+  <header class="pagehead"><div><p class="breadcrumb"><a href="/workbench/observations">试算观察</a> / 详情</p><h1>观察详情</h1></div><span class="status muted">未封存</span></header>
+  <p class="notice info">这不是正式封存，也不保存整份生产值。后续实际交付仍需按原流程单独封存、构建与认证。</p>
+  <dl class="facts"><div><dt>检查项</dt><dd>$count</dd></div><div><dt>保留证据行</dt><dd>$rows</dd></div>
+    <div><dt>保留时间</dt><dd>$created</dd></div>
+    <div><dt>源配方</dt><dd><a href="$recipe">$name · 版本 $number</a></dd></div>
+    <div class="wide"><dt>观察编号</dt><dd><code>$id</code></dd></div>
+    <div class="wide"><dt>模式摘要</dt><dd><code>$digest</code></dd></div></dl>
+  <section><h2>保留的检查项</h2><ul class="data-list">$checks</ul></section>
+  <form class="actions" method="get" action="/workbench/observations/compare">
+    <input type="hidden" name="left" value="$id">
+    <button class="primary">与另一条观察复查</button>
+  </form>
+</div>

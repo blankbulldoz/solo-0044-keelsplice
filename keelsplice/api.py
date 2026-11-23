@@ -64,6 +64,14 @@ class RequestHandler(BaseHTTPRequestHandler):
                 return 200, bench.preview(body)
             case 'POST', ['captures']:
                 return 201, bench.capture(body)
+            case 'POST', ['observations']:
+                return 201, bench.observe(body)
+            case 'GET', ['observations']:
+                return 200, {'observations': bench.observations()}
+            case 'GET', ['observations', observation_id]:
+                return 200, bench.observation(observation_id)
+            case 'POST', ['observations', 'recheck']:
+                return 200, bench.recheck(body)
             case 'GET', ['captures', capture_id]:
                 return 200, bench.status(capture_id)
             case 'POST', ['captures', capture_id, 'trace']:

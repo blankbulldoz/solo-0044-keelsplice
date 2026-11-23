@@ -4,9 +4,9 @@ import re
 import sqlite3
 from urllib.parse import urlsplit
 
-from . import assets, captures, comparison, directory, evidence, preview, selection, versions
+from . import assets, captures, comparison, directory, evidence, observations, preview, selection, versions
 from .errors import invalid_route, message
-from .forms import MAX_BYTES, decode_form, field, version
+from .forms import MAX_BYTES, decode_form, field, observation_body, version
 from .render import page, segment, text
 from ..codec import Fault
 
@@ -63,6 +63,9 @@ def route(handler, path):
             base = f'/workbench/recipes/{segment(name)}/{number}'
             if action == 'preview':
                 status, body = preview.show(bench, name, number)
+            elif action == 'observe':
+                observation = bench.observe(observation_body(values) | dict(name=name, version=number))
+                return redirect(f'/workbench/observations/{segment(observation["id"])}')
             elif action == 'capture':
                 capture = bench.capture(dict(name=name, version=number))
                 return redirect(f'/workbench/captures/{segment(capture["id"])}')
@@ -93,6 +96,14 @@ def route(handler, path):
             status, body = comparison.show(bench)
         case 'POST', ['workbench', 'compare']:
             status, body = comparison.show(bench, values)
+        case 'GET', ['workbench', 'observations']:
+            status, body = observations.index(bench)
+        case 'GET', ['workbench', 'observations', 'compare']:
+            status, body = observations.recheck(bench, query)
+        case 'POST', ['workbench', 'observations', 'compare']:
+            status, body = observations.recheck(bench, values)
+        case 'GET', ['workbench', 'observations', observation_id]:
+            status, body = observations.show(bench, observation_id)
         case _:
             raise invalid_route()
     return status, body, 'text/html; charset=utf-8', {}

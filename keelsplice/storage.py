@@ -2,10 +2,15 @@
 
 import sqlite3
 from contextlib import closing, contextmanager
+from datetime import datetime, timezone
 from pathlib import Path
 from uuid import uuid4
 
 from .codec import Fault, dumps, loads
+
+
+def current_timestamp():
+    return datetime.now(timezone.utc).isoformat(timespec='seconds')
 
 REPOSITORY_DDL = '''
 CREATE TABLE IF NOT EXISTS recipes (
@@ -16,6 +21,11 @@ CREATE TABLE IF NOT EXISTS captures (
     id TEXT PRIMARY KEY, name TEXT NOT NULL, version INTEGER NOT NULL,
     sealed TEXT NOT NULL, state TEXT NOT NULL CHECK(state IN ('sealed','built','certified')),
     artifact BLOB, certificate TEXT,
+    FOREIGN KEY(name, version) REFERENCES recipes(name, version)
+);
+CREATE TABLE IF NOT EXISTS observations (
+    id TEXT PRIMARY KEY, name TEXT NOT NULL, version INTEGER NOT NULL,
+    created TEXT NOT NULL, summary TEXT NOT NULL, trace TEXT NOT NULL,
     FOREIGN KEY(name, version) REFERENCES recipes(name, version)
 );
 '''
@@ -112,6 +122,32 @@ class Repository:
             if saved.rowcount != 1:
                 raise Fault('retired_recipe', 'Recipe retired before this capture could be sealed', 409)
         return dict(id=capture_id, name=name, version=number, sealed=sealed, state='sealed', certificate=None)
+
+    def add_observation(self, name, number, trace, summary):
+        observation_id, created = uuid4().hex, current_timestamp()
+        with self.session(write=True) as conn:
+            saved = conn.execute("""INSERT INTO observations (id,name,version,created,summary,trace)
+                SELECT ?,name,version,?,?,? FROM recipes WHERE name=? AND version=? AND active=1""",
+                (observation_id, created, dumps(summary), dumps(trace), name, number))
+            if saved.rowcount != 1:
+                raise Fault('retired_recipe', 'Recipe retired before this observation could be retained', 409)
+        return dict(id=observation_id, name=name, version=number, created=created,
+                    summary=summary, trace=trace)
+
+    def load_observation(self, observation_id):
+        with self.session() as conn:
+            row = conn.execute('SELECT id,name,version,created,summary,trace FROM observations WHERE id=?',
+                               (observation_id,)).fetchone()
+        if row is None:
+            raise Fault('unknown_observation', 'Observation does not exist', 404)
+        return dict(row) | {'summary': loads(row['summary']), 'trace': loads(row['trace'])}
+
+    def recent_observations(self):
+        with self.session() as conn:
+            rows = conn.execute("""
+                SELECT id, name, version, created, summary FROM observations ORDER BY rowid DESC LIMIT 50
+            """).fetchall()
+        return [dict(row) | {'summary': loads(row['summary'])} for row in rows]
 
     def load_capture(self, capture_id, with_artifact=False):
         columns = 'id,name,version,sealed,state,certificate' + (',artifact' if with_artifact else '')

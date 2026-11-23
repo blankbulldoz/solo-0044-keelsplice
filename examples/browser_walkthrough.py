@@ -2,6 +2,7 @@
 
 import argparse
 import hashlib
+import json
 import re
 import sqlite3
 from contextlib import closing
@@ -60,6 +61,29 @@ def run(base, source, root):
 
     _, preview = html(base, version + '/preview', {})
     assert '未封存' in preview and 'East' in preview and 'Mica' in preview
+    assert '保留本次观察' in preview and '生成值' in preview
+
+    checks = [json.dumps({'kind': 'counts'}), json.dumps({'kind': 'roots'}),
+              json.dumps({'kind': 'generated', 'table': 'assay', 'column': 'doubled'}),
+              json.dumps({'kind': 'relation', 'child': 'assay', 'id': 1})]
+    observed, before = html(base, version + '/observe', {'check': checks})
+    assert observed.startswith('/workbench/observations/') and '不是正式封存' in before
+    assert '生成值 · assay.doubled' in before
+    with closing(sqlite3.connect(source)) as conn, conn:
+        conn.execute("UPDATE assay SET length_um=4.75, cassette=12 WHERE mark='S-01'")
+    latest, _ = html(base, version + '/observe', {'check': checks})
+    assert observed in html(base, '/workbench/observations')[1] and latest in html(
+        base, '/workbench/observations')[1]
+    _, recheck = html(base, '/workbench/observations/compare',
+                      {'left': observed.rsplit('/', 1)[1], 'right': latest.rsplit('/', 1)[1]})
+    assert '具体不同' in recheck and 'S-01' in recheck and '一致 2' in recheck
+    narrow = html(base, version + '/observe', {'check': [json.dumps({'kind': 'counts'})]})[0]
+    _, unknown = html(base, '/workbench/observations/compare',
+                      {'left': observed.rsplit('/', 1)[1], 'right': narrow.rsplit('/', 1)[1]})
+    assert '未知' in unknown and '未同时保留' in unknown
+    with closing(sqlite3.connect(source)) as conn, conn:
+        conn.execute("UPDATE assay SET length_um=3.25, cassette=11 WHERE mark='S-01'")
+
     first, sealed = html(base, version + '/capture', {})
     assert '已封存' in sealed and '下载认证子库' not in sealed
     assert first in html(base, '/workbench/captures')[1]

@@ -27,6 +27,10 @@
       "command": "python3 -m examples.walkthrough preview"
     },
     {
+      "workflow_id": "observe",
+      "command": "python3 -m examples.walkthrough observe"
+    },
+    {
       "workflow_id": "capture",
       "command": "python3 -m examples.walkthrough capture"
     },

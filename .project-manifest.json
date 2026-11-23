@@ -22,6 +22,11 @@
       "responsibility": "SQLite 模式、约束和标识符语义"
     },
     {
+      "id": "observation",
+      "path": "keelsplice/observation.py",
+      "responsibility": "试算观察的检查项选择、有界留痕与逐项复查"
+    },
+    {
       "id": "recipe",
       "path": "keelsplice/recipe.py",
       "responsibility": "根与反向关系声明、版本规范化和校验"
@@ -120,6 +125,46 @@
         "capture",
         "catalog",
         "recipe"
+      ]
+    },
+    {
+      "id": "observe",
+      "name": "保留试算观察",
+      "entry": "POST /observations",
+      "success": "按读取前选定的检查项保留有界证据，不含整份生产值，也不进入封存",
+      "failure": "未知检查项或超出体积预算时不留下观察",
+      "verification": "python3 -m examples.walkthrough observe",
+      "steps": [
+        "接收请求 POST /observations",
+        "在本次读快照上计算所选检查项的证据并保存"
+      ],
+      "module_ids": [
+        "api",
+        "service",
+        "observation",
+        "capture",
+        "catalog",
+        "recipe",
+        "storage"
+      ]
+    },
+    {
+      "id": "recheck",
+      "name": "复查两条观察",
+      "entry": "POST /observations/recheck",
+      "success": "逐项给出一致、具体不同，任一侧未保留证据则标为未知",
+      "failure": "模式摘要不同拒绝复查",
+      "verification": "python3 -m examples.walkthrough observe",
+      "steps": [
+        "接收请求 POST /observations/recheck",
+        "按共同保留的检查项比较两份证据"
+      ],
+      "module_ids": [
+        "api",
+        "service",
+        "observation",
+        "storage",
+        "codec"
       ]
     },
     {
@@ -265,17 +310,18 @@
   ],
   "complexity": {
     "mechanisms": [
-      "state_machine",
-      "resource_lifecycle",
-      "error_propagation",
-      "versioning_audit",
-      "recovery_rollback",
       "batch_transaction",
-      "export_freeze",
       "capacity",
+      "differential_audit",
+      "error_propagation",
+      "export_freeze",
       "idempotency",
       "lineage",
-      "snapshot_consistency"
+      "recovery_rollback",
+      "resource_lifecycle",
+      "snapshot_consistency",
+      "state_machine",
+      "versioning_audit"
     ]
   }
 }
