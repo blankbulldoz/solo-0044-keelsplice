@@ -4,7 +4,7 @@ import re
 import sqlite3
 from urllib.parse import urlsplit
 
-from . import assets, captures, comparison, directory, evidence, preview, selection, versions
+from . import assets, captures, comparison, directory, evidence, preview, reconcile, selection, versions
 from .errors import invalid_route, message
 from .forms import MAX_BYTES, decode_form, field, version
 from .render import page, segment, text
@@ -56,6 +56,9 @@ def route(handler, path):
             if isinstance(result, str):
                 return redirect(result)
             status, body = result
+        case 'POST', ['workbench', 'recipes', 'reconcile']:
+            recipe = reconcile.recover(bench, values)
+            return redirect(f'/workbench/recipes/{segment(recipe["name"])}/{recipe["version"]}')
         case 'GET', ['workbench', 'recipes', name, number]:
             status, body = versions.detail(bench, name, version(number))
         case 'POST', ['workbench', 'recipes', name, number, action]:

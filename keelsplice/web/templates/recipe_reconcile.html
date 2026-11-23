@@ -1,0 +1,49 @@
+<div class="content">
+  <header class="pagehead">
+    <div><p class="breadcrumb"><a href="/workbench/recipes">配方版本</a> / 登记 / 目录核对</p>
+    <h1>核对漂移目录中的草稿</h1></div>
+  </header>
+  $notice
+  <dl class="facts">
+    <div><dt>原草稿绑定的模式摘要</dt><dd><code>$old_digest</code></dd></div>
+    <div><dt>当前目录模式摘要</dt><dd><code>$new_digest</code></dd></div>
+  </dl>
+  <form method="post" action="/workbench/recipes/reconcile">
+    <input type="hidden" name="source" value="$source">
+    <input type="hidden" name="name" value="$name">
+    <input type="hidden" name="row_limit" value="$limit">
+    <input type="hidden" name="roots" value="$roots">
+    <input type="hidden" name="evidence" value="$evidence">
+    <input type="hidden" name="digest" value="$old_digest">
+    <input type="hidden" name="new_digest" value="$new_digest">
+    <section aria-labelledby="root-review">
+      <h2 id="root-review">逐项核对根记录</h2>
+      <div class="scroll">
+        <table>
+          <thead><tr><th scope="col">草稿序号</th><th scope="col">表</th><th scope="col">草稿键值</th>
+          <th scope="col">人工确认</th><th scope="col">核对说明</th></tr></thead>
+          <tbody>$root_rows</tbody>
+        </table>
+      </div>
+      <p class="muted">勾选表示你已对照当前目录确认该根的表与复合主键维数；工作台不会替你勾选，也不会推断缺失行。</p>
+    </section>
+    <section aria-labelledby="edge-review">
+      <h2 id="edge-review">逐项核对反向关系</h2>
+      <div class="scroll">
+        <table>
+          <thead><tr><th scope="col">旧外键编号</th><th scope="col">填表时的含义</th>
+          <th scope="col">当前目录同编号含义</th><th scope="col">人工确认</th><th scope="col">核对说明</th></tr></thead>
+          <tbody>$edge_rows</tbody>
+        </table>
+      </div>
+      <p class="muted">即使编号刚好相同，只要父表或列映射改变，旧编号的含义就无法判定，工作台不会按新目录擅自代选。</p>
+    </section>
+    <fieldset>
+      <legend>显式提交到明确的模式版本</legend>
+      <label class="edge-choice"><input type="checkbox" name="confirmed" value="1" $can_commit>
+        我已逐项核对，仅提交勾选项，并将此配方版本绑定到当前模式摘要 <code>$new_digest</code></label>
+    </fieldset>
+    <div class="actions"><button class="primary" $can_commit>保存为新版本</button>
+      <a class="button" href="/workbench/recipes/new?source=$source">放弃草稿并重新登记</a></div>
+  </form>
+</div>

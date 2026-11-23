@@ -1,10 +1,11 @@
 """HTML recipe forms bind the visible relationship choices to a schema digest."""
 
+from . import reconcile
 from .directory import source_options
 from .errors import message
 from .forms import field, typed_json
 from .render import code, location, page, segment, text
-from ..codec import Fault
+from ..codec import Fault, dumps
 
 
 def editor(bench, alias, values=None, error='', status=200):
@@ -21,9 +22,10 @@ def editor(bench, alias, values=None, error='', status=200):
                      f'{checked}> {code(content)}</label>')
     pk_items = ''.join(f'<li>{code(name)} <span>{code(", ".join(table["pk"]))}</span></li>'
                        for name, table in schema['tables'].items())
+    evidence = dumps(reconcile.catalog_evidence(catalog))
     return status, page('登记配方', 'recipe', 'recipe_editor',
                         options=source_options(bench, alias), source=text(alias),
-                        digest=text(catalog['schema_digest']), keys=pk_items,
+                        digest=text(catalog['schema_digest']), evidence=text(evidence), keys=pk_items,
                         edges=''.join(edges) or '<p class="empty">此源库没有可选关系。</p>',
                         name=text(field(values, 'name')), roots=text(field(values, 'roots')),
                         limit=text(field(values, 'row_limit', '1000')),
@@ -46,7 +48,10 @@ def register(bench, values):
         body = dict(source=alias, roots=roots, follow_children=chosen, row_limit=int(raw_limit))
         recipe = bench.register(field(values, 'name'), body, expected_schema=field(values, 'digest'))
     except Fault as exc:
-        if exc.code in {'browser_schema', 'unknown_source', 'unsupported_schema'}:
+        if exc.code == 'browser_schema':
+            # The draft stays in the browser; hand it to the item-by-item review.
+            return reconcile.show(bench, values, message(exc))
+        if exc.code in {'unknown_source', 'unsupported_schema'}:
             raise
         return editor(bench, alias, values, message(exc), exc.status)
     return location(f'/workbench/recipes/{segment(recipe["name"])}/{recipe["version"]}')

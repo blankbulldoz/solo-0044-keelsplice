@@ -2,6 +2,7 @@
 
 import argparse
 import hashlib
+import html as html_lib
 import re
 import sqlite3
 from contextlib import closing
@@ -36,6 +37,106 @@ def html(base, path, payload=None, expected=200, origin=None):
     return path, body.decode('utf-8')
 
 
+def rebuild_foreign_keys(source):
+    """A colleague recreates the assay foreign keys while the draft stays open.
+
+    A protocol table is added and its reference is declared as a table-level
+    foreign key ahead of the composite substrate reference.  SQLite numbers
+    table-level foreign keys before column-level ones, so the new protocol
+    reference takes id 0 and the substrate reference the draft knew as id 0 is
+    renumbered to id 1 — while id 0 now means something entirely different.
+    Same id number, unknowable old meaning: the review must not guess.
+    """
+    with closing(sqlite3.connect(source)) as conn, conn:
+        rows = conn.execute('SELECT mark, region, code, cassette, length_um FROM assay').fetchall()
+        conn.execute('CREATE TABLE IF NOT EXISTS protocol (proto_id INTEGER PRIMARY KEY, label TEXT NOT NULL)')
+        conn.execute("INSERT OR IGNORE INTO protocol VALUES (1, 'default')")
+        conn.execute('DROP TABLE assay')
+        conn.execute('''CREATE TABLE assay (
+            mark TEXT PRIMARY KEY NOT NULL,
+            region TEXT,
+            code TEXT,
+            cassette INTEGER NOT NULL REFERENCES cassette,
+            proto INTEGER NOT NULL DEFAULT 1,
+            length_um REAL NOT NULL,
+            doubled REAL GENERATED ALWAYS AS (length_um * 2) STORED,
+            FOREIGN KEY (region, code) REFERENCES substrate,
+            FOREIGN KEY (proto) REFERENCES protocol(proto_id)
+        )''')
+        conn.executemany(
+            'INSERT INTO assay(mark,region,code,cassette,length_um,proto) VALUES (?,?,?,?,?,1)', rows)
+        conn.execute('CREATE INDEX assay_substrate_lookup ON assay(region,code) WHERE code IS NOT NULL')
+    with closing(sqlite3.connect(source)) as conn:
+        conn.row_factory = sqlite3.Row
+        ids = {row['id']: row['table'] for row in conn.execute('PRAGMA foreign_key_list(assay)')}
+    assert ids == {0: 'protocol', 1: 'substrate', 2: 'cassette'}, ids
+
+
+def drift_review(base, source, editor_url, form, digest, draft_evidence):
+    rebuild_foreign_keys(source)
+    # Evidence is mandatory for drift recovery; mismatched or altered evidence is refused.
+    assert '目录证据' in html(base, editor_url,
+                             {k: v for k, v in form.items() if k != 'evidence'}, expected=400)[1]
+    assert '不一致' in html(base, editor_url, form | {'digest': 'stale'}, expected=400)[1]
+    tampered = dict(form, evidence=draft_evidence.replace('"child_cols":', '"child_mapping":', 1))
+    assert '不正确' in html(base, editor_url, tampered, expected=400)[1]
+    # The stale draft is rejected with the item-by-item review page, not a dead end.
+    _, review = html(base, editor_url, form, expected=409)
+    new_digest = re.search(r'name="new_digest" value="([0-9a-f]{64})"', review)[1]
+    assert new_digest != digest
+    review_form = {k: form[k] for k in ('source', 'name', 'row_limit', 'roots', 'evidence')}
+    review_form['digest'] = digest
+    review_form['new_digest'] = new_digest
+    review_form['edge'] = form['edge']
+    # The surviving substrate root is offered for manual confirmation, while the
+    # old edge id 0 is undecidable: the new catalog reuses 0 for another meaning.
+    assert '可人工确认' in review and 'name="keep_root" value="0"' in review
+    assert '含义无法判定' in review and '不能代为选择' in review
+    assert 'name="keep_edge"' not in review
+    assert 'checked' not in review.split('逐项核对根记录')[1]
+    # A draft edge whose parent and column mapping survive the rebuild is offered
+    # for manual confirmation, but it is never preselected on the user's behalf.
+    edge_form = dict(form, edge=['0:assay', '0:frame'])
+    _, edge_review = html(base, editor_url, edge_form, expected=409)
+    assert 'name="keep_edge" value="0:frame"' in edge_review
+    assert 'checked' not in edge_review.split('逐项核对反向关系')[1]
+    # The undecidable assay edge still has no confirmable control next to frame.
+    assert edge_review.count('含义无法判定') >= 1
+    # The operator can explicitly keep only the still-meaningful frame edge.
+    keep_edge = review_form | {'edge': ['0:assay', '0:frame'],
+                               'keep_root': ['0'], 'keep_edge': ['0:frame'], 'confirmed': '1'}
+    edge_target, edge_saved = html(base, '/workbench/recipes/reconcile', keep_edge)
+    assert '投用中' in edge_saved
+    _, edge_detail = html(base, edge_target)
+    assert 'frame' in edge_detail and '外键 0' in edge_detail
+    # Submitting without the explicit confirmation is refused.
+    _, refused = html(base, '/workbench/recipes/reconcile',
+                      review_form | {'keep_root': ['0']}, expected=400)
+    assert '最终提交确认' in refused
+    # Confirming the undecidable old number is refused rather than remapped to
+    # the new edge that happens to carry the same number 0.
+    sneaky = review_form | {'keep_root': ['0'], 'keep_edge': ['0:assay'], 'confirmed': '1'}
+    assert '无法判定的旧编号' in html(base, '/workbench/recipes/reconcile', sneaky, expected=400)[1]
+    # A digest that changes again during review forces another review pass.
+    stale_review = review_form | {'new_digest': '0' * 64, 'keep_root': ['0'], 'confirmed': '1'}
+    assert '再次变化' in html(base, '/workbench/recipes/reconcile', stale_review, expected=409)[1]
+    # Explicit commit binds the new version to the current schema version only,
+    # and the undecidable edge is dropped rather than silently re-interpreted.
+    commit = review_form | {'keep_root': ['0'], 'confirmed': '1'}
+    target, saved = html(base, '/workbench/recipes/reconcile', commit)
+    assert target.startswith('/workbench/recipes/browser-swatch/') and '投用中' in saved
+    _, detail = html(base, target)
+    assert new_digest in detail and 'substrate' in detail and '未选择反向关系' in detail
+    _, preview = html(base, target + '/preview', {})
+    assert 'East' in preview and 'Mica' in preview
+    # Reopen the editor against the current catalog so the remaining baseline
+    # flow binds to the schema version that now exists in the source database.
+    _, refreshed = html(base, editor_url)
+    current_digest = re.search(r'name="digest" value="([0-9a-f]{64})"', refreshed)[1]
+    current_evidence = html_lib.unescape(re.search(r'name="evidence" value="([^"]+)"', refreshed)[1])
+    return current_digest, current_evidence
+
+
 def run(base, source, root):
     path, directory = html(base, '/')
     assert path == '/workbench' and '外键关系' in directory
@@ -47,15 +148,18 @@ def run(base, source, root):
     editor_url = '/workbench/recipes/new'
     _, editor = html(base, editor_url)
     digest = re.search(r'name="digest" value="([0-9a-f]{64})"', editor)[1]
-    form = {'source': 'microscope', 'name': 'browser-swatch', 'digest': digest,
+    draft_evidence = html_lib.unescape(re.search(r'name="evidence" value="([^"]+)"', editor)[1])
+    form = {'source': 'microscope', 'name': 'browser-swatch', 'digest': digest, 'evidence': draft_evidence,
             'row_limit': '20', 'edge': ['0:assay'],
             'roots': '[{"table":"substrate","key":["east","MICA"]}]'}
-    assert '目录已变化' in html(base, editor_url, form | {'digest': 'stale'}, expected=409)[1]
+    digest, draft_evidence = drift_review(base, source, editor_url, form, digest, draft_evidence)
+    # The substrate composite edge is now numbered 1 in the rebuilt catalog.
+    form.update(digest=digest, evidence=draft_evidence, edge=['1:assay'])
     assert '本机工作台' in html(base, editor_url, form, expected=403, origin='http://localhost:1')[1]
     _, error = html(base, editor_url, form | {'roots': 'bad'}, expected=400)
     assert '有效的 JSON' in error and 'browser-swatch' in error
     version, page = html(base, editor_url, form)
-    assert version.endswith('/1') and '投用中' in page
+    assert version.endswith('/3') and '投用中' in page
     assert 'browser-swatch' in html(base, '/workbench/recipes')[1]
 
     _, preview = html(base, version + '/preview', {})
