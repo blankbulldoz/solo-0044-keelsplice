@@ -16,6 +16,34 @@ from keelsplice.api import create_server
 
 from .walkthrough import seed
 
+REPLICA_SQL = '''
+PRAGMA journal_mode=WAL;
+PRAGMA foreign_keys=ON;
+CREATE TABLE substrate (
+    code TEXT COLLATE NOCASE NOT NULL,
+    region TEXT COLLATE NOCASE NOT NULL,
+    texture BLOB NOT NULL,
+    PRIMARY KEY (code, region)
+) WITHOUT ROWID;
+CREATE TABLE cassette (
+    serial INTEGER PRIMARY KEY,
+    label TEXT NOT NULL
+);
+CREATE TABLE assay (
+    mark TEXT PRIMARY KEY NOT NULL,
+    cassette INTEGER NOT NULL REFERENCES cassette,
+    length_um REAL NOT NULL
+);
+BEGIN;
+INSERT INTO substrate VALUES ('Mica','East',x'0000ff'), ('Basalt','West',x'fe');
+INSERT INTO cassette VALUES (11,'opal'), (12,'agate');
+INSERT INTO assay VALUES ('S-01',11,3.25), ('S-02',12,5.5);
+COMMIT;
+'''
+
+ROOTS = '[{"table":"substrate","key":["east","MICA"]},' \
+        '{"table":"cassette","key":[11]},{"table":"assay","key":["S-01"]}]'
+
 
 def open_page(base, path, payload=None, expected=200, origin=None):
     data = None if payload is None else urlencode(payload, doseq=True).encode('ascii')
@@ -34,6 +62,74 @@ def html(base, path, payload=None, expected=200, origin=None):
     path, headers, body = open_page(base, path, payload, expected, origin)
     assert headers.get_content_type() == 'text/html', path
     return path, body.decode('utf-8')
+
+
+def hidden(page, name):
+    return re.search(rf'name="{name}" value="([^"]*)"', page)[1]
+
+
+def drafts_flow(base):
+    _, editor = html(base, '/workbench/recipes/new?source=microscope')
+    form = {'source': 'microscope', 'digest': hidden(editor, 'digest'), 'revision': '',
+            'name': 'parallel-swatch', 'row_limit': '50', 'roots': ROOTS,
+            'edge': ['0:assay'], 'intent': 'save', 'switch': 'replica'}
+    _, saved = html(base, '/workbench/drafts', form)
+    assert '草稿已保存' in saved and 'parallel-swatch' in saved and hidden(saved, 'revision') == '1'
+
+    form['revision'] = hidden(saved, 'revision')
+    _, switched = html(base, '/workbench/drafts', form | {'intent': 'switch'})
+    assert '登记配方 · 源 replica' in switched and hidden(switched, 'revision') == ''
+
+    _, copied = html(base, '/workbench/drafts/copy', form)
+    assert '已创建' in copied and copied.count('需在该源编辑页确认') == 1
+    assert 'cassette' in copied and 'assay' in copied and '两源主键列或其次序不同' in copied
+    _, again = html(base, '/workbench/drafts/copy', form)
+    assert '未重复复制' in again
+
+    _, replica = html(base, '/workbench/recipes/new?source=replica')
+    assert hidden(replica, 'revision') == '1' and 'parallel-swatch' in replica
+    body = re.search(r'<textarea[^>]*name="roots"[^>]*>(.*?)</textarea>', replica, re.S)[1]
+    assert 'cassette' in body and 'assay' in body and 'substrate' not in body
+    assert body.index('cassette') < body.index('assay')
+    assert replica.count('需确认') >= 2 and '确认 2 项复制根' in replica
+
+    _, confirmed = html(base, '/workbench/drafts/confirm',
+                        {'source': 'replica', 'revision': hidden(replica, 'revision')})
+    assert '复制项已确认' in confirmed and confirmed.count('已复制') >= 2 and '确认 2 项复制根' not in confirmed
+
+    rev = hidden(confirmed, 'revision')
+    other = {'source': 'replica', 'revision': rev, 'name': 'parallel-swatch', 'row_limit': '50',
+             'roots': '[{"table":"cassette","key":[11]},{"table":"assay","key":["S-01"]},'
+                      '{"table":"cassette","key":[12]}]',
+             'intent': 'save'}
+    _, saved_other = html(base, '/workbench/drafts', other)
+    assert '草稿已保存' in saved_other
+    mine = other | {'revision': rev, 'name': 'parallel-renamed',
+                    'roots': '[{"table":"cassette","key":[11]}]'}
+    _, clash = html(base, '/workbench/drafts', mine, expected=409)
+    assert '已复制（来自并行草稿）' in clash and '需确认（已保存版本有而本页未包含）' in clash
+    assert '两侧各自编辑（本页提交有而已保存版本未包含）' in clash
+    assert 'cassette' in clash and 'parallel-renamed' in clash and 'parallel-swatch' in clash
+    _, forced = html(base, '/workbench/drafts', mine | {'revision': hidden(clash, 'revision')})
+    assert '草稿已保存' in forced and 'parallel-renamed' in forced
+
+    _, replica = html(base, '/workbench/recipes/new?source=replica')
+    register = {'source': 'replica', 'digest': hidden(replica, 'digest'),
+                'revision': hidden(replica, 'revision'), 'name': 'parallel-replica',
+                'row_limit': '50', 'roots': '[{"table":"cassette","key":[11]}]'}
+    _, stale = html(base, '/workbench/recipes/new', register | {'revision': '1'}, expected=409)
+    assert '草稿在另一页已更新' in stale and '仍然登记到 replica' in stale
+    version, page = html(base, '/workbench/recipes/new', register)
+    assert version.endswith('/1') and 'replica' in page and '投用中' in page
+
+    _, microscope = html(base, '/workbench/recipes/new?source=microscope')
+    assert 'parallel-swatch' in microscope and 'substrate' in microscope and 'replica' in microscope
+    register = {'source': 'microscope', 'digest': hidden(microscope, 'digest'),
+                'revision': hidden(microscope, 'revision'), 'name': 'parallel-microscope',
+                'row_limit': '50', 'roots': ROOTS, 'edge': ['0:assay']}
+    version, page = html(base, '/workbench/recipes/new', register)
+    assert version.endswith('/1') and 'microscope' in page and '投用中' in page
+    print('并行草稿检查通过：保存切换、兼容复制、确认标记、并发对照、各自登记到明确的源')
 
 
 def run(base, source, root):
@@ -87,6 +183,7 @@ def run(base, source, root):
         assert conn.execute("SELECT length_um FROM assay WHERE mark='S-01'").fetchone() == (3.25,)
         assert conn.execute('PRAGMA foreign_key_check').fetchall() == []
     print('浏览器端到端检查通过：目录、配方、试算、捕获、证据、对比、停用、构建、认证、下载')
+    drafts_flow(base)
 
 
 def main():
@@ -96,7 +193,11 @@ def main():
         root = Path(directory)
         source = root / 'source.sqlite'
         seed(source)
-        with create_server(('127.0.0.1', 0), root / 'state.sqlite', {'microscope': source}) as server:
+        replica = root / 'replica.sqlite'
+        with closing(sqlite3.connect(replica)) as conn:
+            conn.executescript(REPLICA_SQL)
+        sources = {'microscope': source, 'replica': replica}
+        with create_server(('127.0.0.1', 0), root / 'state.sqlite', sources) as server:
             thread = Thread(target=server.serve_forever)
             thread.start()
             try:

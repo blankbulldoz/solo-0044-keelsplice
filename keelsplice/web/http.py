@@ -4,7 +4,7 @@ import re
 import sqlite3
 from urllib.parse import urlsplit
 
-from . import assets, captures, comparison, directory, evidence, preview, selection, versions
+from . import assets, captures, comparison, directory, drafts, evidence, preview, selection, versions
 from .errors import invalid_route, message
 from .forms import MAX_BYTES, decode_form, field, version
 from .render import page, segment, text
@@ -50,12 +50,24 @@ def route(handler, path):
             status, body = versions.index(bench)
         case 'GET', ['workbench', 'recipes', 'new']:
             source = field(query, 'source', next(iter(sorted(bench.repository.sources)), ''))
-            status, body = selection.editor(bench, source)
+            status, body = selection.editor(bench, source, notice=field(query, 'notice'))
         case 'POST', ['workbench', 'recipes', 'new']:
             result = selection.register(bench, values)
             if isinstance(result, str):
                 return redirect(result)
             status, body = result
+        case 'POST', ['workbench', 'drafts']:
+            result = drafts.save(bench, values)
+            if isinstance(result, str):
+                return redirect(result)
+            status, body = result
+        case 'POST', ['workbench', 'drafts', 'confirm']:
+            result = drafts.confirm(bench, values)
+            if isinstance(result, str):
+                return redirect(result)
+            status, body = result
+        case 'POST', ['workbench', 'drafts', 'copy']:
+            status, body = drafts.copy(bench, values)
         case 'GET', ['workbench', 'recipes', name, number]:
             status, body = versions.detail(bench, name, version(number))
         case 'POST', ['workbench', 'recipes', name, number, action]:

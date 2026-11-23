@@ -18,6 +18,9 @@ CREATE TABLE IF NOT EXISTS captures (
     artifact BLOB, certificate TEXT,
     FOREIGN KEY(name, version) REFERENCES recipes(name, version)
 );
+CREATE TABLE IF NOT EXISTS drafts (
+    source TEXT PRIMARY KEY, revision INTEGER NOT NULL, payload TEXT NOT NULL
+);
 '''
 
 
@@ -102,6 +105,58 @@ class Repository:
             if update.rowcount != 1:
                 raise Fault('unknown_recipe', 'Recipe version is unknown', 404)
         return self.version(name, number)
+
+    def draft(self, source):
+        with self.session() as conn:
+            row = conn.execute('SELECT source, revision, payload FROM drafts WHERE source=?', (source,)).fetchone()
+        return None if row is None else dict(row) | {'payload': loads(row['payload'])}
+
+    def drafts(self):
+        with self.session() as conn:
+            rows = conn.execute('SELECT source, revision, payload FROM drafts ORDER BY source').fetchall()
+        return [dict(row) | {'payload': loads(row['payload'])} for row in rows]
+
+    def write_draft(self, source, expected, payload):
+        with self.session(write=True) as conn:
+            row = conn.execute('SELECT revision FROM drafts WHERE source=?', (source,)).fetchone()
+            current = row['revision'] if row else 0
+            if current != expected:
+                raise Fault('draft_conflict', 'Draft was saved by another page', 409)
+            revision = current + 1
+            if row:
+                conn.execute('UPDATE drafts SET revision=?, payload=? WHERE source=?',
+                             (revision, dumps(payload), source))
+            else:
+                conn.execute('INSERT INTO drafts VALUES (?,?,?)', (source, revision, dumps(payload)))
+        return revision
+
+    def update_draft(self, source, expected, transform):
+        with self.session(write=True) as conn:
+            row = conn.execute('SELECT revision, payload FROM drafts WHERE source=?', (source,)).fetchone()
+            if row is None:
+                raise Fault('unknown_draft', 'No saved draft for this source', 404)
+            if row['revision'] != expected:
+                raise Fault('draft_conflict', 'Draft was saved by another page', 409)
+            payload, extra = transform(loads(row['payload']))
+            if payload is None:
+                return row['revision'], extra
+            revision = row['revision'] + 1
+            conn.execute('UPDATE drafts SET revision=?, payload=? WHERE source=?', (revision, dumps(payload), source))
+        return revision, extra
+
+    def merge_draft(self, source, transform):
+        with self.session(write=True) as conn:
+            row = conn.execute('SELECT revision, payload FROM drafts WHERE source=?', (source,)).fetchone()
+            payload, extra = transform(loads(row['payload']) if row else None)
+            revision = row['revision'] if row else 0
+            if payload is not None:
+                revision += 1
+                if row:
+                    conn.execute('UPDATE drafts SET revision=?, payload=? WHERE source=?',
+                                 (revision, dumps(payload), source))
+                else:
+                    conn.execute('INSERT INTO drafts VALUES (?,?,?)', (source, revision, dumps(payload)))
+        return revision, extra
 
     def add_capture(self, name, number, sealed):
         capture_id = uuid4().hex

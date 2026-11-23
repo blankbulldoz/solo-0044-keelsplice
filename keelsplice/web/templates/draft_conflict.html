@@ -1,0 +1,11 @@
+<div class="content">
+  <header class="pagehead"><div><p class="breadcrumb"><a href="/workbench/recipes">配方版本</a> / 登记</p><h1>草稿在另一页已更新</h1></div></header>
+  <p role="alert" class="notice">源 $source 的草稿已由另一页保存为修订 $revision。对照下列内容后，选择载入已保存版本，或以本页提交覆盖。</p>
+  <section><h2>已复制（来自并行草稿）</h2><ul class="data-list">$copied</ul></section>
+  <section><h2>需确认（已保存版本有而本页未包含）</h2><ul class="data-list">$theirs</ul></section>
+  <section><h2>两侧各自编辑（本页提交有而已保存版本未包含）</h2><ul class="data-list">$mine</ul></section>
+  <div class="actions">
+    <a class="button" href="$editor">放弃本页修改，载入已保存版本</a>
+    <form method="post" action="$action">$hidden<button class="primary">$label</button></form>
+  </div>
+</div>

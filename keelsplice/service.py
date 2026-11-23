@@ -3,7 +3,7 @@
 import re
 import sqlite3
 
-from . import bundle, capture, catalog, recipe
+from . import bundle, capture, catalog, draft, recipe
 from .codec import Fault
 
 NAME = re.compile(r'[a-z][a-z0-9_-]{0,63}\Z')
@@ -29,6 +29,55 @@ class Workbench:
 
     def version(self, name, number):
         return recipe.describe(self.repository.version(name, number))
+
+    def _known(self, alias):
+        if alias not in self.repository.sources:
+            raise Fault('unknown_source', 'Source alias is not registered', 404)
+
+    def draft(self, alias):
+        self._known(alias)
+        return self.repository.draft(alias)
+
+    def drafts(self):
+        return self.repository.drafts()
+
+    def save_draft(self, alias, expected, payload):
+        self._known(alias)
+        draft.check_payload(payload)
+        stored = self.repository.draft(alias)
+        marks = stored['payload']['marks'] if stored else []
+        payload = dict(payload, marks=draft.retained_marks(marks, payload['roots']))
+        return self.repository.write_draft(alias, expected, payload)
+
+    def confirm_draft(self, alias, expected):
+        self._known(alias)
+        return self.repository.update_draft(alias, expected, draft.confirm_marks)
+
+    def copy_roots(self, alias, target, roots_text, defaults):
+        self._known(alias)
+        if not target or target == alias:
+            raise Fault('invalid_target', 'Choose a different parallel source')
+        self._known(target)
+        entries = draft.parse_roots(roots_text)
+        source_schema = self.catalog(alias)['schema']
+        target_schema = self.catalog(target)['schema']
+        compatible, skipped = [], []
+        for entry in entries:
+            reason = draft.incompatible(source_schema, target_schema, entry)
+            if reason is None:
+                compatible.append(entry)
+            else:
+                skipped.append((entry, reason))
+        copied, duplicates, created, revision = [], 0, False, None
+        if compatible:
+            def transform(stored):
+                payload, added, repeated = draft.merge(stored, compatible, alias, defaults)
+                if not added:
+                    return None, ([], repeated, False)
+                return payload, (added, repeated, stored is None)
+            revision, (copied, duplicates, created) = self.repository.merge_draft(target, transform)
+        return dict(target=target, revision=revision, created=created,
+                    copied=copied, duplicates=duplicates, skipped=skipped)
 
     def retire(self, name, number):
         return recipe.describe(self.repository.retire(name, number))

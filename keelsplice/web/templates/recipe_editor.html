@@ -1,11 +1,10 @@
 <div class="content">
-  <header class="pagehead"><div><p class="breadcrumb"><a href="/workbench/recipes">配方版本</a> / 登记</p><h1>登记配方</h1></div></header>
+  <header class="pagehead"><div><p class="breadcrumb"><a href="/workbench/recipes">配方版本</a> / 登记</p><h1>登记配方 · 源 $source</h1></div></header>
   $error
-  <form class="inline source-toolbar" method="get" action="/workbench/recipes/new">
-    <label for="source-choice">SQLite 数据源</label><select id="source-choice" name="source">$options</select><button>切换数据源</button>
-  </form>
-  <form method="post" action="/workbench/recipes/new">
-    <input type="hidden" name="source" value="$source"><input type="hidden" name="digest" value="$digest">
+  $notice
+  $report
+  <form method="post" action="/workbench/drafts">
+    <input type="hidden" name="source" value="$source"><input type="hidden" name="digest" value="$digest"><input type="hidden" name="revision" value="$revision">
     <div class="form-grid">
       <label>配方名称<input name="name" value="$name" required pattern="[a-z][a-z0-9_-]{0,63}" maxlength="64" placeholder="例如 mica-slice"></label>
       <label>封存行上限<input type="number" name="row_limit" value="$limit" min="1" max="5000" required></label>
@@ -15,10 +14,17 @@
         <label for="roots">根记录（JSON）</label>
         <textarea id="roots" name="roots" rows="8" required aria-describedby="root-format" spellcheck="false">$roots</textarea>
         <p id="root-format" class="muted">每项为 <code>{ "table": "表名", "key": [主键值] }</code>，按右侧顺序填写复合主键。</p>
+        $badges
       </section>
       <section><h2>主键列顺序</h2><ul class="key-list">$keys</ul></section>
     </div>
-    <fieldset><legend>允许反向纳入的外键</legend><div class="edge-grid">$edges</div></fieldset>
-    <div class="actions"><button class="primary">保存为新版本</button></div>
+    <fieldset><legend>允许反向纳入的外键（仅对本源生效）</legend><div class="edge-grid">$edges</div></fieldset>
+    <div class="actions">
+      <button class="primary" formaction="/workbench/recipes/new">登记到 $source</button>
+      <button name="intent" value="save" formnovalidate>保存草稿</button>
+      $confirm
+    </div>
+    $parallel
   </form>
+  $panel
 </div>

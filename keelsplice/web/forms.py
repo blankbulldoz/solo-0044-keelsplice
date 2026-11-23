@@ -31,6 +31,14 @@ def version(value):
     return int(value)
 
 
+def revision(value):
+    if not value:
+        return 0
+    if not value.isascii() or not value.isdecimal() or len(value) > 18:
+        raise Fault('invalid_revision', '草稿修订号无效，请重新打开编辑页。', 400)
+    return int(value)
+
+
 def typed_json(value):
     try:
         return json.loads(value)
