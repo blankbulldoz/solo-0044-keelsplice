@@ -76,6 +76,18 @@ class RequestHandler(BaseHTTPRequestHandler):
                 return 200, bench.certify(capture_id)
             case 'POST', ['compare']:
                 return 200, bench.compare(body)
+            case 'POST', ['ledgers']:
+                return 201, bench.open_ledger(body)
+            case 'GET', ['ledgers', name]:
+                return 200, bench.ledger(name)
+            case 'POST', ['ledgers', name, 'comparisons']:
+                return 201, bench.record_comparison(name, body)
+            case 'POST', ['ledgers', name, 'rebase']:
+                return 200, bench.rebase(name, body)
+            case 'GET', ['comparisons', comparison_id]:
+                return 200, bench.comparison(comparison_id)
+            case 'POST', ['comparisons', comparison_id, 'reviews']:
+                return 201, bench.review(comparison_id, body)
             case 'GET', ['captures', capture_id, 'database']:
                 return 200, bench.download(capture_id)
         raise Fault('unknown_route', 'Unknown endpoint', 404)

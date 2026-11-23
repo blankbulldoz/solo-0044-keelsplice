@@ -21,7 +21,8 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 2. 登记配方，填写一个或多个根及封存行上限。样例可填 `[{"table":"substrate","key":["east","MICA"]}]`，再选 `substrate → assay`。
 3. 试算查看逐表计数和实存根。点「封存当前样本」时服务重新读取源。配方绑定的模式有变化时，需要重新核对目录。
 4. 在捕获详情按实存主键追踪。可从直接入选原因或必需父行继续查看相关记录。对比页面按实存带类型主键显示两个同模式捕获的新增、移除和修改。
-5. 构建后再认证。认证后可下载文件并用其 SHA-256 或独立 SQLite 连接核对。停用配方后，既有捕获仍可完成这些操作。
+5. 在「差异清单」选一次封存作为基准，对后续捕获逐次比较并登记复核。明细会区分新增、移除、修改值和关系换目标，并给基准侧、对照侧各一个只指向实际存在那一侧的证据入口。同一变化原样复现时显示沿用的原判断和产生它的比较；变化撤销或同一键变成另一种值时，原判断留在原比较。把某次对照设为新基准后，后续比较从它出发，旧系列仍可回看。
+6. 构建后再认证。认证后可下载文件并用其 SHA-256 或独立 SQLite 连接核对。停用配方后，既有捕获仍可完成这些操作。
 
 ## JSON 接口
 
@@ -38,6 +39,11 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 | `POST /captures/{id}/trace` | 接收如 `{"table":"substrate","key":["East","Mica"]}`，返回直接证据和从零开始的根序号 |
 | `POST /captures/{id}/build`、`POST /captures/{id}/certify` | 接收空对象，构建或认证该捕获的子库 |
 | `POST /compare` | 接收 `{"left":"id-a","right":"id-b"}`，按表报告带类型主键的差异 |
+| `POST /ledgers` | 接收 `{"name":"assay-review","baseline":"id"}`，以该封存为基准建立差异清单 |
+| `GET /ledgers/{name}` | 读取基准、各次比较、当前比较的差异及复核归属；可选 `?comparison=id` 指定查看某次比较 |
+| `POST /ledgers/{name}/comparisons` | 接收 `{"candidate":"id"}`，与当前基准比较并登记为清单中的下一次比较 |
+| `POST /ledgers/{name}/rebase` | 接收 `{"baseline":"id"}`，把该封存设为清单新基准；旧比较与复核保留 |
+| `POST /comparisons/{id}/reviews` | 接收 `{"item":"token","verdict":"confirmed"\|"rejected","note":"..."}`，登记该条差异的复核 |
 | `GET /captures/{id}/database` | 返回已认证 SQLite 字节，`ETag` 为带引号的 SHA-256 |
 
 根记录中的键按目录的列顺序填写。整数为有符号 64 位 JSON 数字。字节用 `{"blob":"AAD/"}`，实数用 `{"real":"0x1.a000000000000p+1"}`，文本用 JSON 字符串。配方可以用不同拼写定位同一个 NOCASE 根，封存与追踪使用实存键。结果中的行去重，输入根出现项保留顺序。工作台近期列表显示最后登记的 50 个配方版本和最后封存的 50 次捕获，历史详情地址依然可访问。
@@ -49,5 +55,4 @@ python3 -m compileall -q keelsplice examples
 python3 -m examples.walkthrough all
 python3 -m examples.browser_walkthrough
 ```
-
 两份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。独立自动化测试套件延后。

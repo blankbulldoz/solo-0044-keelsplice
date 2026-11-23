@@ -75,6 +75,35 @@ def run(base, source, root):
     args = {'left': first.rsplit('/', 1)[1], 'right': second.rsplit('/', 1)[1]}
     _, compare = html(base, '/workbench/compare', args)
     assert 'S-01' in compare and '修改' in compare
+
+    _, ledgers = html(base, '/workbench/ledgers')
+    assert '差异清单' in ledgers
+    ledger, page = html(base, '/workbench/ledgers', {'name': 'assay-review', 'baseline': args['left']})
+    assert ledger.endswith('/assay-review') and '当前系列' not in page
+    _, page = html(base, ledger + '/comparisons', {'candidate': args['right']})
+    assert '修改值' in page and '基准侧证据' in page and '对照侧证据' in page
+    assert '设为新基准' in page
+    token = re.search(r'name="item" value="([0-9a-f]{64})"', page)[1]
+    comparison_id = re.search(r'name="comparison" value="([0-9a-f]{32})"', page)[1]
+    _, page = html(base, ledger + '/review',
+                   {'comparison': comparison_id, 'item': token, 'verdict': 'confirmed', 'note': '长度已核对'})
+    assert '本次已确认' in page and '长度已核对' in page
+
+    untouched, _ = html(base, version + '/capture', {})
+    _, page = html(base, ledger + '/comparisons', {'candidate': untouched.rsplit('/', 1)[1]})
+    assert '沿用原判断' in page and '不重复记为已核对' in page
+
+    with closing(sqlite3.connect(source)) as conn, conn:
+        conn.execute("UPDATE assay SET length_um=3.25 WHERE mark='S-01'")
+    restored, _ = html(base, version + '/capture', {})
+    _, page = html(base, ledger + '/comparisons', {'candidate': restored.rsplit('/', 1)[1]})
+    assert '已撤销的变化' in page and '原比较' in page and '没有已撤销的差异' not in page
+
+    _, page = html(base, ledger + '/rebase', {'baseline': untouched.rsplit('/', 1)[1]})
+    _, page = html(base, ledger + '/comparisons', {'candidate': restored.rsplit('/', 1)[1]})
+    assert '旧基准系列' in page and '当前系列' in page
+    assert '本次已确认' not in page and '待本次复核' in page
+    print('差异清单检查通过：四类变化、逐侧证据、复核沿用与撤销、重设基准')
     assert '已停用' in html(base, version + '/retire', {})[1]
     assert '已停止投用' in html(base, version + '/capture', {}, expected=409)[1]
     assert '已构建' in html(base, first + '/build', {})[1]

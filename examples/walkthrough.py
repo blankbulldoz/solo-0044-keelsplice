@@ -13,7 +13,7 @@ from urllib.request import Request, urlopen
 
 from keelsplice.api import create_server
 
-WORKFLOWS = ('catalog', 'recipe', 'retire', 'preview', 'capture', 'trace', 'build', 'certify', 'compare', 'download')
+WORKFLOWS = ('catalog', 'recipe', 'retire', 'preview', 'capture', 'trace', 'build', 'certify', 'compare', 'ledger', 'ledger-kinds', 'download')
 
 
 def seed(file):
@@ -112,14 +112,80 @@ def walkthrough(base, selected, source, root):
 
     diff = request('/compare', {'left': cap['id'], 'right': newer['id']})
     assert diff['changes']['assay'] == {'added': [], 'removed': [], 'modified': [['S-01']]}
+    if observe('compare', diff['changes']):
+        return
+
+    ledger = request('/ledgers', {'name': 'assay-review', 'baseline': cap['id']}, 201)
+    assert ledger['ledger']['baseline'] == cap['id']
+    assert request('/ledgers', {'name': 'assay-review', 'baseline': cap['id']}, 409)['error'] == 'ledger_exists'
+    first = request('/ledgers/assay-review/comparisons', {'candidate': newer['id']}, 201)
+    assert [item['kind'] for item in first['items']] == ['modified']
+    item = first['items'][0]
+    assert item['baseline_side'] and item['candidate_side'] and item['changed'] == ['length_um', 'doubled']
+    reviewed = request('/comparisons/' + first['id'] + '/reviews',
+                       {'item': item['token'], 'verdict': 'confirmed', 'note': '已核对长度变化'}, 201)
+    assert reviewed['reviews'][item['token']]['verdict'] == 'confirmed'
+    assert request('/comparisons/' + first['id'] + '/reviews',
+                   {'item': 'nope', 'verdict': 'confirmed'}, 404)['error'] == 'unknown_item'
+    assert request('/ledgers/assay-review/comparisons', {'candidate': cap['id']}, 201)['items'] == []
+    repeat = request('/ledgers/assay-review/comparisons', {'candidate': newer['id']}, 201)
+    carried = request('/ledgers/assay-review')
+    assert carried['current']['items'][0]['state'] == 'carried'
+    assert carried['current']['items'][0]['prior_reviews'][0]['comparison'] == first['id']
+    assert request('/ledgers/assay-review/rebase', {'baseline': newer['id']})
+    if observe('ledger', {'item': item['kind'], 'carried': carried['current']['items'][0]['state']}):
+        return
+
+    with closing(sqlite3.connect(source)) as conn, conn:
+        conn.execute("UPDATE assay SET region='West', code='Basalt' WHERE mark='S-03'")
+    kinds_body = {'source': 'microscope',
+                  'roots': [{'table': 'substrate', 'key': ['east', 'MICA']},
+                            {'table': 'substrate', 'key': ['west', 'BASALT']}],
+                  'follow_children': [{'child': 'assay', 'id': edge['id']}, {'child': 'frame', 'id': 0}],
+                  'row_limit': 60}
+    request('/recipes/kinds/versions', kinds_body, 201)
+    kind_base = request('/captures', {'name': 'kinds', 'version': 1}, 201)
+    request('/ledgers', {'name': 'kind-review', 'baseline': kind_base['id']}, 201)
+    with closing(sqlite3.connect(source)) as conn, conn:
+        conn.execute("UPDATE assay SET region='East', code='Mica' WHERE mark='S-03'")
+        conn.execute("UPDATE assay SET length_um=8.5 WHERE mark='S-02'")
+        conn.execute("INSERT INTO frame VALUES (300,'S-01','added')")
+        conn.execute("DELETE FROM frame WHERE frame_id=101")
+    kind_next = request('/captures', {'name': 'kinds', 'version': 1}, 201)
+    covered = request('/ledgers/kind-review/comparisons', {'candidate': kind_next['id']}, 201)
+    kinds = {entry['kind'] for entry in covered['items']}
+    assert kinds == {'added', 'removed', 'modified', 'retarget'}, kinds
+    retarget = next(entry for entry in covered['items'] if entry['kind'] == 'retarget')
+    relation = retarget['relations'][0]
+    assert relation['before'] == ['West', 'Basalt'] and relation['after'] == ['East', 'Mica']
+    assert relation['parent_baseline'] and relation['parent_candidate']
+    added = next(entry for entry in covered['items'] if entry['kind'] == 'added')
+    removed = next(entry for entry in covered['items'] if entry['kind'] == 'removed')
+    assert added['baseline_side'] is False and added['candidate_side'] is True
+    assert removed['baseline_side'] is True and removed['candidate_side'] is False
+
+    with closing(sqlite3.connect(source)) as conn, conn:
+        conn.execute("UPDATE assay SET region='West', code='Basalt' WHERE mark='S-03'")
+        conn.execute("UPDATE assay SET length_um=5.5 WHERE mark='S-02'")
+        conn.execute("INSERT INTO frame VALUES (101,'S-01','front')")
+        conn.execute("DELETE FROM frame WHERE frame_id=300")
+    restored = request('/captures', {'name': 'kinds', 'version': 1}, 201)
+    request('/ledgers/kind-review/comparisons', {'candidate': restored['id']}, 201)
+    settled = request('/ledgers/kind-review')
+    assert settled['current']['items'] == []
+    assert {entry['kind'] for entry in settled['withdrawn']} == {'added', 'removed', 'modified', 'retarget'}
+    assert request('/ledgers/kind-review/rebase', {'baseline': restored['id']})
+    if observe('ledger-kinds', {'kinds': sorted(kinds), 'withdrawn': len(settled['withdrawn'])}):
+        return
+
     with closing(sqlite3.connect(source)) as conn, conn:
         conn.execute('ALTER TABLE frame ADD COLUMN caption TEXT')
     assert request('/captures', lookup, 409)['error'] == 'schema_conflict'
     request('/recipes/swatch/versions', body, 201)
     changed = request('/captures', lookup | {'version': 3}, 201)
     assert request('/compare', {'left': cap['id'], 'right': changed['id']}, 409)['error'] == 'schema_conflict'
-    if observe('compare', diff['changes']):
-        return
+    assert request('/ledgers/assay-review/comparisons', {'candidate': changed['id']}, 409)['error'] == 'schema_conflict'
+    assert repeat['ordinal'] == 3
 
     data, etag = request(endpoint + '/database')
     assert sha256(data).hexdigest() == etag == certificate['sha256']

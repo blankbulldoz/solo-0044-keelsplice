@@ -1,0 +1,34 @@
+<div class="content">
+  <header class="pagehead"><div><p class="breadcrumb"><a href="/workbench/ledgers">差异清单</a> / $name</p><h1>$name</h1></div><span class="status muted">基准 $baseline</span></header>
+  <dl class="facts"><div><dt>清单基准捕获</dt><dd>$baseline</dd></div><div class="wide"><dt>模式摘要前缀</dt><dd>$digest</dd></div><div><dt>当前查看</dt><dd>$selected</dd></div></dl>
+  <section>
+    <h2>新比较</h2>
+    <form class="compare-form" method="post" action="$base/comparisons">
+      <label>对照捕获<select name="candidate" required>$captures</select></label>
+      <button class="primary">与当前基准比较</button>
+    </form>
+    <form class="compare-form" method="post" action="$base/rebase">
+      <label>下一班的新基准<select name="baseline" required>$captures</select></label>
+      <button>把此次捕获设为新基准</button>
+    </form>
+    <p class="muted">把已复核的对照捕获设为新基准后，后续比较从它出发；此前各次的复核仍留在各自的原比较。</p>
+  </section>
+  <section>
+    <h2>比较历史</h2>
+    <div class="scroll"><table><thead><tr><th scope="col">次序</th><th scope="col">基准</th><th scope="col">对照</th><th scope="col">差异条数</th><th scope="col">所属系列</th><th scope="col">推进基准</th></tr></thead><tbody>$history</tbody></table></div>
+  </section>
+  <section>
+    <h2>差异清单明细 · $selected</h2>
+    <div class="scroll"><table><thead><tr><th scope="col">表</th><th scope="col">变化</th><th scope="col">实存主键</th><th scope="col">基准侧</th><th scope="col">对照侧</th><th scope="col">复核</th><th scope="col">记录</th></tr></thead><tbody>$items</tbody></table></div>
+  </section>
+  <section>
+    <h2>已撤销的变化</h2>
+    <p class="muted">这些差异在较早比较中出现过，但未原样出现在当前比较；原判断保留在产生它的那次比较。</p>
+    <div class="scroll"><table><thead><tr><th scope="col">表</th><th scope="col">变化</th><th scope="col">实存主键</th><th scope="col">原判断</th><th scope="col">原比较</th></tr></thead><tbody>$withdrawn</tbody></table></div>
+  </section>
+  <section>
+    <h2>同一键的另一种值</h2>
+    <p class="muted">同一实存主键在当前比较中呈现为另一种变化；早先的复核不会被当成本次已核对。</p>
+    <div class="scroll"><table><thead><tr><th scope="col">表</th><th scope="col">实存主键</th><th scope="col">本次变化</th><th scope="col">早先判断</th></tr></thead><tbody>$reopened</tbody></table></div>
+  </section>
+</div>

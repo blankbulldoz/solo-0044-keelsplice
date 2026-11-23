@@ -4,7 +4,7 @@ import re
 import sqlite3
 
 from . import bundle, capture, catalog, recipe
-from .codec import Fault
+from .codec import Fault, dumps
 
 NAME = re.compile(r'[a-z][a-z0-9_-]{0,63}\Z')
 
@@ -74,7 +74,156 @@ class Workbench:
         if any(not isinstance(body[k], str) for k in ('left', 'right')):
             raise Fault('invalid_capture', 'Supply two capture identifiers')
         left, right = (self.repository.load_capture(body[k])['sealed'] for k in ('left', 'right'))
-        return {'left': body['left'], 'right': body['right'], 'changes': capture.compare(left, right)}
+        return {'left': body['left'], 'right': body['right'], 'changes': capture.compare(left, right),
+                'items': capture.differences(left, right)}
+
+    def open_ledger(self, body):
+        recipe.fields(body, ('name', 'baseline'))
+        if not isinstance(body['name'], str) or not NAME.fullmatch(body['name']):
+            raise Fault('invalid_name', 'Expected an ASCII ledger name')
+        if not isinstance(body['baseline'], str):
+            raise Fault('invalid_capture', 'Supply a capture identifier as the baseline')
+        baseline = self.repository.load_capture(body['baseline'])['sealed']
+        self.repository.add_ledger(body['name'], baseline['schema_digest'], body['baseline'])
+        return self.ledger(body['name'])
+
+    def ledger(self, name, comparison_id=None):
+        record = self.repository.ledger(name)
+        comparisons = self.repository.comparisons(name)
+        labels = {row['baseline'] for row in comparisons} | {row['candidate'] for row in comparisons}
+        labels.add(record['baseline'])
+        reviews = {row['id']: self.repository.reviews(row['id']) for row in comparisons}
+        # Reviews only follow a difference that reappears under the same
+        # baseline. A rebase starts a fresh series, so earlier verdicts stay
+        # attached to the comparison that actually judged them.
+        carried = {}
+        rendered = []
+        for row in comparisons:
+            previous = carried.setdefault(row['baseline'], {})
+            items = []
+            for item in row['items']:
+                own = reviews[row['id']].get(item['token'])
+                prior = list(previous.get(item['token'], []))
+                # A verbatim repeat keeps the earlier verdict as the standing
+                # review; a withdrawn or re-valued difference never does.
+                state = 'reviewed' if own else ('carried' if prior else 'pending')
+                items.append(dict(item, review=own, prior_reviews=prior, state=state))
+            rendered.append(dict(row, items=items))
+            for item in row['items']:
+                review = reviews[row['id']].get(item['token'])
+                if review:
+                    previous.setdefault(item['token'], []).append(
+                        dict(comparison=row['id'], ordinal=row['ordinal'],
+                             verdict=review['verdict'], note=review['note']))
+        series = [row for row in rendered if row['baseline'] == record['baseline']]
+        current = series[-1] if series else None
+        if comparison_id is None:
+            chosen = current
+        else:
+            chosen = next((row for row in rendered if row['id'] == comparison_id), None)
+            if chosen is None:
+                raise Fault('unknown_comparison', 'Comparison does not exist', 404)
+        withdrawn = []
+        reopened = []
+        if chosen:
+            # Only a change under the same baseline can be a withdrawal or a
+            # re-valuing of an earlier difference. An earlier series ended by
+            # a rebase keeps its own verdicts and is never consulted here.
+            target_series = [row for row in rendered if row['baseline'] == chosen['baseline']]
+            present = {item['token'] for item in chosen['items']}
+            current_keys = {(item['table'], tuple(item['key'])) for item in chosen['items']}
+            seen = set()
+            for row in target_series:
+                if row['id'] == chosen['id']:
+                    continue
+                for item in row['items']:
+                    identity = (item['table'], tuple(item['key']))
+                    if item['token'] in present or item['token'] in seen or identity in current_keys:
+                        continue
+                    # Absent entirely: the row matches the baseline again or is
+                    # gone, so the earlier change is genuinely withdrawn.
+                    seen.add(item['token'])
+                    withdrawn.append(dict(item, comparison=row['id'], ordinal=row['ordinal'],
+                                          review=reviews[row['id']].get(item['token'])))
+            # Same typed key, but a different change under the same baseline:
+            # the earlier verdict belongs to that earlier comparison and must
+            # not silently count as a check of this one. Keep the earlier
+            # change even without a verdict so the reopen is still visible.
+            keyed = {}
+            for row in target_series:
+                if row['id'] == chosen['id']:
+                    continue
+                for item in row['items']:
+                    review = reviews[row['id']].get(item['token'])
+                    keyed.setdefault((item['table'], tuple(item['key'])), []).append(
+                        dict(comparison=row['id'], ordinal=row['ordinal'], token=item['token'],
+                             kind=item['kind'], verdict=review['verdict'] if review else None,
+                             note=review['note'] if review else ''))
+            for item in chosen['items']:
+                earlier = keyed.get((item['table'], tuple(item['key'])))
+                if earlier and item['token'] not in {entry['token'] for entry in earlier}:
+                    reopened.append(dict(table=item['table'], key=item['key'], token=item['token'],
+                                         kind=item['kind'], earlier=earlier))
+        return {'ledger': record, 'comparisons': rendered, 'current': current, 'chosen': chosen,
+                'withdrawn': withdrawn, 'reopened': reopened,
+                'captures': self._capture_labels(labels)}
+
+    def _capture_labels(self, identifiers):
+        labels = {}
+        for capture_id in identifiers:
+            try:
+                record = self.repository.load_capture(capture_id)
+            except Fault:
+                labels[capture_id] = {'id': capture_id, 'name': None, 'version': None, 'state': None}
+            else:
+                labels[capture_id] = {key: record[key] for key in ('id', 'name', 'version', 'state')}
+        return labels
+
+    def record_comparison(self, name, body):
+        recipe.fields(body, ('candidate',))
+        if not isinstance(body['candidate'], str):
+            raise Fault('invalid_capture', 'Supply a capture identifier to compare')
+        record = self.repository.ledger(name)
+        baseline = self.repository.load_capture(record['baseline'])['sealed']
+        candidate = self.repository.load_capture(body['candidate'])['sealed']
+        if candidate['schema_digest'] != record['schema_digest']:
+            raise Fault('schema_conflict', 'Capture schema differs from the ledger binding', 409)
+        items = capture.differences(baseline, candidate)
+        row = self.repository.add_comparison(name, record['baseline'], body['candidate'], items)
+        return {'id': row['id'], 'ledger': name, 'ordinal': row['ordinal'],
+                'baseline': row['baseline'], 'candidate': row['candidate'], 'items': items}
+
+    def rebase(self, name, body):
+        recipe.fields(body, ('baseline',))
+        if not isinstance(body['baseline'], str):
+            raise Fault('invalid_capture', 'Supply a capture identifier as the new baseline')
+        record = self.repository.ledger(name)
+        baseline = self.repository.load_capture(body['baseline'])['sealed']
+        if baseline['schema_digest'] != record['schema_digest']:
+            raise Fault('schema_conflict', 'Capture schema differs from the ledger binding', 409)
+        return self.repository.set_baseline(name, body['baseline'])
+
+    def comparison(self, comparison_id):
+        row = self.repository.review(comparison_id)
+        evaluations = self.repository.reviews(comparison_id)
+        return dict(row, items=[dict(item, review=evaluations.get(item['token'])) for item in row['items']])
+
+    def review(self, comparison_id, body):
+        recipe.fields(body, ('item', 'verdict'), ('note',))
+        if not isinstance(body['item'], str):
+            raise Fault('invalid_item', 'Supply the difference item identifier', 400)
+        verdict, note = body['verdict'], body.get('note', '')
+        if verdict not in ('confirmed', 'rejected'):
+            raise Fault('invalid_verdict', 'Use confirmed or rejected', 400)
+        if not isinstance(note, str) or len(note) > 2000:
+            raise Fault('invalid_note', 'Notes must be text up to 2000 characters', 400)
+        comparison = self.repository.review(comparison_id)
+        item = next((entry for entry in comparison['items'] if entry['token'] == body['item']), None)
+        if item is None:
+            raise Fault('unknown_item', 'Difference item does not belong to this comparison', 404)
+        self.repository.add_review(comparison_id, item['token'], item['table'],
+                                   dumps(item['key']), item['kind'], verdict, note)
+        return {'comparison': comparison_id, 'reviews': self.repository.reviews(comparison_id)}
 
     def build(self, capture_id):
         record = self.repository.load_capture(capture_id)

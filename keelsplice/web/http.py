@@ -4,7 +4,7 @@ import re
 import sqlite3
 from urllib.parse import urlsplit
 
-from . import assets, captures, comparison, directory, evidence, preview, selection, versions
+from . import assets, captures, comparison, directory, evidence, preview, review, selection, versions
 from .errors import invalid_route, message
 from .forms import MAX_BYTES, decode_form, field, version
 from .render import page, segment, text
@@ -93,6 +93,20 @@ def route(handler, path):
             status, body = comparison.show(bench)
         case 'POST', ['workbench', 'compare']:
             status, body = comparison.show(bench, values)
+        case 'GET', ['workbench', 'ledgers']:
+            status, body = review.index(bench, query)
+        case 'POST', ['workbench', 'ledgers']:
+            return redirect(review.create(bench, values))
+        case 'GET', ['workbench', 'ledgers', name]:
+            status, body = review.detail(bench, name, query)
+        case 'POST', ['workbench', 'ledgers', name, action]:
+            if action == 'comparisons':
+                return redirect(review.run_comparison(bench, name, values))
+            if action == 'rebase':
+                return redirect(review.rebase(bench, name, values))
+            if action == 'review':
+                return redirect(review.review(bench, name, values))
+            raise invalid_route()
         case _:
             raise invalid_route()
     return status, body, 'text/html; charset=utf-8', {}

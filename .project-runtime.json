@@ -47,6 +47,10 @@
       "command": "python3 -m examples.walkthrough compare"
     },
     {
+      "workflow_id": "ledger",
+      "command": "python3 -m examples.walkthrough ledger"
+    },
+    {
       "workflow_id": "download",
       "command": "python3 -m examples.walkthrough download"
     },

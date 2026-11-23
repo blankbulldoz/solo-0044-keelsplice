@@ -221,6 +221,27 @@
       ]
     },
     {
+      "id": "ledger",
+      "name": "差异清单复核与新基准",
+      "entry": "POST /ledgers",
+      "success": "按类型化主键登记新增、移除、修改值和关系换目标；同一基准下原样复现的差异沿用原判断，撤销或换值的差异只在原比较保留复核；可把某次对照设为新基准",
+      "failure": "模式摘要与清单绑定不符、未知差异条目或结论取值无效时拒绝且不改变既有清单",
+      "verification": "python3 -m examples.walkthrough ledger",
+      "steps": [
+        "POST /ledgers 以一次封存建立清单基准",
+        "POST /ledgers/{name}/comparisons 按类型化主键登记差异与两侧证据",
+        "POST /comparisons/{id}/reviews 记录或更新单条差异的复核",
+        "POST /ledgers/{name}/rebase 把对照设为新基准并另起系列"
+      ],
+      "module_ids": [
+        "api",
+        "service",
+        "capture",
+        "storage",
+        "codec"
+      ]
+    },
+    {
       "id": "download",
       "name": "交接已认证成果",
       "entry": "GET /captures/{id}/database",
@@ -242,13 +263,14 @@
       "id": "workbench",
       "name": "浏览器端封存与交接",
       "entry": "GET /workbench",
-      "success": "从目录填写配方，试算实存根并封存，浏览关系证据和差异，下载独立验证的 SQLite 子库",
+      "success": "从目录填写配方，试算实存根并封存，浏览关系证据和差异，在差异清单登记复核并按需推进基准，下载独立验证的 SQLite 子库",
       "failure": "模式漂移、错误主键、跨来源表单及未认证下载有明确页面且保留持久状态",
       "verification": "python3 -m examples.browser_walkthrough",
       "steps": [
         "用目录的主键和外键填写配方并绑定模式摘要",
         "在新读事务中封存闭包并保存证据",
-        "验证成果证书和下载文件"
+        "验证成果证书和下载文件",
+        "在差异清单逐条复核差异，原样复现沿用原判断，撤销或换值的差异留待重新核对，可把对照设为新基准"
       ],
       "module_ids": [
         "web",

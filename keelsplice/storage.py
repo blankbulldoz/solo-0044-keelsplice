@@ -18,6 +18,30 @@ CREATE TABLE IF NOT EXISTS captures (
     artifact BLOB, certificate TEXT,
     FOREIGN KEY(name, version) REFERENCES recipes(name, version)
 );
+CREATE TABLE IF NOT EXISTS ledgers (
+    name TEXT PRIMARY KEY,
+    baseline TEXT NOT NULL REFERENCES captures(id),
+    schema_digest TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS comparisons (
+    id TEXT PRIMARY KEY,
+    ledger TEXT NOT NULL REFERENCES ledgers(name),
+    ordinal INTEGER NOT NULL,
+    baseline TEXT NOT NULL REFERENCES captures(id),
+    candidate TEXT NOT NULL REFERENCES captures(id),
+    changes TEXT NOT NULL,
+    UNIQUE(ledger, ordinal)
+);
+CREATE TABLE IF NOT EXISTS reviews (
+    comparison TEXT NOT NULL REFERENCES comparisons(id),
+    item TEXT NOT NULL,
+    table_name TEXT NOT NULL,
+    row_key TEXT NOT NULL,
+    kind TEXT NOT NULL CHECK(kind IN ('added','removed','modified','retarget')),
+    verdict TEXT NOT NULL CHECK(verdict IN ('confirmed','rejected')),
+    note TEXT NOT NULL,
+    PRIMARY KEY(comparison, item)
+);
 '''
 
 
@@ -131,3 +155,70 @@ class Repository:
                 conn.execute("UPDATE captures SET state='certified',certificate=? WHERE id=? AND state='built'",
                              (dumps(certificate), capture_id))
         return self.load_capture(capture_id)
+
+    def add_ledger(self, name, schema_digest, baseline):
+        with self.session(write=True) as conn:
+            if conn.execute('SELECT 1 FROM ledgers WHERE name=?', (name,)).fetchone():
+                raise Fault('ledger_exists', 'A difference ledger already uses this name', 409)
+            conn.execute('INSERT INTO ledgers VALUES(?,?,?)', (name, baseline, schema_digest))
+        return self.ledger(name)
+
+    def ledger(self, name):
+        with self.session() as conn:
+            row = conn.execute('SELECT * FROM ledgers WHERE name=?', (name,)).fetchone()
+        if row is None:
+            raise Fault('unknown_ledger', 'Difference ledger does not exist', 404)
+        return dict(row)
+
+    def recent_ledgers(self):
+        with self.session() as conn:
+            rows = conn.execute("""
+                SELECT ledgers.name, ledgers.baseline, ledgers.schema_digest, COUNT(comparisons.id) AS comparisons
+                FROM ledgers LEFT JOIN comparisons ON comparisons.ledger=ledgers.name
+                GROUP BY ledgers.name ORDER BY ledgers.rowid DESC LIMIT 50
+            """).fetchall()
+        return [dict(row) for row in rows]
+
+    def set_baseline(self, name, capture_id):
+        with self.session(write=True) as conn:
+            updated = conn.execute('UPDATE ledgers SET baseline=? WHERE name=?', (capture_id, name))
+            if updated.rowcount != 1:
+                raise Fault('unknown_ledger', 'Difference ledger does not exist', 404)
+        return self.ledger(name)
+
+    def add_comparison(self, name, baseline, candidate, items):
+        comparison_id = uuid4().hex
+        with self.session(write=True) as conn:
+            number = conn.execute('SELECT COALESCE(MAX(ordinal),0)+1 FROM comparisons WHERE ledger=?',
+                                  (name,)).fetchone()[0]
+            conn.execute('INSERT INTO comparisons VALUES(?,?,?,?,?,?)',
+                         (comparison_id, name, number, baseline, candidate, dumps(items)))
+        return dict(id=comparison_id, ledger=name, ordinal=number, baseline=baseline,
+                    candidate=candidate, items=items)
+
+    def comparisons(self, name):
+        with self.session() as conn:
+            rows = conn.execute('SELECT * FROM comparisons WHERE ledger=? ORDER BY ordinal', (name,)).fetchall()
+        return [dict(row) | {'items': loads(row['changes'])} for row in rows]
+
+    def review(self, comparison_id):
+        with self.session() as conn:
+            row = conn.execute('SELECT * FROM comparisons WHERE id=?', (comparison_id,)).fetchone()
+        if row is None:
+            raise Fault('unknown_comparison', 'Comparison does not exist', 404)
+        return dict(row) | {'items': loads(row['changes'])}
+
+    def add_review(self, comparison_id, item, table, key, kind, verdict, note):
+        with self.session(write=True) as conn:
+            conn.execute("""INSERT INTO reviews (comparison,item,table_name,row_key,kind,verdict,note)
+                VALUES(?,?,?,?,?,?,?)
+                ON CONFLICT(comparison,item) DO UPDATE SET
+                    table_name=excluded.table_name, row_key=excluded.row_key, kind=excluded.kind,
+                    verdict=excluded.verdict, note=excluded.note""",
+                (comparison_id, item, table, key, kind, verdict, note))
+        return self.reviews(comparison_id)
+
+    def reviews(self, comparison_id):
+        with self.session() as conn:
+            rows = conn.execute('SELECT * FROM reviews WHERE comparison=? ORDER BY rowid', (comparison_id,)).fetchall()
+        return {row['item']: dict(row) for row in rows}

@@ -1,0 +1,11 @@
+<div class="content">
+  <header class="pagehead"><h1>差异清单</h1></header>
+  <p class="notice info">清单把每次对比中需要复核的差异逐条登记。同一差异原样出现在新对比里时可看到既有复核；变化被撤销或同一键变成另一种值时，原判断仍留在原比较。</p>
+  <form class="compare-form" method="post" action="/workbench/ledgers">
+    <label>清单名称<input name="name" required pattern="[a-z][a-z0-9_-]{0,63}" maxlength="64" placeholder="例如 assay-review" value="$name"></label>
+    <label>基准捕获<select name="baseline" required>$captures</select></label>
+    <button class="primary">建立清单</button>
+  </form>
+  $error
+  <div class="scroll"><table><caption>最近 50 个清单</caption><thead><tr><th scope="col">清单</th><th scope="col">基准捕获</th><th scope="col">比较次数</th></tr></thead><tbody>$rows</tbody></table></div>
+</div>
