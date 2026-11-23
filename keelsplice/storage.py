@@ -2,6 +2,7 @@
 
 import sqlite3
 from contextlib import closing, contextmanager
+from datetime import datetime, timezone
 from pathlib import Path
 from uuid import uuid4
 
@@ -18,6 +19,12 @@ CREATE TABLE IF NOT EXISTS captures (
     artifact BLOB, certificate TEXT,
     FOREIGN KEY(name, version) REFERENCES recipes(name, version)
 );
+CREATE TABLE IF NOT EXISTS shares (
+    token TEXT PRIMARY KEY, capture_id TEXT NOT NULL, view TEXT NOT NULL,
+    revoked INTEGER NOT NULL DEFAULT 0, created_at TEXT NOT NULL,
+    FOREIGN KEY(capture_id) REFERENCES captures(id)
+);
+CREATE INDEX IF NOT EXISTS shares_by_capture ON shares(capture_id);
 '''
 
 
@@ -131,3 +138,35 @@ class Repository:
                 conn.execute("UPDATE captures SET state='certified',certificate=? WHERE id=? AND state='built'",
                              (dumps(certificate), capture_id))
         return self.load_capture(capture_id)
+
+    def add_share(self, capture_id, view):
+        token = uuid4().hex
+        with self.session(write=True) as conn:
+            conn.execute('INSERT INTO shares (token,capture_id,view,revoked,created_at) VALUES (?,?,?,0,?)',
+                         (token, capture_id, dumps(view), datetime.now(timezone.utc).isoformat(timespec='seconds')))
+        return self.load_share(token)
+
+    def load_share(self, token, with_view=True):
+        columns = 'token,capture_id,revoked,created_at' + (',view' if with_view else '')
+        with self.session() as conn:
+            row = conn.execute(f'SELECT {columns} FROM shares WHERE token=?', (token,)).fetchone()
+        if row is None:
+            raise Fault('unknown_share', 'Share does not exist', 404)
+        record = dict(row) | {'id': row['token']}
+        if with_view:
+            record['view'] = loads(row['view'])
+        return record
+
+    def shares_for(self, capture_id):
+        with self.session() as conn:
+            rows = conn.execute(
+                'SELECT token,capture_id,revoked,created_at,view FROM shares WHERE capture_id=? ORDER BY rowid',
+                (capture_id,)).fetchall()
+        return [dict(row) | {'id': row['token'], 'view': loads(row['view'])} for row in rows]
+
+    def revoke_share(self, token):
+        with self.session(write=True) as conn:
+            update = conn.execute('UPDATE shares SET revoked=1 WHERE token=?', (token,))
+            if update.rowcount != 1:
+                raise Fault('unknown_share', 'Share does not exist', 404)
+        return self.load_share(token)

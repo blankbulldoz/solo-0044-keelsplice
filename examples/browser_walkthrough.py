@@ -69,6 +69,21 @@ def run(base, source, root):
                             {'table': 'substrate', 'key': '["east","MICA"]'}, expected=404)[1]
     assert '需先认证' in html(base, first + '/database', expected=409)[1]
 
+    path, share_page = html(base, first + '/share', {
+        'table': 'cassette', 'key': '[11]', 'direction': 'parents', 'edge': '', 'depth': '3'})
+    token = path.rsplit('/', 1)[1]
+    assert '冻结证据视图' in share_page and '环或重合' in share_page
+    other_path, other_page = html(base, first + '/share', {
+        'table': 'substrate', 'key': '["East","Mica"]', 'direction': 'children',
+        'edge': '0:assay', 'depth': '2'})
+    other = other_path.rsplit('/', 1)[1]
+    _, listed = html(base, first)
+    assert '分享编号' in listed and token in listed and other in listed
+    assert '"' not in token and 'East' not in token and ':' not in token
+    path, _ = html(base, '/workbench/shares/' + other + '/withdraw', {})
+    assert path == '/workbench/captures' and '已撤回' in html(base, first)[1]
+    assert '冻结证据视图' in html(base, '/workbench/shares/' + token)[1]
+
     with closing(sqlite3.connect(source)) as conn, conn:
         conn.execute("UPDATE assay SET length_um=7 WHERE mark='S-01'")
     second, _ = html(base, version + '/capture', {})
@@ -86,7 +101,19 @@ def run(base, source, root):
     with closing(sqlite3.connect(handoff)) as conn:
         assert conn.execute("SELECT length_um FROM assay WHERE mark='S-01'").fetchone() == (3.25,)
         assert conn.execute('PRAGMA foreign_key_check').fetchall() == []
-    print('浏览器端到端检查通过：目录、配方、试算、捕获、证据、对比、停用、构建、认证、下载')
+    print('浏览器端到端检查通过：目录、配方、试算、捕获、证据、分享、对比、停用、构建、认证、下载')
+    return first, token, other
+
+
+def restart(base, first, token, other):
+    """Open a fresh process whose source can no longer serve the capture."""
+    assert '无法处理当前数据' in html(base, '/workbench?source=microscope', expected=422)[1]
+    path, page = html(base, '/workbench/shares/' + token)
+    assert path == '/workbench/shares/' + token
+    assert '冻结证据视图' in page and 'cassette' in page and '环或重合' in page
+    assert '已撤回' in html(base, '/workbench/shares/' + other, expected=410)[1]
+    assert token in html(base, first)[1]
+    print('重启后分享检查通过：源文件已替换，未撤回的分享仍展示冻结范围')
 
 
 def main():
@@ -96,11 +123,22 @@ def main():
         root = Path(directory)
         source = root / 'source.sqlite'
         seed(source)
-        with create_server(('127.0.0.1', 0), root / 'state.sqlite', {'microscope': source}) as server:
+        state = root / 'state.sqlite'
+        with create_server(('127.0.0.1', 0), state, {'microscope': source}) as server:
             thread = Thread(target=server.serve_forever)
             thread.start()
             try:
-                run(f'http://127.0.0.1:{server.server_port}', source, root)
+                first, token, other = run(f'http://127.0.0.1:{server.server_port}', source, root)
+            finally:
+                server.shutdown()
+                thread.join()
+        disconnected = root / 'disconnected.sqlite'
+        disconnected.write_bytes(b'not a sqlite database')
+        with create_server(('127.0.0.1', 0), state, {'microscope': disconnected}) as server:
+            thread = Thread(target=server.serve_forever)
+            thread.start()
+            try:
+                restart(f'http://127.0.0.1:{server.server_port}', first, token, other)
             finally:
                 server.shutdown()
                 thread.join()

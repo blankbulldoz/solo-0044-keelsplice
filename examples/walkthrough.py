@@ -13,7 +13,8 @@ from urllib.request import Request, urlopen
 
 from keelsplice.api import create_server
 
-WORKFLOWS = ('catalog', 'recipe', 'retire', 'preview', 'capture', 'trace', 'build', 'certify', 'compare', 'download')
+WORKFLOWS = ('catalog', 'recipe', 'retire', 'preview', 'capture', 'trace', 'share',
+             'build', 'certify', 'compare', 'download')
 
 
 def seed(file):
@@ -94,6 +95,28 @@ def walkthrough(base, selected, source, root):
     assert traced['roots'] == [0] and len(traced['causes']) == 2
     assert request(endpoint + '/trace', {'table': 'substrate','key':['east','MICA']}, 404)['error'] == 'row_not_captured'
     if observe('trace', traced):
+        return
+
+    branch = request(endpoint + '/shares', {'anchor': {'table': 'substrate', 'key': ['East', 'Mica']},
+                                            'direction': 'children', 'edge': {'child': 'assay', 'id': edge['id']},
+                                            'depth': 3}, 201)
+    parent = request(endpoint + '/shares', {'anchor': {'table': 'substrate', 'key': ['East', 'Mica']},
+                                            'direction': 'parents', 'depth': 2}, 201)
+    ring = request(endpoint + '/shares', {'anchor': {'table': 'cassette', 'key': [11]},
+                                          'direction': 'parents', 'depth': 3}, 201)
+    assert branch['capture_digest'] == parent['capture_digest'] == ring['capture_digest']
+    assert branch['seal'] != parent['seal'] and ':' not in branch['id'] and 'East' not in branch['id']
+    view = request('/shares/' + branch['id'])
+    assert view['summary'] == branch['summary'] and view['rows'][0]['table'] == 'substrate'
+    assert {row['table'] for row in view['rows']} == {'substrate', 'assay'}
+    assert request('/shares/' + ring['id'])['summary']['revisits'] == 1
+    request('/shares/' + parent['id'] + '/withdraw', {})
+    assert request('/shares/' + parent['id'], status=410)['error'] == 'share_revoked'
+    assert request('/shares/' + branch['id'])['seal'] == view['seal']
+    assert request('/shares/absent', status=404)['error'] == 'unknown_share'
+    if observe('share', {'rows': view['summary']['rows'], 'revisits': request('/shares/' + ring['id'])['summary']['revisits'],
+                         'shared_capture': branch['capture_digest'] == ring['capture_digest'],
+                         'survives_withdrawal': True}):
         return
 
     assert request(endpoint + '/certify', {}, 409)['error'] == 'fixture_not_built'

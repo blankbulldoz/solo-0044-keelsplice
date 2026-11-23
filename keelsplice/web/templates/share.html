@@ -1,0 +1,22 @@
+<div class="content">
+  <header class="pagehead"><div><p class="breadcrumb">冻结证据视图 / 分享</p><h1>冻结证据视图</h1></div>
+    <span class="status ready">已冻结</span></header>
+  <p class="notice info">这段只展示分享人从同一次捕获中选定的分支范围。链接只带分享编号，服务重启后仍可打开。</p>
+  <dl class="facts">
+    <div><dt>入选行</dt><dd>$rows</dd></div><div><dt>关系见证</dt><dd>$witnesses</dd></div>
+    <div><dt>环或重合到达</dt><dd>$revisits</dd></div><div><dt>分享编号</dt><dd><code>$id</code></dd></div>
+    <div><dt>创建时间</dt><dd>$created</dd></div><div class="wide"><dt>选定范围</dt><dd>$selection</dd></div>
+  </dl>
+  <section><h2>来源归属</h2>
+    <dl class="facts"><div class="wide"><dt>冻结捕获摘要</dt><dd>$capture_digest</dd></div>
+      <div class="wide"><dt>模式摘要</dt><dd>$schema_digest</dd></div>
+      <div class="wide"><dt>分享内容封印</dt><dd>$seal</dd></div></dl>
+    <p class="muted">同一冻结捕获的其他分享会显示相同的捕获摘要，可据此核对是否同源；这里的链接只打开分享人选中并冻结的这段，不含该捕获的其余行。</p>
+  </section>
+  <section><h2>这段选中的行</h2><div class="scroll"><table>
+    <thead><tr><th scope="col">表</th><th scope="col">实存主键</th><th scope="col">距锚点</th><th scope="col">封存值</th></tr></thead>
+    <tbody>$row_rows</tbody></table></div></section>
+  <section><h2>这段经过的关系</h2><div class="scroll"><table>
+    <thead><tr><th scope="col">距锚点</th><th scope="col">方向</th><th scope="col">外键</th><th scope="col">来源行</th><th scope="col">目标行</th><th scope="col">到达</th></tr></thead>
+    <tbody>$arc_rows</tbody></table></div></section>
+</div>

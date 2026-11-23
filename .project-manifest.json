@@ -32,6 +32,11 @@
       "responsibility": "沿入出关系选样、追踪和比较"
     },
     {
+      "id": "share",
+      "path": "keelsplice/share.py",
+      "responsibility": "从封存捕获裁剪冻结分享范围、封印与复核"
+    },
+    {
       "id": "codec",
       "path": "keelsplice/codec.py",
       "responsibility": "SQLite 值类型、主键及稳定摘要"
@@ -159,6 +164,27 @@
         "capture",
         "storage",
         "codec"
+      ]
+    },
+    {
+      "id": "share",
+      "name": "冻结证据分享",
+      "entry": "POST /captures/{id}/shares",
+      "success": "从同一次封存捕获裁剪选定分支，保存带封印的分享和不透明链接，撤回后仅该链接失效",
+      "failure": "未知锚点、方向或深度被拒绝；已撤回的分享不再展示内容，其他分享仍可回看",
+      "verification": "python3 -m examples.walkthrough share",
+      "steps": [
+        "两位操作者从同一次捕获各选一段分支并冻结为分享",
+        "分享地址只含不透明编号，重启后仍可打开并核对冻结捕获摘要",
+        "撤回其中一份后其余分享仍能回看自己那段"
+      ],
+      "module_ids": [
+        "api",
+        "service",
+        "share",
+        "storage",
+        "codec",
+        "web"
       ]
     },
     {

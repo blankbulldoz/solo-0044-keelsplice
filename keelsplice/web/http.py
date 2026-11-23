@@ -4,7 +4,7 @@ import re
 import sqlite3
 from urllib.parse import urlsplit
 
-from . import assets, captures, comparison, directory, evidence, preview, selection, versions
+from . import assets, captures, comparison, directory, evidence, preview, selection, shares, versions
 from .errors import invalid_route, message
 from .forms import MAX_BYTES, decode_form, field, version
 from .render import page, segment, text
@@ -84,11 +84,19 @@ def route(handler, path):
         case 'POST', ['workbench', 'captures', capture_id, action]:
             if action == 'trace':
                 status, body = evidence.show(bench, capture_id, values)
+            elif action == 'share':
+                record = shares.create(bench, capture_id, values)
+                return redirect(shares.link(record['id']))
             elif action in ('build', 'certify'):
                 (bench.build if action == 'build' else bench.certify)(capture_id)
                 return redirect(f'/workbench/captures/{segment(capture_id)}')
             else:
                 raise invalid_route()
+        case 'GET', ['workbench', 'shares', token]:
+            status, body = shares.show(bench, token)
+        case 'POST', ['workbench', 'shares', token, 'withdraw']:
+            bench.withdraw(token)
+            return redirect('/workbench/captures')
         case 'GET', ['workbench', 'compare']:
             status, body = comparison.show(bench)
         case 'POST', ['workbench', 'compare']:

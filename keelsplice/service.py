@@ -3,7 +3,7 @@
 import re
 import sqlite3
 
-from . import bundle, capture, catalog, recipe
+from . import bundle, capture, catalog, recipe, share as sharing
 from .codec import Fault
 
 NAME = re.compile(r'[a-z][a-z0-9_-]{0,63}\Z')
@@ -106,3 +106,26 @@ class Workbench:
         if bundle.digest_bytes(data) != sha:
             raise Fault('artifact_integrity', 'Stored fixture bytes do not match the certificate', 409)
         return data, sha
+
+    def share(self, capture_id, body):
+        record = self.repository.load_capture(capture_id)
+        selection = sharing.normalize(record['sealed']['schema'], body)
+        return sharing.describe(self.repository.add_share(capture_id, sharing.freeze(record['sealed'], selection)))
+
+    def shares(self, capture_id):
+        self.repository.load_capture(capture_id)
+        return [sharing.describe(record) for record in self.repository.shares_for(capture_id)]
+
+    def shared(self, token):
+        record = self.repository.load_share(token)
+        if record['revoked']:
+            raise Fault('share_revoked', 'This share was withdrawn by the person who made it', 410)
+        sealed = self.repository.load_capture(record['capture_id'])['sealed']
+        view = sharing.open_view(sealed, record['view'])
+        return {'id': token, 'created_at': record['created_at'], 'capture_digest': view['capture_digest'],
+                'summary': view['summary'], 'selection': view['selection'], 'rows': view['rows'],
+                'arcs': view['arcs'], 'columns': view['columns'], 'seal': view['seal'],
+                'schema_digest': view['schema_digest']}
+
+    def withdraw(self, token):
+        return sharing.describe(self.repository.revoke_share(token))

@@ -11,7 +11,7 @@ MESSAGES = {
     'invalid_key': '请按目录中的列顺序填写完整主键，各分量均须有值。',
     'invalid_value': '主键值须使用有效的 SQLite 类型编码。',
     'invalid_roots': '根记录须为包含 1 至 256 项的 JSON 数组。',
-    'invalid_edge': '选中的外键已不在当前目录中。',
+    'invalid_edge': '选中的外键与当前捕获或目录不一致。',
     'invalid_edges': '最多可选 256 条反向关系。',
     'invalid_limit': '封存行上限须为 1 至 5,000 的整数。',
     'unknown_recipe': '配方版本不存在。',
@@ -36,6 +36,12 @@ MESSAGES = {
     'artifact_reference': '子库的外键复核失败。',
     'artifact_schema': '子库模式与封存模式不一致。',
     'artifact_content': '子库行内容与封存内容不一致。',
+    'unknown_share': '找不到这份分享，链接可能不完整。',
+    'share_revoked': '这份分享已被分享人撤回。',
+    'share_integrity': '分享内容与保存时的封印不一致。',
+    'share_source_mismatch': '分享引用的冻结捕获已不一致。',
+    'invalid_direction': '分支方向须为双向、仅父行或仅子行。',
+    'invalid_depth': '分享深度须为 1 至 12 的整数。',
     'unknown_route': '找不到指定页面。',
 }
 

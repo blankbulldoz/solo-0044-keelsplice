@@ -74,6 +74,15 @@ class RequestHandler(BaseHTTPRequestHandler):
             case 'POST', ['captures', capture_id, 'certify']:
                 fields(body)
                 return 200, bench.certify(capture_id)
+            case 'POST', ['captures', capture_id, 'shares']:
+                return 201, bench.share(capture_id, body)
+            case 'GET', ['captures', capture_id, 'shares']:
+                return 200, {'shares': bench.shares(capture_id)}
+            case 'GET', ['shares', token]:
+                return 200, bench.shared(token)
+            case 'POST', ['shares', token, 'withdraw']:
+                fields(body)
+                return 200, bench.withdraw(token)
             case 'POST', ['compare']:
                 return 200, bench.compare(body)
             case 'GET', ['captures', capture_id, 'database']:

@@ -35,6 +35,10 @@
       "command": "python3 -m examples.walkthrough trace"
     },
     {
+      "workflow_id": "share",
+      "command": "python3 -m examples.walkthrough share"
+    },
+    {
       "workflow_id": "build",
       "command": "python3 -m examples.walkthrough build"
     },
