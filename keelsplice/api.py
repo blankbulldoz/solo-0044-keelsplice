@@ -49,10 +49,29 @@ class RequestHandler(BaseHTTPRequestHandler):
         if path.query or path.fragment:
             raise Fault('invalid_query', 'Use the JSON body for parameters', 400)
         bench = self.server.workbench
-        body = self.read_body() if self.command == 'POST' else None
+        body = self.read_body() if self.command in ('POST', 'PUT') else None
         match self.command, parts:
             case 'GET', ['sources', alias, 'catalog']:
                 return 200, bench.catalog(alias)
+            case 'POST', ['sources', alias, 'check']:
+                fields(body)
+                check, notifications = bench.check_source(alias)
+                return 200, {'check': check, 'notifications': notifications}
+            case 'PUT', ['watches']:
+                return 201, bench.create_watch(body)
+            case 'GET', ['watches']:
+                return 200, {'watches': bench.watches()}
+            case 'GET', ['watches', watch_id]:
+                return 200, bench.watch_detail(watch_id)
+            case 'DELETE', ['watches', watch_id]:
+                return 200, bench.retire_watch(watch_id)
+            case 'GET', ['notifications']:
+                return 200, {'notifications': bench.notifications()}
+            case 'GET', ['notifications', notification_id]:
+                return 200, bench.notification_detail(notification_id)
+            case 'POST', ['notifications', notification_id, 'acknowledge']:
+                fields(body)
+                return 200, bench.acknowledge(notification_id)
             case 'POST', ['recipes', name, 'versions']:
                 return 201, bench.register(name, body)
             case 'GET', ['recipes', name, 'versions', number] if VERSION.fullmatch(number) and int(number) < 2**63:
@@ -114,6 +133,8 @@ class RequestHandler(BaseHTTPRequestHandler):
 
     do_GET = handle_request
     do_POST = handle_request
+    do_PUT = handle_request
+    do_DELETE = handle_request
 
 
 def create_server(address, repo, sources):

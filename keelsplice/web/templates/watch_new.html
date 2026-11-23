@@ -1,0 +1,24 @@
+<div class="content">
+  <header class="pagehead"><div><p class="breadcrumb"><a href="/workbench/watches">源模式关注</a> / 登记</p><h1>登记关注</h1></div></header>
+  $error
+  <form class="inline source-toolbar" method="get" action="/workbench/watches/new">
+    <label for="source-choice">SQLite 数据源</label><select id="source-choice" name="source">$options</select><button>切换数据源</button>
+  </form>
+  <form method="post" action="/workbench/watches/new">
+    <input type="hidden" name="source" value="$source">
+    <fieldset>
+      <legend>可关注的外键关系（真实列映射，索引变化不会告警）</legend>
+      <div class="edge-grid">$edge_choices</div>
+    </fieldset>
+    <fieldset>
+      <legend>可关注的主键定义</legend>
+      <div class="edge-grid">$pk_choices</div>
+    </fieldset>
+    <div class="form-grid">
+      <label>连续核对窗口（秒）<input type="number" name="continuity_seconds" value="$continuity" min="1" max="604800" required></label>
+      <label>备注（可选）<input name="note" value="$note" maxlength="500"></label>
+    </div>
+    <p class="muted">两次成功核对之间若读不到源库，或间隔超过该窗口，即使结构相同也会标记为「结构相同但存在未观测区间」。</p>
+    <div class="actions"><button class="primary">建立基线并加入关注</button></div>
+  </form>
+</div>

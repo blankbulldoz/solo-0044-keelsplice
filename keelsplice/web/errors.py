@@ -37,6 +37,13 @@ MESSAGES = {
     'artifact_schema': '子库模式与封存模式不一致。',
     'artifact_content': '子库行内容与封存内容不一致。',
     'unknown_route': '找不到指定页面。',
+    'invalid_watch': '关注对象的形状不符合要求。',
+    'invalid_continuity': '连续核对窗口的秒数超出允许范围。',
+    'watch_exists': '这个结构已经在关注列表中。',
+    'unknown_watch': '找不到指定的关注。',
+    'watch_subject_missing': '关注对象不在当前目录中，无法建立基线。',
+    'unknown_notification': '找不到指定的通知。',
+    'no_watch': '这个源库还没有关注项，先登记关注后再核对。',
 }
 
 
@@ -44,7 +51,6 @@ def message(exc):
     return MESSAGES.get(exc.code, str(exc) if exc.code in {
         'browser_form', 'browser_origin', 'browser_schema', 'invalid_json', 'invalid_version'
     } else '工作台无法完成这次操作。')
-
 
 def invalid_route():
     return Fault('unknown_route', '找不到指定页面。', 404)

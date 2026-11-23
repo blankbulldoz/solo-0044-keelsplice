@@ -1,0 +1,24 @@
+<div class="content">
+  <header class="pagehead">
+    <div><p class="breadcrumb"><a href="/workbench/watches">源模式关注</a> / <a href="$watch_href">关注详情</a> / 通知</p><h1>通知详情</h1></div>
+  </header>
+  <dl class="facts">
+    <div><dt>关注对象</dt><dd>$watch_label</dd></div>
+    <div><dt>生成时间</dt><dd>$created</dd></div>
+    <div><dt>确认状态</dt><dd>$acknowledged</dd></div>
+    <div class="wide"><dt>摘要</dt><dd>$summary</dd></div>
+    <div class="wide"><dt>触发的目录核对</dt><dd>$check_line</dd></div>
+  </dl>
+  <section aria-labelledby="evidence">
+    <h2 id="evidence">当时各次目录结论（已随通知固化）</h2>
+    <div class="scroll"><table>
+      <thead><tr><th scope="col">时间（UTC）</th><th scope="col">读取结果</th><th scope="col">关注对象结论</th><th scope="col">结构摘要前缀</th><th scope="col">失败原因</th></tr></thead>
+      <tbody>$evidence</tbody>
+    </table></div>
+  </section>
+  <section aria-labelledby="recipients">
+    <h2 id="recipients">当时使用这条结构的配方版本</h2>
+    <ul class="data-list">$recipients</ul>
+  </section>
+  <div class="actions">$ack_form</div>
+</div>

@@ -3,6 +3,7 @@
 import json
 import sqlite3
 import sys
+import time
 from contextlib import closing
 from hashlib import sha256
 from pathlib import Path
@@ -13,7 +14,8 @@ from urllib.request import Request, urlopen
 
 from keelsplice.api import create_server
 
-WORKFLOWS = ('catalog', 'recipe', 'retire', 'preview', 'capture', 'trace', 'build', 'certify', 'compare', 'download')
+WORKFLOWS = ('catalog', 'recipe', 'retire', 'preview', 'capture', 'trace', 'build', 'certify', 'compare',
+             'download', 'watch')
 
 
 def seed(file):
@@ -132,6 +134,134 @@ def walkthrough(base, selected, source, root):
         assert conn.execute('SELECT texture FROM substrate').fetchone()[0] == b'\x00\x00\xff'
         assert conn.execute('SELECT count(*) FROM frame').fetchone()[0] == 0
     observe('download', {'sha256': etag, 'source_changes_isolated': True, 'length_and_generated': row})
+    watch(base, selected, source, root)
+
+
+def recreate_assay(conn, with_foreign_key):
+    """Rebuild the assay table, optionally without its substrate foreign key."""
+    if with_foreign_key:
+        conn.execute('''CREATE TABLE assay_new (
+            mark TEXT PRIMARY KEY NOT NULL, region TEXT, code TEXT, cassette INTEGER NOT NULL REFERENCES cassette,
+            length_um REAL NOT NULL, doubled REAL GENERATED ALWAYS AS (length_um * 2) STORED,
+            FOREIGN KEY (region, code) REFERENCES substrate)''')
+    else:
+        conn.execute('''CREATE TABLE assay_new (
+            mark TEXT PRIMARY KEY NOT NULL, region TEXT, code TEXT, cassette INTEGER NOT NULL REFERENCES cassette,
+            length_um REAL NOT NULL, doubled REAL GENERATED ALWAYS AS (length_um * 2) STORED)''')
+    conn.execute('INSERT INTO assay_new(mark,region,code,cassette,length_um) '
+                 'SELECT mark,region,code,cassette,length_um FROM assay')
+    conn.execute('DROP TABLE assay')
+    conn.execute('ALTER TABLE assay_new RENAME TO assay')
+
+
+def watch(base, selected, source, root):
+    catalog = call(base, '/sources/microscope/catalog')
+    edge = next(edge for edge in catalog['schema']['edges'] if edge['child'] == 'assay' and edge['parent'] == 'substrate')
+    body = {'source': 'microscope', 'roots': [{'table': 'substrate', 'key': ['east', 'MICA']}],
+            'follow_children': [{'child': 'assay', 'id': edge['id']}], 'row_limit': 20}
+    call(base, '/recipes/edge-user/versions', body, 201)
+
+    # Without a watch, catalog reads leave no check evidence.
+    assert call(base, '/sources/microscope/check', {}, status=409)['error'] == 'no_watch'
+
+    watch_body = {'source': 'microscope', 'kind': 'edge', 'child': 'assay', 'id': edge['id'],
+                  'continuity_seconds': 1}
+    created = _call(base, '/watches', watch_body, 'PUT', 201)
+    watch_id = created['watch']['id']
+    assert created['latest_state'] == 'verified'
+    assert _call(base, '/watches', watch_body, 'PUT', 409)['error'] == 'watch_exists'
+
+    # An unrelated index does not change the edge fingerprint.
+    with closing(sqlite3.connect(source)) as conn, conn:
+        conn.execute('CREATE INDEX assay_cassette_extra ON assay(cassette)')
+    indexed = call(base, '/sources/microscope/check', {})
+    detail = call(base, f'/watches/{watch_id}')
+    assert [entry['state'] for entry in detail['timeline']] == ['verified', 'verified']
+    assert indexed['notifications'] == []
+
+    # A gap beyond the continuity window with the same structure reopens the range.
+    time.sleep(1.05)
+    call(base, '/sources/microscope/check', {})
+    detail = call(base, f'/watches/{watch_id}')
+    assert detail['timeline'][-1]['state'] == 'reopened'
+    assert {segment['kind'] for segment in detail['segments']} >= {'verified', 'unobserved'}
+
+    # Dropping the selected relationship is an observed change and notifies the recipe.
+    # SQLite renumbers the surviving cassette foreign key to id 0, so the watched id
+    # either disappears or resolves to a different column mapping.
+    before = len(call(base, '/notifications')['notifications'])
+    with closing(sqlite3.connect(source)) as conn, conn:
+        recreate_assay(conn, with_foreign_key=False)
+    dropped = call(base, '/sources/microscope/check', {})
+    detail = call(base, f'/watches/{watch_id}')
+    assert detail['timeline'][-1]['state'] in ('changed', 'missing')
+    assert dropped['notifications'] and dropped['notifications'][0]['kind'] == 'changed'
+    notifications = call(base, '/notifications')['notifications']
+    assert len(notifications) == before + len(dropped['notifications'])
+    changed = next(item for item in notifications if item['kind'] == 'changed')
+    assert {'name': 'edge-user', 'version': 1, 'active': True, 'usage': ['follow_children']} in \
+        changed['recipients']
+    assert len(changed['evidence']) >= len(detail['timeline']) - 1
+
+    # Restoring the edge is another observed change back to a real mapping.
+    with closing(sqlite3.connect(source)) as conn, conn:
+        recreate_assay(conn, with_foreign_key=True)
+    call(base, '/sources/microscope/check', {})
+    detail = call(base, f'/watches/{watch_id}')
+    assert detail['timeline'][-1]['state'] == 'changed'
+
+    # Hours without a readable source are explicit unreachable checks.
+    moved = source.with_name('microscope-offline.sqlite')
+    source.rename(moved)
+    unreadable = call(base, '/sources/microscope/check', {})
+    assert unreadable['check']['outcome'] == 'unreachable'
+    first_unreachable = unreadable['notifications']
+    assert first_unreachable and first_unreachable[0]['kind'] == 'unreachable'
+    call(base, '/sources/microscope/check', {})
+    assert len([n for n in call(base, '/notifications')['notifications'] if n['kind'] == 'unreachable']) == 1
+
+    # Reopening the old notification still shows every catalog conclusion at that time.
+    notice = call(base, f'/notifications/{first_unreachable[0]["id"]}')
+    assert notice['check']['outcome'] == 'unreachable'
+    assert [entry['state'] for entry in notice['evidence']][-1] == 'unreachable'
+    call(base, f'/notifications/{first_unreachable[0]["id"]}/acknowledge', {})
+    assert call(base, f'/notifications/{first_unreachable[0]["id"]}')['acknowledged'] is True
+
+    # Once the source is back, an unobserved interval separates the conclusions;
+    # the state is reopened when the watched mapping matches, or changed if SQLite
+    # renumbered the foreign keys while the file was being rebuilt.
+    moved.rename(source)
+    call(base, '/sources/microscope/check', {})
+    detail = call(base, f'/watches/{watch_id}')
+    assert detail['timeline'][-1]['state'] in ('reopened', 'changed')
+
+    # A primary-key watch catches a changed key definition on another table.
+    pk_watch = _call(base, '/watches', {'source': 'microscope', 'kind': 'pk', 'table': 'frame'}, 'PUT', 201)
+    with closing(sqlite3.connect(source)) as conn, conn:
+        conn.execute('CREATE TABLE frame_new (frame_id INTEGER, mark TEXT REFERENCES assay, note TEXT NOT NULL, '
+                     'PRIMARY KEY(frame_id, mark))')
+        conn.execute('INSERT INTO frame_new(frame_id, mark, note) SELECT frame_id, mark, note FROM frame')
+        conn.execute('DROP TABLE frame')
+        conn.execute('ALTER TABLE frame_new RENAME TO frame')
+    call(base, '/sources/microscope/check', {})
+    pk_detail = call(base, f'/watches/{pk_watch["watch"]["id"]}')
+    assert pk_detail['timeline'][-1]['state'] == 'changed'
+    print('watch', json.dumps(
+        {'edge_states': [entry['state'] for entry in detail['timeline']],
+         'notifications': len(call(base, '/notifications')['notifications'])}, sort_keys=True))
+
+
+def _call(base, route, body, method, status=200):
+    headers = {'Content-Type': 'application/json'}
+    data = json.dumps(body).encode('utf-8') if body is not None else None
+    try:
+        response = urlopen(Request(base + route, data, headers, method=method), timeout=5)
+    except HTTPError as exc:
+        response = exc
+    with response:
+        payload = response.read()
+        assert response.status == status, (route, method, response.status, payload[:400])
+        return json.loads(payload)
 
 
 def main():

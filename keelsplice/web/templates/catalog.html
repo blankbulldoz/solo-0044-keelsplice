@@ -10,8 +10,12 @@
   <div class="workarea">
     <header class="pagehead">
       <div><p class="breadcrumb">关系目录 / $alias</p><h1>$selected</h1></div>
-      <a class="button primary" href="$recipe">登记配方</a>
+      <div class="actions">
+        <a class="button" href="$watch_pk">关注此表主键</a>
+        <a class="button primary" href="$recipe">登记配方</a>
+      </div>
     </header>
+    <p class="muted">需要盯外键列映射？可在<a href="$watch_href">源模式关注列表</a>登记，或用下方外键表旁的入口。</p>
     <dl class="facts">
       <div><dt>有序主键</dt><dd>$pk</dd></div>
       <div><dt>列数</dt><dd>$column_count</dd></div>

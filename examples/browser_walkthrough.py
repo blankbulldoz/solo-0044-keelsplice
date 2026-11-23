@@ -86,7 +86,56 @@ def run(base, source, root):
     with closing(sqlite3.connect(handoff)) as conn:
         assert conn.execute("SELECT length_um FROM assay WHERE mark='S-01'").fetchone() == (3.25,)
         assert conn.execute('PRAGMA foreign_key_check').fetchall() == []
-    print('浏览器端到端检查通过：目录、配方、试算、捕获、证据、对比、停用、构建、认证、下载')
+
+    _, watch_editor = html(base, '/workbench/watches/new?source=microscope')
+    assert '外键关系' in watch_editor and '主键定义' in watch_editor
+    detail_path, watch_page = html(base, '/workbench/watches/new', {
+        'source': 'microscope', 'subject': 'edge:assay:0',
+        'continuity_seconds': '1', 'note': '盯真实列映射'})
+    assert '连续核对一致' in watch_page and '盯真实列映射' in watch_page
+    watch_id = detail_path.rsplit('/', 1)[1]
+    _, listing = html(base, '/workbench/watches')
+    assert '源模式关注列表' in listing and watch_id in listing
+    # Duplicate subject is rejected and the editor keeps its input.
+    _, duplicate = html(base, '/workbench/watches/new', {
+        'source': 'microscope', 'subject': 'edge:assay:0', 'continuity_seconds': '1'}, expected=409)
+    assert '已经在关注列表中' in duplicate
+    # An unrelated index does not raise a change.
+    with closing(sqlite3.connect(source)) as conn, conn:
+        conn.execute('CREATE INDEX browser_extra ON assay(cassette)')
+    _, checked = html(base, '/workbench/sources/microscope/check', {})
+    assert '目录核对完成' in checked and '本次产生通知' in checked
+    _, still_verified = html(base, f'/workbench/watches/{watch_id}')
+    assert '连续核对一致' in still_verified and '结构相同但存在未观测区间' not in still_verified
+    # Breaking the watched foreign key creates a change notification with evidence.
+    with closing(sqlite3.connect(source)) as conn, conn:
+        conn.execute('CREATE TABLE assay_b (mark TEXT PRIMARY KEY NOT NULL, region TEXT, code TEXT, '
+                     'cassette INTEGER NOT NULL, length_um REAL NOT NULL, '
+                     'doubled REAL GENERATED ALWAYS AS (length_um*2) STORED)')
+        conn.execute('INSERT INTO assay_b(mark,region,code,cassette,length_um) '
+                     'SELECT mark,region,code,cassette,length_um FROM assay')
+        conn.execute('DROP TABLE assay')
+        conn.execute('ALTER TABLE assay_b RENAME TO assay')
+    _, changed_page = html(base, '/workbench/sources/microscope/check', {})
+    assert '目录核对完成' in changed_page
+    _, notifications_page = html(base, '/workbench/notifications')
+    assert '模式变化通知' in notifications_page and '外键 assay #0' in notifications_page
+    notice_link = re.search(r'/workbench/notifications/[0-9a-f]{32}', notifications_page)[0]
+    _, notice = html(base, notice_link)
+    assert '当时各次目录结论' in notice and '当时使用这条结构的配方版本' in notice
+    assert 'browser-swatch' in notice
+    assert '确认已知悉' in notice
+    _, acknowledged = html(base, notice_link + '/acknowledge', {})
+    assert '已确认' in acknowledged and '确认已知悉' not in acknowledged
+    # A primary-key watch is available from the catalog page.
+    _, catalog_frame = html(base, '/workbench?source=microscope&table=frame')
+    pk_link = re.search(r'/workbench/watches/new\?source=microscope&amp;subject=pk%3Aframe',
+                        catalog_frame)
+    assert pk_link is not None
+    _, pk_created = html(base, '/workbench/watches/new', {
+        'source': 'microscope', 'subject': 'pk:frame', 'continuity_seconds': '60'})
+    assert '主键定义' in pk_created
+    print('浏览器端到端检查通过：目录、配方、试算、捕获、证据、对比、停用、构建、认证、下载、源模式关注与通知')
 
 
 def main():

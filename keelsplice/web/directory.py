@@ -68,4 +68,7 @@ def show(bench, query):
                      edges=edge_rows(catalog['schema']['edges'], selected),
                      indexes=index_items or '<li class="empty">无显式索引。</li>',
                      recipe=text(location('/workbench/recipes/new', source=alias)),
+                     watch_pk=text(location('/workbench/watches/new', source=alias,
+                                            subject=f'pk:{selected}')),
+                     watch_href=text(location('/workbench/watches', source=alias)),
                      ddl=text(table['ddl']))

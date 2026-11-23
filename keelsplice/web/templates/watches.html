@@ -1,0 +1,20 @@
+<div class="content">
+  <header class="pagehead">
+    <div><p class="breadcrumb">工作台</p><h1>源模式关注列表</h1></div>
+    <a class="button primary" href="/workbench/watches/new">登记关注</a>
+  </header>
+  <form class="inline source-toolbar" method="get" action="/workbench/watches">
+    <label for="watch-source">SQLite 数据源</label>
+    <select id="watch-source" name="source"><option value="">全部源库</option>$options</select>
+    <button>筛选</button>
+  </form>
+  <div class="scroll"><table>
+    <caption>关注的外键列映射与主键定义</caption>
+    <thead><tr><th scope="col">关注对象</th><th scope="col">源库</th><th scope="col">最新结论</th><th scope="col">最新核对时间</th><th scope="col">核对次数</th><th scope="col">通知</th></tr></thead>
+    <tbody>$rows</tbody>
+  </table></div>
+  <section aria-labelledby="pending">
+    <h2 id="pending">待确认通知</h2>
+    $notifications
+  </section>
+</div>

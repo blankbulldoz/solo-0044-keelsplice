@@ -4,10 +4,10 @@ import re
 import sqlite3
 from urllib.parse import urlsplit
 
-from . import assets, captures, comparison, directory, evidence, preview, selection, versions
+from . import assets, captures, comparison, directory, evidence, preview, selection, versions, watch as watch_pages
 from .errors import invalid_route, message
 from .forms import MAX_BYTES, decode_form, field, version
-from .render import page, segment, text
+from .render import location as render_location, page, segment, text
 from ..codec import Fault
 
 LOOPBACK_HOST = re.compile(r'(?:127\.0\.0\.1|localhost)(?::[0-9]{1,5})?\Z')
@@ -93,6 +93,37 @@ def route(handler, path):
             status, body = comparison.show(bench)
         case 'POST', ['workbench', 'compare']:
             status, body = comparison.show(bench, values)
+        case 'GET', ['workbench', 'watches']:
+            status, body = watch_pages.index(bench, query)
+        case 'GET', ['workbench', 'watches', 'new']:
+            status, body = watch_pages.new_form(bench, query)
+        case 'POST', ['workbench', 'watches', 'new']:
+            result = watch_pages.create(bench, values)
+            if isinstance(result, str):
+                return redirect(result)
+            status, body = result
+        case 'GET', ['workbench', 'watches', watch_id]:
+            status, body = watch_pages.detail(bench, watch_id)
+        case 'POST', ['workbench', 'watches', watch_id, 'retire']:
+            bench.retire_watch(watch_id)
+            return redirect('/workbench/watches')
+        case 'POST', ['workbench', 'sources', alias, 'check']:
+            check_record, made = watch_pages.run_check(bench, alias)
+            status, body = 200, page(
+                '目录核对完成', 'watch', 'check_result',
+                check_source=text(check_record['source']),
+                check_outcome=text('成功读取目录' if check_record['outcome'] == 'observed' else '目录不可读'),
+                check_observed=text(check_record['observed_at']),
+                check_digest=text(check_record['schema_digest'] or '—'),
+                check_reason=text(check_record['reason'] or '—'),
+                notifications=len(made),
+                back=text(render_location('/workbench/watches', source=alias)))
+        case 'GET', ['workbench', 'notifications']:
+            status, body = watch_pages.notifications(bench)
+        case 'GET', ['workbench', 'notifications', notification_id]:
+            status, body = watch_pages.notification_detail(bench, notification_id)
+        case 'POST', ['workbench', 'notifications', notification_id, 'acknowledge']:
+            return redirect(watch_pages.acknowledge(bench, notification_id))
         case _:
             raise invalid_route()
     return status, body, 'text/html; charset=utf-8', {}

@@ -1,0 +1,38 @@
+<div class="content">
+  <header class="pagehead">
+    <div><p class="breadcrumb"><a href="/workbench/watches">源模式关注</a> / 详情</p><h1>$heading</h1></div>
+    $state
+  </header>
+  <dl class="facts">
+    <div><dt>数据源</dt><dd>$source</dd></div>
+    <div><dt>关注类型</dt><dd>$kind</dd></div>
+    <div><dt>连续核对窗口</dt><dd>$continuity 秒</dd></div>
+    <div><dt>累计核对</dt><dd>$checks 次</dd></div>
+    <div class="wide"><dt>基线结构摘要</dt><dd><code>$baseline</code></dd></div>
+    <div class="wide"><dt>备注</dt><dd>$note</dd></div>
+  </dl>
+  <form class="inline source-toolbar" method="post" action="/workbench/sources/$source_alias/check">
+    <button class="primary">立即核对源库</button>
+  </form>
+  <form method="post" action="/workbench/watches/$watch_id/retire">
+    <button class="quiet">停用此关注（历史通知与核对记录保留）</button>
+  </form>
+  <section aria-labelledby="segments">
+    <h2 id="segments">核对范围结论</h2>
+    <div class="scroll"><table>
+      <thead><tr><th scope="col">分类</th><th scope="col">范围说明</th><th scope="col">结构摘要前缀</th></tr></thead>
+      <tbody>$segments</tbody>
+    </table></div>
+  </section>
+  <section aria-labelledby="timeline">
+    <h2 id="timeline">历次目录核对结论</h2>
+    <div class="scroll"><table>
+      <thead><tr><th scope="col">时间（UTC）</th><th scope="col">读取结果</th><th scope="col">关注对象结论</th><th scope="col">结构摘要前缀</th><th scope="col">结构 / 失败原因</th></tr></thead>
+      <tbody>$timeline</tbody>
+    </table></div>
+  </section>
+  <section aria-labelledby="notes">
+    <h2 id="notes">收到的通知</h2>
+    <ul class="data-list">$notifications</ul>
+  </section>
+</div>
