@@ -2,8 +2,9 @@
 
 import re
 import sqlite3
+from collections import Counter
 
-from . import bundle, capture, catalog, recipe
+from . import audit, bundle, capture, catalog, recipe
 from .codec import Fault
 
 NAME = re.compile(r'[a-z][a-z0-9_-]{0,63}\Z')
@@ -68,6 +69,26 @@ class Workbench:
 
     def trace(self, capture_id, body):
         return capture.trace(self.repository.load_capture(capture_id)['sealed'], body)
+
+    def mark(self, capture_id, body):
+        record = self.repository.load_capture(capture_id)
+        verdict, auditor, note = audit.judgment(body)
+        arc = audit.validate_arc(record['sealed'], body['arc'])
+        rel_key = audit.arc_key(record['sealed'], arc)
+        return audit.public(self.repository.add_mark(capture_id, arc, rel_key, verdict, auditor, note))
+
+    def marks(self, capture_id):
+        self.repository.load_capture(capture_id)
+        return {'marks': [audit.public(mark) for mark in self.repository.marks_for_capture(capture_id)]}
+
+    def audit(self, capture_id):
+        record = self.repository.load_capture(capture_id)
+        sealed = record['sealed']
+        marks = self.repository.marks_for_recipe(record['name'])
+        counts = {capture_id: Counter(audit.arc_keys(sealed))}
+        for other in {mark['capture'] for mark in marks} - {capture_id}:
+            counts[other] = Counter(audit.arc_keys(self.repository.load_capture(other)['sealed']))
+        return {'id': capture_id} | audit.review(capture_id, sealed, marks, counts)
 
     def compare(self, body):
         recipe.fields(body, ('left', 'right'))

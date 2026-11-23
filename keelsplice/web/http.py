@@ -4,7 +4,7 @@ import re
 import sqlite3
 from urllib.parse import urlsplit
 
-from . import assets, captures, comparison, directory, evidence, preview, selection, versions
+from . import assets, audit, captures, comparison, directory, evidence, preview, selection, versions
 from .errors import invalid_route, message
 from .forms import MAX_BYTES, decode_form, field, version
 from .render import page, segment, text
@@ -75,6 +75,8 @@ def route(handler, path):
             status, body = captures.index(bench)
         case 'GET', ['workbench', 'captures', capture_id]:
             status, body = captures.detail(bench, capture_id)
+        case 'GET', ['workbench', 'captures', capture_id, 'arcs', number] if re.fullmatch('[0-9]{1,10}', number):
+            status, body = audit.arc_page(bench, capture_id, number)
         case 'GET', ['workbench', 'captures', capture_id, 'database']:
             data, sha = bench.download(capture_id)
             return 200, data, 'application/vnd.sqlite3', {
@@ -84,6 +86,8 @@ def route(handler, path):
         case 'POST', ['workbench', 'captures', capture_id, action]:
             if action == 'trace':
                 status, body = evidence.show(bench, capture_id, values)
+            elif action == 'mark':
+                return redirect(audit.mark(bench, capture_id, values))
             elif action in ('build', 'certify'):
                 (bench.build if action == 'build' else bench.certify)(capture_id)
                 return redirect(f'/workbench/captures/{segment(capture_id)}')

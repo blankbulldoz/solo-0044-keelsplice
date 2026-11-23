@@ -28,5 +28,6 @@ legend { font-weight: 650; }
 .status { display: inline-block; font-size: 13px; padding: 3px 8px; border-radius: 4px; white-space: nowrap; }
 .status.ready { background: var(--brand-soft); color: var(--brand); }
 .status.pending { background: var(--warning-bg); color: var(--warning); }
+.status.review { background: var(--error-bg); color: var(--error); }
 .status.muted { background: #e7ebef; }
 .certificate { border-left: 3px solid var(--brand); padding-left: 12px; }

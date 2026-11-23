@@ -1,0 +1,14 @@
+<div class="content">
+  <header class="pagehead"><div><p class="breadcrumb"><a href="$base">捕获详情</a> / 直接关系 #$index</p><h1>直接关系核对</h1></div>$state</header>
+  <dl class="facts"><div class="wide"><dt>直接关系</dt><dd>$relation</dd></div>
+    <div><dt>外键</dt><dd>$edge</dd></div><div><dt>遍历方向</dt><dd>$direction</dd></div>
+    <div class="wide"><dt>当前依据</dt><dd>$provenance</dd></div></dl>
+  <section><h2>登记核对结论</h2><form class="trace-form" method="post" action="$base/mark">
+    <input type="hidden" name="arc" value="$arc_json"><input type="hidden" name="index" value="$index">
+    <label>核对人<input required name="auditor" maxlength="64"></label>
+    <label>说明（可选）<input name="note" maxlength="500"></label>
+    <button class="primary" name="verdict" value="verified">核对过</button>
+    <button name="verdict" value="pending">待说明</button>
+  </form></section>
+  <section><h2>标记历史</h2><div class="scroll"><table><thead><tr><th scope="col">标记</th><th scope="col">所属捕获</th><th scope="col">当时的关系</th><th scope="col">结论</th><th scope="col">核对人</th><th scope="col">说明</th></tr></thead><tbody>$history</tbody></table></div></section>
+</div>

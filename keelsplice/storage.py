@@ -18,6 +18,14 @@ CREATE TABLE IF NOT EXISTS captures (
     artifact BLOB, certificate TEXT,
     FOREIGN KEY(name, version) REFERENCES recipes(name, version)
 );
+CREATE TABLE IF NOT EXISTS audit_marks (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    capture_id TEXT NOT NULL REFERENCES captures(id),
+    arc TEXT NOT NULL, rel_key TEXT NOT NULL,
+    verdict TEXT NOT NULL CHECK(verdict IN ('verified','pending')),
+    auditor TEXT NOT NULL, note TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS audit_marks_rel_key ON audit_marks(rel_key);
 '''
 
 
@@ -131,3 +139,26 @@ class Repository:
                 conn.execute("UPDATE captures SET state='certified',certificate=? WHERE id=? AND state='built'",
                              (dumps(certificate), capture_id))
         return self.load_capture(capture_id)
+
+    def add_mark(self, capture_id, arc, rel_key, verdict, auditor, note):
+        with self.session(write=True) as conn:
+            cursor = conn.execute(
+                'INSERT INTO audit_marks (capture_id,arc,rel_key,verdict,auditor,note) VALUES(?,?,?,?,?,?)',
+                (capture_id, dumps(arc), rel_key, verdict, auditor, note))
+            mark_id = cursor.lastrowid
+        return dict(id=mark_id, capture=capture_id, arc=arc, rel_key=rel_key,
+                    verdict=verdict, auditor=auditor, note=note)
+
+    def marks(self, sql, args):
+        with self.session() as conn:
+            rows = conn.execute(sql, args).fetchall()
+        return [dict(id=row['id'], capture=row['capture_id'], arc=loads(row['arc']),
+                     rel_key=row['rel_key'], verdict=row['verdict'],
+                     auditor=row['auditor'], note=row['note']) for row in rows]
+
+    def marks_for_capture(self, capture_id):
+        return self.marks('SELECT * FROM audit_marks WHERE capture_id=? ORDER BY id', (capture_id,))
+
+    def marks_for_recipe(self, name):
+        return self.marks('''SELECT m.* FROM audit_marks m JOIN captures c ON c.id=m.capture_id
+                             WHERE c.name=? ORDER BY m.id''', (name,))

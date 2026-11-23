@@ -38,9 +38,18 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 | `POST /captures/{id}/trace` | 接收如 `{"table":"substrate","key":["East","Mica"]}`，返回直接证据和从零开始的根序号 |
 | `POST /captures/{id}/build`、`POST /captures/{id}/certify` | 接收空对象，构建或认证该捕获的子库 |
 | `POST /compare` | 接收 `{"left":"id-a","right":"id-b"}`，按表报告带类型主键的差异 |
+| `POST /captures/{id}/marks` | 接收 `{"arc":…,"verdict":"verified"或"pending","auditor":"甲","note":"…"}`，在封存关系上追加核对标记 |
+| `GET /captures/{id}/marks` | 读取锚定在该捕获上的全部历史标记 |
+| `GET /captures/{id}/audit` | 逐条直接关系给出核对状态、依据标记及同配方下的标记历史 |
 | `GET /captures/{id}/database` | 返回已认证 SQLite 字节，`ETag` 为带引号的 SHA-256 |
 
 根记录中的键按目录的列顺序填写。整数为有符号 64 位 JSON 数字。字节用 `{"blob":"AAD/"}`，实数用 `{"real":"0x1.a000000000000p+1"}`，文本用 JSON 字符串。配方可以用不同拼写定位同一个 NOCASE 根，封存与追踪使用实存键。结果中的行去重，输入根出现项保留顺序。工作台近期列表显示最后登记的 50 个配方版本和最后封存的 50 次捕获，历史详情地址依然可访问。
+
+## 关系核对标记
+
+多名核对人可轮流在封存捕获上把某条直接关系标为「核对过」（`verified`）或「待说明」（`pending`）。标记只增不改：新判断追加新标记，不会覆盖旧捕获上的历史结论；每条标记始终锚定当时的捕获与关系内容（含当时的外键编号）。
+
+关系的语义身份由端点实存主键、遍历方向和外键列映射构成，不含外键编号与列表位置。因此下一轮捕获里无关列更新、另一条外键插入导致原边改号时，已核对的关系仍自动沿用最新判断。端点更换、遍历方向变化或键列映射不同的关系不会承接旧标记；同端点重复外键等无法唯一对应的情况显示「待复核」，等待人工在关系页重新登记。标记历史页面把每条结论链接回其所属捕获。
 
 ## 复跑
 
@@ -48,6 +57,7 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 python3 -m compileall -q keelsplice examples
 python3 -m examples.walkthrough all
 python3 -m examples.browser_walkthrough
+python3 -m examples.audit_walkthrough
 ```
 
-两份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。独立自动化测试套件延后。
+两份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。审计演练另用含同端点双边与重复根的样例库，验证标记沿用、改号、歧义待复核与历史不可覆盖。独立自动化测试套件延后。

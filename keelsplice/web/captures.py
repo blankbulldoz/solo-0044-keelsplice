@@ -1,6 +1,6 @@
 """Browse persistent capture records without reading artifact BLOBs."""
 
-from . import handoff, preview
+from . import audit, handoff, preview
 from .render import code, page, segment, text, typed
 from ..codec import dumps
 
@@ -34,10 +34,11 @@ def detail(bench, capture_id):
         f'<span>{code(table)} {typed(key)}</span><button class="quiet">追踪此根</button></form></li>'
         for table, key in record['roots']
     )
+    audit_rows, audit_note = audit.section(bench.audit(capture_id), capture_id)
     return 200, page('捕获详情', 'capture', 'capture', id=text(capture_id), base=base,
                      recipe=f'/workbench/recipes/{segment(record["name"])}/{record["version"]}',
                      name=text(record['name']), number=record['version'], stage=stage(record['state']),
                      digest=text(record['schema_digest']), certificate=handoff.certificate(record),
                      actions=handoff.actions(base, record['state']), roots=roots,
                      counts=preview.counts(record['summary']), rows=record['summary']['rows'],
-                     witnesses=record['summary']['witnesses'])
+                     witnesses=record['summary']['witnesses'], audit=audit_rows, audit_note=audit_note)

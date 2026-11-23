@@ -32,6 +32,11 @@
       "responsibility": "沿入出关系选样、追踪和比较"
     },
     {
+      "id": "audit",
+      "path": "keelsplice/audit.py",
+      "responsibility": "封存直接关系上的核对标记、语义身份与跨捕获沿用"
+    },
+    {
       "id": "codec",
       "path": "keelsplice/codec.py",
       "responsibility": "SQLite 值类型、主键及稳定摘要"
@@ -216,6 +221,26 @@
         "api",
         "service",
         "capture",
+        "storage",
+        "codec"
+      ]
+    },
+    {
+      "id": "audit",
+      "name": "核对封存直接关系",
+      "entry": "POST /captures/{id}/marks",
+      "success": "标记只增不改并锚定当时捕获，按语义身份沿用到后续捕获，歧义关系等待人工复核",
+      "failure": "形状非法或不在封存结果中的关系不产生标记",
+      "verification": "python3 -m examples.audit_walkthrough",
+      "steps": [
+        "接收请求 POST /captures/{id}/marks",
+        "校验关系属于封存结果后追加不可变标记",
+        "按端点、方向与外键列映射把最新判断沿用到后续捕获"
+      ],
+      "module_ids": [
+        "api",
+        "service",
+        "audit",
         "storage",
         "codec"
       ]
