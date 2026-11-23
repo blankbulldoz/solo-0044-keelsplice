@@ -14,6 +14,8 @@ MESSAGES = {
     'invalid_edge': '选中的外键已不在当前目录中。',
     'invalid_edges': '最多可选 256 条反向关系。',
     'invalid_limit': '封存行上限须为 1 至 5,000 的整数。',
+    'overlapping_groups': '两个候选关系组不能包含同一条反向边，请重新分组。',
+    'invalid_basis': '读取依据对象无效或被修改过，请重新发起不带旧依据的试算。',
     'unknown_recipe': '配方版本不存在。',
     'retired_recipe': '此配方版本已停止投用。',
     'schema_conflict': '模式摘要不一致，无法沿用当前配方或直接比较这两次捕获。',

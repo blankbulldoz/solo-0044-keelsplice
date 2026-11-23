@@ -20,8 +20,10 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 1. 在「关系目录」选源和表。主键顺序用于填写根，外键映射用于判断哪些子行需要反向纳入。
 2. 登记配方，填写一个或多个根及封存行上限。样例可填 `[{"table":"substrate","key":["east","MICA"]}]`，再选 `substrate → assay`。
 3. 试算查看逐表计数和实存根。点「封存当前样本」时服务重新读取源。配方绑定的模式有变化时，需要重新核对目录。
-4. 在捕获详情按实存主键追踪。可从直接入选原因或必需父行继续查看相关记录。对比页面按实存带类型主键显示两个同模式捕获的新增、移除和修改。
-5. 构建后再认证。认证后可下载文件并用其 SHA-256 或独立 SQLite 连接核对。停用配方后，既有捕获仍可完成这些操作。
+4. 需要判断两组可选关系分别开还是一起开时，在配方详情点「关系分组试算」，把反向边拆成候选组 A、B 提交。工作台在**同一个源读事务**内计算原配方、单独 A、单独 B 与联合 A+B 四个方案：每个方案给出逐表计数、实存带类型主键的行身份和逐行边界归因（根出现项、必需父行补齐、反向关系纳入及所属分组），集合比较标出仅一组入选、两组共享（共享父行只计一次）以及只有联合开启才沿另一组边纳入的行。超预算的方案标记为失败并排除出集合比较。
+5. 分组试算响应携带可回传的读取依据 `basis`（模式摘要加主库与 WAL 的字节数、mtime 和 SHA-256，含防篡改摘要）。再次试算时回传该依据：源库未被写入时标记 `same_basis`；两次试算之间发生过写入则标记 `basis_changed`，本页四个方案仍在同一新读事务内彼此可比，但不能与旧试算共同用于决定。依据对象被修改返回 `invalid_basis`，两组包含同一条边返回 `overlapping_groups`。
+6. 在捕获详情按实存主键追踪。可从直接入选原因或必需父行继续查看相关记录。对比页面按实存带类型主键显示两个同模式捕获的新增、移除和修改。
+7. 构建后再认证。认证后可下载文件并用其 SHA-256 或独立 SQLite 连接核对。停用配方后，既有捕获仍可完成这些操作。
 
 ## JSON 接口
 
@@ -34,6 +36,7 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 | `GET /recipes/{name}/versions/{version}` | 读取版本及其投用状态 |
 | `POST /recipes/{name}/versions/{version}/retire` | 接收空对象并停用版本 |
 | `POST /preview`、`POST /captures` | 接收 `{"name":"swatch","version":1}`，分别试算和封存 |
+| `POST /preview/alternatives` | 接收配方版本与两组候选反向边，在同一读事务内返回原配方、单独 A、单独 B、联合四方案 |
 | `GET /captures/{id}` | 读取捕获状态、实存根、计数和证书 |
 | `POST /captures/{id}/trace` | 接收如 `{"table":"substrate","key":["East","Mica"]}`，返回直接证据和从零开始的根序号 |
 | `POST /captures/{id}/build`、`POST /captures/{id}/certify` | 接收空对象，构建或认证该捕获的子库 |

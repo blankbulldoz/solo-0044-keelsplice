@@ -13,7 +13,8 @@ from urllib.request import Request, urlopen
 
 from keelsplice.api import create_server
 
-WORKFLOWS = ('catalog', 'recipe', 'retire', 'preview', 'capture', 'trace', 'build', 'certify', 'compare', 'download')
+WORKFLOWS = ('catalog', 'recipe', 'retire', 'preview', 'alternatives', 'capture', 'trace',
+             'build', 'certify', 'compare', 'download')
 
 
 def seed(file):
@@ -77,6 +78,40 @@ def walkthrough(base, selected, source, root):
     request('/recipes/tight/versions', body | {'row_limit': 1}, 201)
     assert request('/preview', {'name': 'tight','version': 1}, 422)['error'] == 'row_budget'
     if observe('preview', preview['summary']):
+        return
+
+    frame_edge = next(edge for edge in catalog['schema']['edges'] if edge['child'] == 'frame' and edge['parent'] == 'assay')
+    trial = {'name': 'swatch', 'version': 1,
+             'group_a': [{'child': 'assay', 'id': edge['id']}],
+             'group_b': [{'child': 'frame', 'id': frame_edge['id']}]}
+    alternatives = request('/preview/alternatives', trial)
+    scenarios = alternatives['scenarios']
+    assert alternatives['basis_status']['comparison'] == 'single_snapshot' and alternatives['decidable'] is True
+    assert scenarios['baseline']['status'] == scenarios['group_a']['status'] == 'ok'
+    assert scenarios['group_b']['summary']['rows'] == 1
+    assert scenarios['union']['summary']['counts']['frame'] == 3
+    # Shared parents keep one identity; frames only enter when both groups are open together.
+    findings = alternatives['findings']
+    assert [row for row in findings['solo_a_vs_solo_b']['shared_identity'] if row[0] == 'substrate']
+    assert {row[0] for row in findings['union_vs_solos']['reached_only_together']} == {'frame'}
+    union_rows = scenarios['union']['row_identities']
+    assert len(union_rows['cassette']) == 2
+    attribution = {tuple(entry['row'][0:1] + [entry['row'][1][0]]): entry
+                   for entry in scenarios['union']['attribution']}
+    assert attribution[('assay', 'S-01')]['child_reasons'][0]['group'] == 'group_a'
+    assert all(entry['parent_reasons'] for table, entry in attribution.items() if table == 'cassette')
+    # Re-submitting the same basis stays comparable; a write between trials marks it stale.
+    basis = alternatives['basis']
+    assert request('/preview/alternatives', trial | {'basis': basis})['basis_status']['comparison'] == 'same_basis'
+    overlap = dict(trial, group_b=[{'child': 'assay', 'id': edge['id']}])
+    assert request('/preview/alternatives', overlap, 422)['error'] == 'overlapping_groups'
+    tight_trial = dict(trial, name='tight')
+    tight_alt = request('/preview/alternatives', tight_trial)
+    assert tight_alt['scenarios']['group_b']['status'] == 'ok'
+    assert tight_alt['scenarios']['union']['error']['code'] == 'row_budget'
+    assert tight_alt['decidable'] is False and 'union_vs_solos' not in tight_alt['findings']
+    if observe('alternatives', {'scenarios': {k: v.get('summary', v.get('error')) for k, v in scenarios.items()},
+                                'basis': alternatives['basis_status']['comparison']}):
         return
 
     cap = request('/captures', lookup, 201)

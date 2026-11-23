@@ -3,8 +3,8 @@
 import re
 import sqlite3
 
-from . import bundle, capture, catalog, recipe
-from .codec import Fault
+from . import alternatives, bundle, capture, catalog, recipe
+from .codec import Fault, fingerprint
 
 NAME = re.compile(r'[a-z][a-z0-9_-]{0,63}\Z')
 
@@ -53,6 +53,28 @@ class Workbench:
         name, number, sealed = self.execute(body)
         return {'name': name, 'version': number, 'schema_digest': sealed['schema_digest'],
                 'summary': capture.summarize(sealed['result']), 'roots': sealed['result']['roots']}
+
+    def preview_alternatives(self, body):
+        alternatives.request_shape(body)
+        name, number = body['name'], body['version']
+        if not isinstance(name, str) or not NAME.fullmatch(name):
+            raise Fault('invalid_name', 'Expected an ASCII recipe name')
+        version = self.repository.version(name, number)
+        if not version['active']:
+            raise Fault('retired_recipe', 'Recipe version is retired', 409)
+        normalized = version['recipe']
+        with self.repository.source(normalized['source']) as conn:
+            disclosed = catalog.snapshot(conn)
+            if disclosed['schema_digest'] != version['schema_digest']:
+                raise Fault('schema_conflict', 'Source schema differs from the recipe binding', 409)
+            group_a, group_b = alternatives.normalize_groups(disclosed['schema'], body)
+            basis = self.repository.source_basis(normalized['source'])
+            basis = basis | {'schema_digest': disclosed['schema_digest']}
+            basis = basis | {'digest': fingerprint(alternatives.content_evidence(basis))}
+            status = alternatives.basis_status(body.get('basis'), basis)
+            scenarios = alternatives.run_variants(conn, disclosed['schema'], normalized, group_a, group_b)
+        result = alternatives.payload(version['schema_digest'], basis, status, scenarios)
+        return {'name': name, 'version': number} | result
 
     def capture(self, body):
         name, number, sealed = self.execute(body)

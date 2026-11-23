@@ -24,12 +24,8 @@ def identity(schema, value):
     return {'table': table, 'key': [encode(decode(v)) for v in vals]}
 
 
-def validate(schema, body):
-    fields(body, ('source', 'roots'), ('follow_children', 'row_limit'))
-    roots = body['roots']
-    if not isinstance(roots, list) or not 1 <= len(roots) <= 256:
-        raise Fault('invalid_roots', 'Specify 1 to 256 root tuples')
-    edges = body.get('follow_children', [])
+def validate_edges(schema, edges):
+    """Normalize one candidate group of reverse edges against the live schema."""
     if not isinstance(edges, list) or len(edges) > 256:
         raise Fault('invalid_edges', 'Specify a list of up to 256 child edges')
     selected = set()
@@ -40,6 +36,16 @@ def validate(schema, body):
         if type(number) is not int or not any(e['child'] == child and e['id'] == number for e in schema['edges']):
             raise Fault('invalid_edge', f'Unknown key number in {child}')
         selected.add((child, number))
+    return [dict(child=child, id=number) for child, number in sorted(selected)]
+
+
+def validate(schema, body):
+    fields(body, ('source', 'roots'), ('follow_children', 'row_limit'))
+    roots = body['roots']
+    if not isinstance(roots, list) or not 1 <= len(roots) <= 256:
+        raise Fault('invalid_roots', 'Specify 1 to 256 root tuples')
+    selected = validate_edges(schema, body.get('follow_children', []))
+    selected = {(edge['child'], edge['id']) for edge in selected}
     limit = body.get('row_limit', DEFAULT_BUDGET)
     if type(limit) is not int or not 1 <= limit <= MAX_ROWS:
         raise Fault('invalid_limit', f'row_limit must be 1 to {MAX_ROWS}')

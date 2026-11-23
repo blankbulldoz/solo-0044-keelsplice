@@ -1,0 +1,11 @@
+<div class="content">
+  <header class="pagehead"><div><p class="breadcrumb"><a href="/workbench/recipes">配方版本</a> / 关系分组试算</p><h1>关系分组试算</h1></div><span class="status pending">未封存</span></header>
+  $error
+  <p class="notice info">把可选反向关系拆成两组，工作台将在<b>同一个源读事务</b>内分别计算原配方、单独开启 A、单独开启 B 与联合开启四个方案，逐行给出身份与边界归因。封存行上限沿用配方：$limit 行。</p>
+  <dl class="facts"><div class="wide"><dt>配方绑定的模式摘要</dt><dd><code>$digest</code></dd></div></dl>
+  <form method="post" action="$action">
+    $basis_hidden
+    $groups
+    <div class="actions"><button class="primary">在同一读取依据下试算四组方案</button></div>
+  </form>
+</div>

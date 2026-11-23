@@ -31,6 +31,7 @@ def detail(bench, name, number):
     if saved['active']:
         actions = (
             f'<form method="post" action="{href}/preview"><button>试算闭包</button></form>'
+            f'<form method="get" action="{href}/alternatives"><button>关系分组试算</button></form>'
             f'<form method="post" action="{href}/capture"><button class="primary">封存当前样本</button></form>'
             f'<form method="post" action="{href}/retire"><button class="quiet">停止投用</button></form>'
         )

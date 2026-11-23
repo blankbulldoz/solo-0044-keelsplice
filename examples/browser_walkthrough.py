@@ -60,6 +60,22 @@ def run(base, source, root):
 
     _, preview = html(base, version + '/preview', {})
     assert '未封存' in preview and 'East' in preview and 'Mica' in preview
+
+    trial_url = version + '/alternatives'
+    _, editor = html(base, trial_url)
+    assert '候选关系组 A' in editor and '候选关系组 B' in editor and '同一个源读事务' in editor
+    trial_form = {'group_a': ['0:assay'], 'group_b': ['0:frame']}
+    _, report = html(base, trial_url, trial_form)
+    assert '联合开启 A + B' in report and '只有联合开启才沿另一组边纳入的行' in report
+    assert '边界归因' in report and '必需父行补齐' in report and '本次分组试算可用于决定' in report
+    basis = re.search(r'name="basis" value=(\'|")(.*?)\1', report).group(2)
+    import html as html_module
+    basis = html_module.unescape(basis)
+    _, same = html(base, trial_url, trial_form | {'basis': basis})
+    assert '同一个源读事务内计算' in same
+    _, overlap = html(base, trial_url, {'group_a': ['0:assay'], 'group_b': ['0:assay']}, expected=422)
+    assert '两个候选关系组不能包含同一条反向边' in overlap
+
     first, sealed = html(base, version + '/capture', {})
     assert '已封存' in sealed and '下载认证子库' not in sealed
     assert first in html(base, '/workbench/captures')[1]

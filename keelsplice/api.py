@@ -62,6 +62,8 @@ class RequestHandler(BaseHTTPRequestHandler):
                 return 200, bench.retire(name, int(number))
             case 'POST', ['preview']:
                 return 200, bench.preview(body)
+            case 'POST', ['preview', 'alternatives']:
+                return 200, bench.preview_alternatives(body)
             case 'POST', ['captures']:
                 return 201, bench.capture(body)
             case 'GET', ['captures', capture_id]:

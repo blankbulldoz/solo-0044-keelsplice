@@ -106,6 +106,48 @@ def summarize(result):
             'root_occurrences': len(result['roots'])}
 
 
+def identity_set(result):
+    """Typed (table, key) identities selected in one trial, each counted once."""
+    return {(table, tuple(loads(token))) for table, rows in result['rows'].items() for token in rows}
+
+
+def row_identities(result):
+    """Per-table ordered actual typed primary keys for operator cross-checking."""
+    return {table: [loads(token) for token in sorted(rows)] for table, rows in result['rows'].items()}
+
+
+def _address_token(address):
+    return address[0], tuple(address[1])
+
+
+def attribution(result, edge_labels):
+    """Direct boundary reason for every selected row identity.
+
+    Root occurrences, required-parent closure and reverse-child adoption are kept
+    separately so a shared parent reached through several entries is still one row.
+    Parent closure is mandatory for every variant and never carries a candidate
+    group label; only reverse-child witnesses inherit the adopting edge's group.
+    """
+    reasons = defaultdict(lambda: {'roots': [], 'parent_edges': [], 'child_edges': []})
+    for index, address in enumerate(result['roots']):
+        reasons[_address_token(address)]['roots'].append(index)
+    for arc in result['arcs']:
+        bucket = reasons[_address_token(arc['target'])]
+        edge = f'{arc["edge"][0]}#{arc["edge"][1]}'
+        reason = {'edge': edge, 'from': list(arc['origin'])}
+        if arc['direction'] == 'parent':
+            bucket['parent_edges'].append(reason)
+        else:
+            reason['group'] = edge_labels.get(tuple(arc['edge']), 'none')
+            bucket['child_edges'].append(reason)
+    rows = []
+    for (table, values), bucket in sorted(reasons.items(), key=lambda item: (item[0][0], dumps(list(item[0][1])))):
+        rows.append({'row': [table, list(values)], 'root_occurrences': bucket['roots'],
+                     'parent_reasons': sorted(bucket['parent_edges'], key=dumps),
+                     'child_reasons': sorted(bucket['child_edges'], key=dumps)})
+    return rows
+
+
 def trace(sealed, address):
     lookup = identity(sealed['schema'], address)
     target = [lookup['table'], lookup['key']]

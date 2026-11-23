@@ -5,7 +5,7 @@ from contextlib import closing, contextmanager
 from pathlib import Path
 from uuid import uuid4
 
-from .codec import Fault, dumps, loads
+from .codec import Fault, digest, dumps, loads
 
 REPOSITORY_DDL = '''
 CREATE TABLE IF NOT EXISTS recipes (
@@ -67,6 +67,30 @@ class Repository:
                 if work > 5000:
                     raise Fault('scan_budget', 'Source query work exceeded the snapshot budget') from exc
                 raise
+
+    def source_path(self, alias):
+        if not isinstance(alias, str) or alias not in self.sources:
+            raise Fault('unknown_source', 'Source alias is not registered', 404)
+        return self.sources[alias]
+
+    def source_basis(self, alias):
+        """Comparable read evidence gathered while the caller holds a read snapshot.
+
+        The main database and its WAL journal are content-bearing and hashed; the
+        transient SHM journal carries no committed data and is reported as metadata.
+        """
+        path = self.source_path(alias)
+        files = []
+        for journal in ('', '-wal', '-shm'):
+            target = path.with_name(path.name + journal)
+            if not target.is_file():
+                continue
+            stat = target.stat()
+            entry = {'file': target.name, 'bytes': stat.st_size, 'mtime_ns': stat.st_mtime_ns}
+            if journal in ('', '-wal'):
+                entry['sha256'] = digest(target.read_bytes())
+            files.append(entry)
+        return {'source': alias, 'files': files}
 
     def add_recipe(self, name, schema_digest, recipe):
         with self.session(write=True) as conn:

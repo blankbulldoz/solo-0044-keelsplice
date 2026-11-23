@@ -4,7 +4,7 @@ import re
 import sqlite3
 from urllib.parse import urlsplit
 
-from . import assets, captures, comparison, directory, evidence, preview, selection, versions
+from . import alternatives, assets, captures, comparison, directory, evidence, preview, selection, versions
 from .errors import invalid_route, message
 from .forms import MAX_BYTES, decode_form, field, version
 from .render import page, segment, text
@@ -58,6 +58,10 @@ def route(handler, path):
             status, body = result
         case 'GET', ['workbench', 'recipes', name, number]:
             status, body = versions.detail(bench, name, version(number))
+        case 'GET', ['workbench', 'recipes', name, number, 'alternatives']:
+            status, body = alternatives.editor(bench, name, version(number))
+        case 'POST', ['workbench', 'recipes', name, number, 'alternatives']:
+            status, body = alternatives.show(bench, name, version(number), values)
         case 'POST', ['workbench', 'recipes', name, number, action]:
             number = version(number)
             base = f'/workbench/recipes/{segment(name)}/{number}'
