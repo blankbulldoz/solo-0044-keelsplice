@@ -1,0 +1,4 @@
+# 构建产物不入库：可由 build_kits.py 随时确定性重建。
+generated/
+__pycache__/
+*.pyc

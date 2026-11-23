@@ -1,0 +1,155 @@
+{
+  "_note": "由当前构建提取；build_kits.py 确定性输出，重建后这些值保持不变。捕获 ID 为随机 UUID，不作参考。",
+  "kits": {
+    "alpha": {
+      "bytes": 40960,
+      "capture_digest": "c55dcc8b1ac78429eab0ab1bbf0bf3dbfdff48daeab3f228ab048bbcc09ea4f2",
+      "certificate_sha256": "325d288f3e70d6a76e202dee10fcb2928d0e211f492c0794e1e30188deb35be9",
+      "claimed_root": [
+        "project",
+        [
+          "P1"
+        ]
+      ],
+      "counts": {
+        "project": 1,
+        "reading": 3,
+        "site": 2,
+        "staff": 2
+      },
+      "db_state": "certified",
+      "file_sha256": "325d288f3e70d6a76e202dee10fcb2928d0e211f492c0794e1e30188deb35be9",
+      "page_size": 4096,
+      "project_rows": [
+        "P1"
+      ],
+      "recomputed_sealed_fingerprint": "c55dcc8b1ac78429eab0ab1bbf0bf3dbfdff48daeab3f228ab048bbcc09ea4f2",
+      "schema_digest": "f31c24d332a0e22e22ca708a04a1212c2acaa879f731aa473aa55042dc148203",
+      "sealed_roots": [
+        [
+          "project",
+          [
+            "P1"
+          ]
+        ]
+      ]
+    },
+    "b1": {
+      "bytes": 40960,
+      "capture_digest": "af2acbc27cb7cb531d52cdf2b5248affe7e76efd71796c205bba0d41c483b74e",
+      "certificate_sha256": "3f2859a234e9c29b2a41a8cb4f4b75910b0ce10353dcb14568b257483b5fc081",
+      "claimed_root": [
+        "project",
+        [
+          "P2"
+        ]
+      ],
+      "counts": {
+        "project": 1,
+        "reading": 3,
+        "site": 2,
+        "staff": 3
+      },
+      "db_state": "certified",
+      "file_sha256": "3f2859a234e9c29b2a41a8cb4f4b75910b0ce10353dcb14568b257483b5fc081",
+      "page_size": 4096,
+      "project_rows": [
+        "P2"
+      ],
+      "recomputed_sealed_fingerprint": "af2acbc27cb7cb531d52cdf2b5248affe7e76efd71796c205bba0d41c483b74e",
+      "schema_digest": "f31c24d332a0e22e22ca708a04a1212c2acaa879f731aa473aa55042dc148203",
+      "sealed_roots": [
+        [
+          "project",
+          [
+            "P2"
+          ]
+        ]
+      ]
+    },
+    "b2": {
+      "bytes": 81920,
+      "capture_digest": "af2acbc27cb7cb531d52cdf2b5248affe7e76efd71796c205bba0d41c483b74e",
+      "certificate_sha256": "bb2ce5360c971fd1178c74e3557a48237b104fcd6f90ecde5daa5f434b0298b8",
+      "claimed_root": [
+        "project",
+        [
+          "P2"
+        ]
+      ],
+      "counts": {
+        "project": 1,
+        "reading": 3,
+        "site": 2,
+        "staff": 3
+      },
+      "db_state": "certified",
+      "file_sha256": "bb2ce5360c971fd1178c74e3557a48237b104fcd6f90ecde5daa5f434b0298b8",
+      "page_size": 8192,
+      "project_rows": [
+        "P2"
+      ],
+      "recomputed_sealed_fingerprint": "af2acbc27cb7cb531d52cdf2b5248affe7e76efd71796c205bba0d41c483b74e",
+      "schema_digest": "f31c24d332a0e22e22ca708a04a1212c2acaa879f731aa473aa55042dc148203",
+      "sealed_roots": [
+        [
+          "project",
+          [
+            "P2"
+          ]
+        ]
+      ]
+    },
+    "beta": {
+      "bytes": 40960,
+      "capture_digest": "c55dcc8b1ac78429eab0ab1bbf0bf3dbfdff48daeab3f228ab048bbcc09ea4f2",
+      "certificate_sha256": "325d288f3e70d6a76e202dee10fcb2928d0e211f492c0794e1e30188deb35be9",
+      "claimed_root": [
+        "project",
+        [
+          "P3"
+        ]
+      ],
+      "counts": {
+        "project": 1,
+        "reading": 3,
+        "site": 2,
+        "staff": 2
+      },
+      "db_state": "certified",
+      "file_sha256": "325d288f3e70d6a76e202dee10fcb2928d0e211f492c0794e1e30188deb35be9",
+      "page_size": 4096,
+      "project_rows": [
+        "P1"
+      ],
+      "recomputed_sealed_fingerprint": "5952f2756c12ec9aea361ce5d4bc0692415f24be6dd5ffa1512a151ac76eb840",
+      "schema_digest": "f31c24d332a0e22e22ca708a04a1212c2acaa879f731aa473aa55042dc148203",
+      "sealed_roots": [
+        [
+          "project",
+          [
+            "P3"
+          ]
+        ]
+      ]
+    },
+    "gamma": {
+      "claimed_root": [
+        "project",
+        [
+          "P1"
+        ]
+      ],
+      "db_state": "sealed",
+      "recomputed_sealed_fingerprint": "1de97c52538977bbe113af92938f5e1a8d6fb63b14aefd32342f6d049d8a9cf2",
+      "sealed_roots": [
+        [
+          "project",
+          [
+            "P1"
+          ]
+        ]
+      ]
+    }
+  }
+}
