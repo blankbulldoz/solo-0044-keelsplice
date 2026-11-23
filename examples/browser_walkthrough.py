@@ -43,13 +43,14 @@ def run(base, source, root):
     assert 'region → code' in table and 'cassette' in table
     assert open_page(base, '/workbench/assets/workspace.css')[1].get_content_type() == 'text/css'
     assert '未注册' in html(base, '/workbench?source=missing', expected=404)[1]
+    assert '尚无封存捕获' in html(base, '/workbench/audit')[1]
 
     editor_url = '/workbench/recipes/new'
     _, editor = html(base, editor_url)
     digest = re.search(r'name="digest" value="([0-9a-f]{64})"', editor)[1]
     form = {'source': 'microscope', 'name': 'browser-swatch', 'digest': digest,
             'row_limit': '20', 'edge': ['0:assay'],
-            'roots': '[{"table":"substrate","key":["east","MICA"]}]'}
+            'roots': '[{"table":"substrate","key":["east","MICA"]},{"table":"substrate","key":["EAST","mica"]}]'}
     assert '目录已变化' in html(base, editor_url, form | {'digest': 'stale'}, expected=409)[1]
     assert '本机工作台' in html(base, editor_url, form, expected=403, origin='http://localhost:1')[1]
     _, error = html(base, editor_url, form | {'roots': 'bad'}, expected=400)
@@ -70,11 +71,15 @@ def run(base, source, root):
     assert '需先认证' in html(base, first + '/database', expected=409)[1]
 
     with closing(sqlite3.connect(source)) as conn, conn:
-        conn.execute("UPDATE assay SET length_um=7 WHERE mark='S-01'")
+        conn.execute("UPDATE assay SET length_um=7, cassette=13 WHERE mark='S-01'")
     second, _ = html(base, version + '/capture', {})
     args = {'left': first.rsplit('/', 1)[1], 'right': second.rsplit('/', 1)[1]}
     _, compare = html(base, '/workbench/compare', args)
     assert 'S-01' in compare and '修改' in compare
+    _, audit = html(base, '/workbench/audit')
+    assert '实存根解析' in audit and 'doubled' in audit and '的生成值' in audit and '外键' in audit
+    assert '重复根' in audit and '共用实际观察' in audit and '关系目标变更' in audit
+    assert '根序号' in audit and 'S-01' in audit and first in audit and second in audit
     assert '已停用' in html(base, version + '/retire', {})[1]
     assert '已停止投用' in html(base, version + '/capture', {}, expected=409)[1]
     assert '已构建' in html(base, first + '/build', {})[1]
@@ -86,7 +91,7 @@ def run(base, source, root):
     with closing(sqlite3.connect(handoff)) as conn:
         assert conn.execute("SELECT length_um FROM assay WHERE mark='S-01'").fetchone() == (3.25,)
         assert conn.execute('PRAGMA foreign_key_check').fetchall() == []
-    print('浏览器端到端检查通过：目录、配方、试算、捕获、证据、对比、停用、构建、认证、下载')
+    print('浏览器端到端检查通过：目录、配方、试算、捕获、证据、对比、审计、停用、构建、认证、下载')
 
 
 def main():

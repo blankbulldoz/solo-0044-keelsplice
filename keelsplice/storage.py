@@ -96,6 +96,13 @@ class Repository:
             """).fetchall()
         return [dict(row) for row in rows]
 
+    def all_captures(self):
+        with self.session() as conn:
+            rows = conn.execute("""
+                SELECT id, name, version, state, sealed FROM captures ORDER BY rowid
+            """).fetchall()
+        return [dict(row) | {'sealed': loads(row['sealed'])} for row in rows]
+
     def retire(self, name, number):
         with self.session(write=True) as conn:
             update = conn.execute('UPDATE recipes SET active=0 WHERE name=? AND version=?', (name, number))

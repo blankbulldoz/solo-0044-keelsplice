@@ -1,0 +1,31 @@
+<div class="content">
+  <header class="pagehead"><div><p class="breadcrumb">验收证据</p><h1>覆盖审计</h1></div></header>
+  <p class="notice info">统计状态库中全部封存捕获。同一实体被多次观察时只计为一个独立实体；代表捕获取最近一次观察到该实体的捕获，依据列出全部等价观察。</p>
+  <dl class="facts">
+    <div><dt>已审计捕获</dt><dd>$captures</dd></div>
+    <div><dt>检查项</dt><dd>$checks</dd></div>
+    <div><dt>独立实体</dt><dd>$entities</dd></div>
+    <div><dt>观察次数</dt><dd>$sightings</dd></div>
+    <div><dt>已合并重复</dt><dd>$merged</dd></div>
+  </dl>
+  <section aria-labelledby="coverage">
+    <h2 id="coverage">检查项覆盖</h2>
+    <div class="scroll"><table><caption>每项检查由多少独立实体支持</caption><thead><tr><th scope="col">类别</th><th scope="col">检查项</th><th scope="col">独立实体</th><th scope="col">观察次数</th><th scope="col">涉及捕获</th></tr></thead><tbody>$coverage</tbody></table></div>
+  </section>
+  <section aria-labelledby="representatives">
+    <h2 id="representatives">实体与代表捕获</h2>
+    $representatives
+  </section>
+  <section aria-labelledby="duplicates">
+    <h2 id="duplicates">重复根</h2>
+    $duplicates
+  </section>
+  <section aria-labelledby="shared">
+    <h2 id="shared">共用实际观察</h2>
+    $shared
+  </section>
+  <section aria-labelledby="retargeted">
+    <h2 id="retargeted">关系目标变更</h2>
+    $retargeted
+  </section>
+</div>

@@ -3,7 +3,7 @@
 import re
 import sqlite3
 
-from . import bundle, capture, catalog, recipe
+from . import audit, bundle, capture, catalog, recipe
 from .codec import Fault
 
 NAME = re.compile(r'[a-z][a-z0-9_-]{0,63}\Z')
@@ -75,6 +75,9 @@ class Workbench:
             raise Fault('invalid_capture', 'Supply two capture identifiers')
         left, right = (self.repository.load_capture(body[k])['sealed'] for k in ('left', 'right'))
         return {'left': body['left'], 'right': body['right'], 'changes': capture.compare(left, right)}
+
+    def audit(self):
+        return audit.analyze(self.repository.all_captures())
 
     def build(self, capture_id):
         record = self.repository.load_capture(capture_id)

@@ -4,7 +4,7 @@ import re
 import sqlite3
 from urllib.parse import urlsplit
 
-from . import assets, captures, comparison, directory, evidence, preview, selection, versions
+from . import assets, audit, captures, comparison, directory, evidence, preview, selection, versions
 from .errors import invalid_route, message
 from .forms import MAX_BYTES, decode_form, field, version
 from .render import page, segment, text
@@ -93,6 +93,8 @@ def route(handler, path):
             status, body = comparison.show(bench)
         case 'POST', ['workbench', 'compare']:
             status, body = comparison.show(bench, values)
+        case 'GET', ['workbench', 'audit']:
+            status, body = audit.show(bench)
         case _:
             raise invalid_route()
     return status, body, 'text/html; charset=utf-8', {}
