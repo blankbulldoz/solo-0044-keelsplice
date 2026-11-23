@@ -3,7 +3,7 @@
 import re
 import sqlite3
 
-from . import bundle, capture, catalog, recipe
+from . import bundle, capture, catalog, onboarding, recipe
 from .codec import Fault
 
 NAME = re.compile(r'[a-z][a-z0-9_-]{0,63}\Z')
@@ -16,6 +16,12 @@ class Workbench:
     def catalog(self, alias):
         with self.repository.source(alias) as conn:
             return catalog.snapshot(conn)
+
+    def onboarding_check(self, body):
+        return onboarding.check(self.repository, body)
+
+    def onboarding_recheck(self, body):
+        return onboarding.recheck(self.repository, body)
 
     def register(self, name, body, *, expected_schema=None):
         if not NAME.fullmatch(name):

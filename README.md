@@ -38,9 +38,29 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 | `POST /captures/{id}/trace` | 接收如 `{"table":"substrate","key":["East","Mica"]}`，返回直接证据和从零开始的根序号 |
 | `POST /captures/{id}/build`、`POST /captures/{id}/certify` | 接收空对象，构建或认证该捕获的子库 |
 | `POST /compare` | 接收 `{"left":"id-a","right":"id-b"}`，按表报告带类型主键的差异 |
+| `POST /sources/onboarding/check` | 接收 `{"reference":"别名","candidates":{"标签":"路径"},"probes":[...]}，输出可审核的源接入基线 |
+| `POST /sources/onboarding/recheck` | 接收 `{"baseline":<check 的返回>}`，在源更新后逐项指出先前结论是否仍适用 |
 | `GET /captures/{id}/database` | 返回已认证 SQLite 字节，`ETag` 为带引号的 SHA-256 |
 
 根记录中的键按目录的列顺序填写。整数为有符号 64 位 JSON 数字。字节用 `{"blob":"AAD/"}`，实数用 `{"real":"0x1.a000000000000p+1"}`，文本用 JSON 字符串。配方可以用不同拼写定位同一个 NOCASE 根，封存与追踪使用实存键。结果中的行去重，输入根出现项保留顺序。工作台近期列表显示最后登记的 50 个配方版本和最后封存的 50 次捕获，历史详情地址依然可访问。
+
+## 新增源文件接入自查
+
+迁移或重新接入时，管理员常同时持有运行中 WAL 库的目录拷贝、跟随原文件的别名路径，以及同结构但根值不同的替代库。既有配方继续使用登记的别名；新配方在登记前先用接入自查明确「这份路径到底提供哪种保证」。
+
+`POST /sources/onboarding/check` 以已登记别名指向的运行库为参照，对 `candidates` 中每个路径独立采证并给出判定：
+
+| 判定 | 证据含义 | 接入建议 |
+| --- | --- | --- |
+| `same_object` | 设备号与 inode 与参照主文件相同，路径实际指向同一对象（如符号链接） | `register_alias` |
+| `same_database_copy` | 不同文件，但只读快照能看到全部已提交的代表记录（目录拷贝保留了 WAL 帧） | `register_copy` |
+| `main_file_only` | 主文件字节与参照一致，但代表记录不可见，只能证明主文件相同 | `do_not_register` |
+| `divergent_database` | 主文件不同且代表记录缺失（同结构、不同已提交内容） | `do_not_register` |
+| `unreadable` | 路径缺失、无法只读打开或模式不支持 | `do_not_register` |
+
+证据同时给出主文件 SHA-256、`-wal`/`-shm` 边车是否随拷贝提供、模式摘要是否一致以及每个代表行的命中情况。只读探测在私有暂存区打开候选，不会在操作员的候选目录里生成或改动任何边车文件。
+
+返回的基线应保存到实际登记之间。期间源若有更新，调用 `POST /sources/onboarding/recheck` 并原样回传基线：服务重新采证，对每个候选给出 `verdict_unchanged`、逐项 `evidence_changes` 和总的 `still_applies`，并在参照上标记 `changed_since_baseline`。类别未变但证据（如 checkpoint 后主文件摘要）漂移时，`still_applies` 为 `false`，提示先前的接入结论需要重新确认。
 
 ## 复跑
 
@@ -48,6 +68,7 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 python3 -m compileall -q keelsplice examples
 python3 -m examples.walkthrough all
 python3 -m examples.browser_walkthrough
+python3 -m examples.onboarding_walkthrough
 ```
 
-两份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。独立自动化测试套件延后。
+两份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。接入演练构造「运行中 WAL 库、跟随原文件的别名、带 WAL 的完整目录拷贝、仅主文件拷贝、同结构替代库」，先验证基线判定，再在源提交并 checkpoint 后验证复核结论。独立自动化测试套件延后。
