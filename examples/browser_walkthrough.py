@@ -75,6 +75,11 @@ def run(base, source, root):
     args = {'left': first.rsplit('/', 1)[1], 'right': second.rsplit('/', 1)[1]}
     _, compare = html(base, '/workbench/compare', args)
     assert 'S-01' in compare and '修改' in compare
+    token = re.search(r'value="(\d+:assay:child)">substrate', compare)[1]
+    _, grouped = html(base, '/workbench/compare', args | {'direction': token})
+    assert '按关系方向归并' in grouped and 'East' in grouped and 'Mica' in grouped
+    assert '锚行溯源' in grouped and '归并引用' in grouped and '所有差异均已归并入组' in grouped
+    assert '归并方向' in html(base, '/workbench/compare', args | {'direction': '99:assay:child'}, expected=422)[1]
     assert '已停用' in html(base, version + '/retire', {})[1]
     assert '已停止投用' in html(base, version + '/capture', {}, expected=409)[1]
     assert '已构建' in html(base, first + '/build', {})[1]

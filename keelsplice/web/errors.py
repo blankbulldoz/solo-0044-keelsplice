@@ -17,6 +17,7 @@ MESSAGES = {
     'unknown_recipe': '配方版本不存在。',
     'retired_recipe': '此配方版本已停止投用。',
     'schema_conflict': '模式摘要不一致，无法沿用当前配方或直接比较这两次捕获。',
+    'invalid_direction': '归并方向须引用对比模式中已登记的外键及有效朝向。',
     'unknown_capture': '找不到指定的捕获。',
     'row_not_captured': '封存结果中没有这个实存主键，请核对类型与拼写。',
     'fixture_not_built': '需先构建子库。',

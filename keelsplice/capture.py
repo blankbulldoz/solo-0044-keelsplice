@@ -2,8 +2,9 @@
 
 from collections import defaultdict, deque
 
+from .catalog import resolve
 from .codec import Fault, decode, dumps, key, loads, quote, row_values
-from .recipe import MAX_ARCS, MAX_BYTES, identity
+from .recipe import MAX_ARCS, MAX_BYTES, fields, identity
 
 
 def condition(columns, alias):
@@ -129,3 +130,76 @@ def compare(left, right):
             'modified': [loads(token) for token in sorted(before.keys() & after.keys()) if before[token] != after[token]],
         }
     return changes
+
+
+def group(changes, left, right, direction):
+    """Regroup flat differences around anchor rows along one oriented foreign key.
+
+    Anchors and members come only from the sealed rows and arcs of the two
+    captures. A changed row may be referenced by several groups (cycles or a
+    moved foreign key giving it an owner on each side), but the totals count
+    each distinct actual row change exactly once.
+    """
+    fields(direction, ('child', 'id', 'towards'))
+    schema = left['schema']
+    towards = direction['towards']
+    if towards not in ('parent', 'child'):
+        raise Fault('invalid_direction', 'Direction must follow an edge towards its parent or child side')
+    child = resolve(schema['tables'], direction['child'])
+    number = direction['id']
+    edge = next((e for e in schema['edges'] if e['child'] == child and e['id'] == number), None)
+    if type(number) is not int or edge is None:
+        raise Fault('invalid_direction', 'Direction must name a foreign key from the compared schema')
+    anchor_table = edge['parent'] if towards == 'child' else edge['child']
+    member_table = edge['child'] if towards == 'child' else edge['parent']
+    wanted = [edge['child'], edge['id']]
+    anchors_of = defaultdict(set)
+    for sealed in (left, right):
+        for arc in sealed['result']['arcs']:
+            if arc['edge'] != wanted:
+                continue
+            pair = (arc['origin'], arc['target']) if arc['direction'] == 'parent' else (arc['target'], arc['origin'])
+            child_row, parent_row = pair
+            anchor, member = (parent_row, child_row) if towards == 'child' else (child_row, parent_row)
+            anchors_of[dumps(member)].add(dumps(anchor))
+
+    def sides(address):
+        table, values = address
+        token = key(values)
+        return [side for side, sealed in (('left', left), ('right', right))
+                if token in sealed['result']['rows'][table]]
+
+    groups, ungrouped = {}, []
+    kinds = {'added': 0, 'removed': 0, 'modified': 0}
+    for table, difference in changes.items():
+        for kind, keys in difference.items():
+            for values in keys:
+                kinds[kind] += 1
+                address = [table, values]
+                token = dumps(address)
+                placed = False
+                if table == anchor_table:
+                    groups.setdefault(token, {'anchor': address, 'own': None, 'members': []})['own'] = kind
+                    placed = True
+                if table == member_table and token in anchors_of:
+                    for anchor_token in sorted(anchors_of[token]):
+                        slot = groups.setdefault(anchor_token, {'anchor': loads(anchor_token), 'own': None, 'members': []})
+                        slot['members'].append({'row': address, 'kind': kind})
+                    placed = True
+                if not placed:
+                    ungrouped.append({'row': address, 'kind': kind})
+    ordered = [groups[token] for token in sorted(groups)]
+    for entry in ordered:
+        entry['members'].sort(key=lambda member: dumps(member['row']))
+        entry['sides'] = sides(entry['anchor'])
+        for member in entry['members']:
+            member['sides'] = sides(member['row'])
+    ungrouped.sort(key=lambda entry: dumps(entry['row']))
+    for entry in ungrouped:
+        entry['sides'] = sides(entry['row'])
+    references = sum(int(entry['own'] is not None) + len(entry['members']) for entry in ordered)
+    totals = kinds | {'changes': sum(kinds.values()), 'references': references,
+                      'groups': len(ordered), 'ungrouped': len(ungrouped)}
+    return {'direction': {'child': edge['child'], 'id': edge['id'], 'towards': towards,
+                          'anchor': anchor_table, 'member': member_table},
+            'groups': ordered, 'ungrouped': ungrouped, 'totals': totals}

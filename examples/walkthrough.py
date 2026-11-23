@@ -112,6 +112,33 @@ def walkthrough(base, selected, source, root):
 
     diff = request('/compare', {'left': cap['id'], 'right': newer['id']})
     assert diff['changes']['assay'] == {'added': [], 'removed': [], 'modified': [['S-01']]}
+    assert diff['groups'] is None
+    with closing(sqlite3.connect(source)) as conn, conn:
+        conn.execute("UPDATE assay SET cassette=13 WHERE mark='S-01'")
+        conn.execute("UPDATE cassette SET label='fire-opal' WHERE serial=11")
+    moved = request('/captures', lookup, 201)
+    edges = catalog['schema']['edges']
+    slot = next(edge for edge in edges if edge['child'] == 'assay' and edge['parent'] == 'cassette')
+    grouped = request('/compare', {'left': cap['id'], 'right': moved['id'],
+                                   'direction': {'child': 'assay', 'id': slot['id'], 'towards': 'child'}})
+    assert grouped['groups']['totals'] == {'added': 1, 'removed': 0, 'modified': 2, 'changes': 3,
+                                           'references': 4, 'groups': 2, 'ungrouped': 0}
+    anchors = {tuple(entry['anchor'][1]): entry for entry in grouped['groups']['groups']}
+    assert anchors[(11,)]['own'] == 'modified' and anchors[(13,)]['own'] == 'added'
+    member = {'row': ['assay', ['S-01']], 'kind': 'modified', 'sides': ['left', 'right']}
+    assert anchors[(11,)]['members'] == anchors[(13,)]['members'] == [member]
+    assert anchors[(11,)]['sides'] == ['left', 'right'] and anchors[(13,)]['sides'] == ['right']
+    loop = next(edge for edge in edges if edge['child'] == 'cassette')
+    cycled = request('/compare', {'left': cap['id'], 'right': moved['id'],
+                                  'direction': {'child': 'cassette', 'id': loop['id'], 'towards': 'child'}})
+    assert cycled['groups']['totals'] == {'added': 1, 'removed': 0, 'modified': 2, 'changes': 3,
+                                          'references': 3, 'groups': 3, 'ungrouped': 1}
+    anchors = {tuple(entry['anchor'][1]): entry for entry in cycled['groups']['groups']}
+    assert anchors[(11,)]['own'] == 'modified' and anchors[(12,)]['members'][0]['row'] == ['cassette', [11]]
+    assert cycled['groups']['ungrouped'] == [member]
+    for bad in ({'child': 'assay', 'id': 99, 'towards': 'child'}, {'child': 'assay', 'id': slot['id'], 'towards': 'up'}):
+        assert request('/compare', {'left': cap['id'], 'right': moved['id'], 'direction': bad},
+                       422)['error'] == 'invalid_direction'
     with closing(sqlite3.connect(source)) as conn, conn:
         conn.execute('ALTER TABLE frame ADD COLUMN caption TEXT')
     assert request('/captures', lookup, 409)['error'] == 'schema_conflict'
