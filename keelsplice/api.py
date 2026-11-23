@@ -69,11 +69,15 @@ class RequestHandler(BaseHTTPRequestHandler):
             case 'POST', ['captures', capture_id, 'trace']:
                 return 200, bench.trace(capture_id, body)
             case 'POST', ['captures', capture_id, 'build']:
-                fields(body)
-                return 200, bench.build(capture_id)
+                fields(body, (), ('request',))
+                return 200, bench.build(capture_id, request=body.get('request'))
             case 'POST', ['captures', capture_id, 'certify']:
-                fields(body)
-                return 200, bench.certify(capture_id)
+                fields(body, (), ('request',))
+                return 200, bench.certify(capture_id, request=body.get('request'))
+            case 'GET', ['captures', capture_id, 'operations']:
+                return 200, bench.operations(capture_id)
+            case 'GET', ['captures', capture_id, 'operations', operation_id]:
+                return 200, bench.operation(capture_id, operation_id)
             case 'POST', ['compare']:
                 return 200, bench.compare(body)
             case 'GET', ['captures', capture_id, 'database']:

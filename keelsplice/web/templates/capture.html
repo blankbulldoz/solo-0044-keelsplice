@@ -5,7 +5,9 @@
     <div><dt>源配方</dt><dd><a href="$recipe">$name · 版本 $number</a></dd></div>
     <div class="wide"><dt>封存模式摘要</dt><dd><code>$digest</code></dd></div></dl>
   <div class="actions">$actions</div>
+  <p class="muted">$stage_line</p>
   $certificate
+  <section><h2>操作回执</h2><div class="scroll"><table><caption>构建与认证请求的回执，断线重连后可在此核对</caption><thead><tr><th scope="col">回执</th><th scope="col">操作</th><th scope="col">结果</th><th scope="col">阶段变化</th><th scope="col">关联</th></tr></thead><tbody>$operations</tbody></table></div></section>
   <div class="editor-grid">
     <section><h2>源库实存根</h2><ol class="data-list">$roots</ol></section>
     <section><h2>逐表计数</h2><div class="scroll"><table><thead><tr><th scope="col">表</th><th scope="col">入选行</th></tr></thead><tbody>$counts</tbody></table></div></section>

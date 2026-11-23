@@ -86,7 +86,29 @@ def run(base, source, root):
     with closing(sqlite3.connect(handoff)) as conn:
         assert conn.execute("SELECT length_um FROM assay WHERE mark='S-01'").fetchone() == (3.25,)
         assert conn.execute('PRAGMA foreign_key_check').fetchall() == []
-    print('浏览器端到端检查通过：目录、配方、试算、捕获、证据、对比、停用、构建、认证、下载')
+
+    # 两个工位操作同一捕获：A 的构建实际完成但断线，B 随后构建并认证，重连后各自核对回执。
+    _, page_a = html(base, second)
+    token_a = re.search(r'name="request" value="([0-9a-f]{32})"', page_a)[1]
+    _, receipt_a = html(base, second + '/build', {'request': token_a})
+    assert '推进了状态' in receipt_a and '已封存 → 已构建' in receipt_a
+    _, page_b = html(base, second)
+    token_b = re.search(r'name="request" value="([0-9a-f]{32})"', page_b)[1]
+    assert token_b != token_a
+    _, receipt_b = html(base, second + '/build', {'request': token_b})
+    assert '未改变状态' in receipt_b and token_b in receipt_b and token_a[:12] in receipt_b
+    _, page_c = html(base, second)
+    token_c = re.search(r'name="request" value="([0-9a-f]{32})"', page_c)[1]
+    _, receipt_c = html(base, second + '/certify', {'request': token_c})
+    assert '推进了状态' in receipt_c and '对应构建回执' in receipt_c and token_a[:12] in receipt_c
+    _, reconnected = html(base, second)
+    assert '当前阶段：已认证' in reconnected and '对应构建回执' in reconnected
+    assert token_a[:12] in reconnected and token_b[:12] in reconnected and token_c[:12] in reconnected
+    _, own = html(base, second + '/operations/' + token_a)
+    assert '推进了状态' in own
+    _, retry = html(base, second + '/build', {'request': token_a})
+    assert '推进了状态' in retry
+    print('浏览器端到端检查通过：目录、配方、试算、捕获、证据、对比、停用、构建、认证、下载、回执核对')
 
 
 def main():

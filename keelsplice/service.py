@@ -7,6 +7,15 @@ from . import bundle, capture, catalog, recipe
 from .codec import Fault
 
 NAME = re.compile(r'[a-z][a-z0-9_-]{0,63}\Z')
+TOKEN = re.compile(r'[0-9A-Za-z][0-9A-Za-z_-]{7,63}\Z')
+
+
+def request_token(value):
+    if value is None:
+        return None
+    if not isinstance(value, str) or not TOKEN.fullmatch(value):
+        raise Fault('invalid_token', 'Request token needs 8 to 64 letters, digits, dashes, or underscores', 400)
+    return value
 
 
 class Workbench:
@@ -76,17 +85,22 @@ class Workbench:
         left, right = (self.repository.load_capture(body[k])['sealed'] for k in ('left', 'right'))
         return {'left': body['left'], 'right': body['right'], 'changes': capture.compare(left, right)}
 
-    def build(self, capture_id):
+    def build(self, capture_id, request=None):
+        request = request_token(request)
         record = self.repository.load_capture(capture_id)
         if record['state'] == 'sealed':
             try:
                 data = bundle.build(record['sealed'])
             except sqlite3.Error as exc:
                 raise Fault('artifact_build', 'SQLite rejected the sealed schema or values') from exc
-            record = self.repository.promote(capture_id, artifact=data)
+            detail = {'sha256': bundle.digest_bytes(data), 'bytes': len(data)}
+            record = self.repository.promote(capture_id, artifact=data, detail=detail, request=request)
+        elif request is not None:
+            self.repository.observe(capture_id, 'build', request)
         return self.describe(record)
 
-    def certify(self, capture_id):
+    def certify(self, capture_id, request=None):
+        request = request_token(request)
         record = self.repository.load_capture(capture_id, with_artifact=True)
         if record['state'] == 'sealed':
             raise Fault('fixture_not_built', 'Build the fixture before certifying', 409)
@@ -95,8 +109,19 @@ class Workbench:
                 certificate = bundle.certify(record['artifact'], record['sealed'])
             except sqlite3.Error as exc:
                 raise Fault('artifact_unreadable', 'SQLite could not read the resulting fixture') from exc
-            record = self.repository.promote(capture_id, certificate=certificate)
+            record = self.repository.promote(capture_id, certificate=certificate,
+                                             detail={'sha256': certificate['sha256']}, request=request)
+        elif request is not None:
+            self.repository.observe(capture_id, 'certify', request)
         return self.describe(record)
+
+    def operations(self, capture_id):
+        self.repository.load_capture(capture_id)
+        return {'capture': capture_id, 'operations': self.repository.operations(capture_id)}
+
+    def operation(self, capture_id, operation_id):
+        self.repository.load_capture(capture_id)
+        return self.repository.operation(capture_id, operation_id)
 
     def download(self, capture_id):
         record = self.repository.load_capture(capture_id, with_artifact=True)

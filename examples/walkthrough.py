@@ -99,6 +99,13 @@ def walkthrough(base, selected, source, root):
     assert request(endpoint + '/certify', {}, 409)['error'] == 'fixture_not_built'
     rebuilt = request(endpoint + '/build', {})
     assert rebuilt['state'] == 'built' and request(endpoint + '/build', {}) == rebuilt
+    journal = request(endpoint + '/operations')['operations']
+    assert [op['outcome'] for op in journal] == ['performed']
+    tokened = request(endpoint + '/build', {'request': 'json-client-1'})
+    assert tokened == rebuilt
+    journal = request(endpoint + '/operations')['operations']
+    assert [op['outcome'] for op in journal] == ['performed', 'observed']
+    assert journal[1]['id'] == 'json-client-1' and journal[1]['detail']['by'] == journal[0]['id']
     assert request(endpoint + '/database', status=409)['error'] == 'fixture_not_certified'
     if observe('build', {'state':rebuilt['state']}):
         return
@@ -107,6 +114,12 @@ def walkthrough(base, selected, source, root):
     certificate = certified['certificate']
     assert certified['state'] == 'certified' and certificate['counts'] == cap['summary']['counts']
     assert request(endpoint + '/certify', {}) == certified
+    journal = request(endpoint + '/operations')['operations']
+    assert [op['outcome'] for op in journal] == ['performed', 'observed', 'performed']
+    assert journal[2]['detail']['build'] == journal[0]['id']
+    assert journal[2]['detail']['sha256'] == certificate['sha256']
+    receipt = request(endpoint + '/operations/' + journal[0]['id'])
+    assert receipt['action'] == 'build' and receipt['detail']['sha256'] == certificate['sha256']
     if observe('certify', certificate):
         return
 

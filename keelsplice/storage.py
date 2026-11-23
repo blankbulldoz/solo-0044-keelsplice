@@ -18,6 +18,15 @@ CREATE TABLE IF NOT EXISTS captures (
     artifact BLOB, certificate TEXT,
     FOREIGN KEY(name, version) REFERENCES recipes(name, version)
 );
+CREATE TABLE IF NOT EXISTS operations (
+    capture TEXT NOT NULL REFERENCES captures(id),
+    id TEXT NOT NULL,
+    action TEXT NOT NULL CHECK(action IN ('build','certify')),
+    outcome TEXT NOT NULL CHECK(outcome IN ('performed','observed')),
+    before_state TEXT NOT NULL, after_state TEXT NOT NULL,
+    detail TEXT NOT NULL,
+    PRIMARY KEY (capture, id)
+);
 '''
 
 
@@ -122,12 +131,68 @@ class Repository:
         return dict(row) | {'sealed': loads(row['sealed']),
                             'certificate': loads(row['certificate']) if row['certificate'] else None}
 
-    def promote(self, capture_id, *, artifact=None, certificate=None):
+    def promote(self, capture_id, *, artifact=None, certificate=None, detail=None, request=None):
+        action = 'build' if artifact is not None else 'certify'
         with self.session(write=True) as conn:
             if artifact is not None:
-                conn.execute("UPDATE captures SET state='built',artifact=? WHERE id=? AND state='sealed'",
-                             (artifact, capture_id))
+                update = conn.execute("UPDATE captures SET state='built',artifact=? WHERE id=? AND state='sealed'",
+                                      (artifact, capture_id))
             else:
-                conn.execute("UPDATE captures SET state='certified',certificate=? WHERE id=? AND state='built'",
-                             (dumps(certificate), capture_id))
+                update = conn.execute("UPDATE captures SET state='certified',certificate=? WHERE id=? AND state='built'",
+                                      (dumps(certificate), capture_id))
+            state = conn.execute('SELECT state FROM captures WHERE id=?', (capture_id,)).fetchone()['state']
+            if update.rowcount == 1:
+                outcome, before, recorded = 'performed', 'sealed' if action == 'build' else 'built', dict(detail or ())
+                if action == 'certify':
+                    recorded['build'] = self._performed(conn, capture_id, 'build')
+            else:
+                outcome, before = 'observed', state
+                recorded = {'by': self._performed(conn, capture_id, action)}
+            self._record(conn, capture_id, action, outcome, before, state, recorded, request)
         return self.load_capture(capture_id)
+
+    def observe(self, capture_id, action, request):
+        with self.session(write=True) as conn:
+            row = conn.execute('SELECT state FROM captures WHERE id=?', (capture_id,)).fetchone()
+            if row is None:
+                raise Fault('unknown_capture', 'Capture does not exist', 404)
+            detail = {'by': self._performed(conn, capture_id, action)}
+            self._record(conn, capture_id, action, 'observed', row['state'], row['state'], detail, request)
+
+    @staticmethod
+    def _performed(conn, capture_id, action):
+        row = conn.execute("SELECT id FROM operations WHERE capture=? AND action=? AND outcome='performed'",
+                           (capture_id, action)).fetchone()
+        return row['id'] if row else None
+
+    @staticmethod
+    def _record(conn, capture_id, action, outcome, before, after, detail, request):
+        operation_id = request or uuid4().hex
+        if request is not None:
+            existing = conn.execute('SELECT action FROM operations WHERE capture=? AND id=?',
+                                    (capture_id, operation_id)).fetchone()
+            if existing is not None:
+                if existing['action'] != action:
+                    raise Fault('request_token_conflict', 'Request token was already used for another action', 409)
+                return
+        conn.execute('INSERT INTO operations VALUES(?,?,?,?,?,?,?)',
+                     (capture_id, operation_id, action, outcome, before, after, dumps(detail)))
+
+    @staticmethod
+    def _operation(row):
+        return {'id': row['id'], 'capture': row['capture'], 'action': row['action'],
+                'outcome': row['outcome'], 'before': row['before_state'], 'after': row['after_state'],
+                'detail': loads(row['detail'])}
+
+    def operations(self, capture_id):
+        with self.session() as conn:
+            rows = conn.execute('SELECT * FROM operations WHERE capture=? ORDER BY rowid', (capture_id,)).fetchall()
+        return [self._operation(row) for row in rows]
+
+    def operation(self, capture_id, operation_id):
+        with self.session() as conn:
+            row = conn.execute('SELECT * FROM operations WHERE capture=? AND id=?',
+                               (capture_id, operation_id)).fetchone()
+        if row is None:
+            raise Fault('unknown_operation', 'Operation receipt is unknown', 404)
+        return self._operation(row)

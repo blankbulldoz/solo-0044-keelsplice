@@ -75,6 +75,8 @@ def route(handler, path):
             status, body = captures.index(bench)
         case 'GET', ['workbench', 'captures', capture_id]:
             status, body = captures.detail(bench, capture_id)
+        case 'GET', ['workbench', 'captures', capture_id, 'operations', operation_id]:
+            status, body = captures.receipt(bench, capture_id, operation_id)
         case 'GET', ['workbench', 'captures', capture_id, 'database']:
             data, sha = bench.download(capture_id)
             return 200, data, 'application/vnd.sqlite3', {
@@ -85,7 +87,10 @@ def route(handler, path):
             if action == 'trace':
                 status, body = evidence.show(bench, capture_id, values)
             elif action in ('build', 'certify'):
-                (bench.build if action == 'build' else bench.certify)(capture_id)
+                token = field(values, 'request')
+                (bench.build if action == 'build' else bench.certify)(capture_id, request=token or None)
+                if token:
+                    return redirect(f'/workbench/captures/{segment(capture_id)}/operations/{segment(token)}')
                 return redirect(f'/workbench/captures/{segment(capture_id)}')
             else:
                 raise invalid_route()

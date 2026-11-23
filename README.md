@@ -21,7 +21,7 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 2. 登记配方，填写一个或多个根及封存行上限。样例可填 `[{"table":"substrate","key":["east","MICA"]}]`，再选 `substrate → assay`。
 3. 试算查看逐表计数和实存根。点「封存当前样本」时服务重新读取源。配方绑定的模式有变化时，需要重新核对目录。
 4. 在捕获详情按实存主键追踪。可从直接入选原因或必需父行继续查看相关记录。对比页面按实存带类型主键显示两个同模式捕获的新增、移除和修改。
-5. 构建后再认证。认证后可下载文件并用其 SHA-256 或独立 SQLite 连接核对。停用配方后，既有捕获仍可完成这些操作。
+5. 构建后再认证。认证后可下载文件并用其 SHA-256 或独立 SQLite 连接核对。停用配方后，既有捕获仍可完成这些操作。构建与认证表单每次提交都携带新的请求标识：捕获详情页的「操作回执」台账列出每次请求是推进了状态还是仅观察到既有状态、当前阶段谁能继续，以及证书对应哪次成功构建；断线重连后凭回执编号核对自己的操作，重复提交同一标识仍指向原回执。
 
 ## JSON 接口
 
@@ -36,7 +36,8 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 | `POST /preview`、`POST /captures` | 接收 `{"name":"swatch","version":1}`，分别试算和封存 |
 | `GET /captures/{id}` | 读取捕获状态、实存根、计数和证书 |
 | `POST /captures/{id}/trace` | 接收如 `{"table":"substrate","key":["East","Mica"]}`，返回直接证据和从零开始的根序号 |
-| `POST /captures/{id}/build`、`POST /captures/{id}/certify` | 接收空对象，构建或认证该捕获的子库 |
+| `POST /captures/{id}/build`、`POST /captures/{id}/certify` | 接收空对象或带 `"request"` 幂等标识的对象，构建或认证该捕获的子库；重复请求返回同一结果 |
+| `GET /captures/{id}/operations`、`GET /captures/{id}/operations/{id}` | 读取构建与认证的操作回执：每次请求是推进还是观察、阶段变化、证书对应的构建回执 |
 | `POST /compare` | 接收 `{"left":"id-a","right":"id-b"}`，按表报告带类型主键的差异 |
 | `GET /captures/{id}/database` | 返回已认证 SQLite 字节，`ETag` 为带引号的 SHA-256 |
 
