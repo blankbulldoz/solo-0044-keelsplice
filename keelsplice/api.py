@@ -78,6 +78,12 @@ class RequestHandler(BaseHTTPRequestHandler):
                 return 200, bench.compare(body)
             case 'GET', ['captures', capture_id, 'database']:
                 return 200, bench.download(capture_id)
+            case 'POST', ['captures', capture_id, 'receipts']:
+                return 201, bench.acknowledge(capture_id, body)
+            case 'GET', ['captures', capture_id, 'receipts']:
+                return 200, bench.receipts(capture_id)
+            case 'GET', ['receipts', receipt_id]:
+                return 200, bench.receipt(receipt_id)
         raise Fault('unknown_route', 'Unknown endpoint', 404)
 
     def send_result(self, status, payload):

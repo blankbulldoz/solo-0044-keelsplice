@@ -36,3 +36,21 @@ def typed_json(value):
         return json.loads(value)
     except (ValueError, RecursionError) as exc:
         raise Fault('invalid_json', '请输入有效的 JSON。', 400) from exc
+
+
+def receipt_fields(values):
+    """Collect recipient evidence from the handoff form, keeping blanks absent."""
+    body = {'sha256': field(values, 'sha256')}
+    if field(values, 'recipient'):
+        body['recipient'] = field(values, 'recipient')
+    if field(values, 'note'):
+        body['note'] = field(values, 'note')
+    raw = field(values, 'counts')
+    if raw.strip():
+        counts = typed_json(raw)
+        if not isinstance(counts, dict):
+            raise Fault('invalid_counts', '请按「表名: 行数」的 JSON 对象填写计数。', 400)
+        body['counts'] = counts
+    if field(values, 'corrects'):
+        body['corrects'] = field(values, 'corrects')
+    return body

@@ -86,7 +86,30 @@ def run(base, source, root):
     with closing(sqlite3.connect(handoff)) as conn:
         assert conn.execute("SELECT length_um FROM assay WHERE mark='S-01'").fetchone() == (3.25,)
         assert conn.execute('PRAGMA foreign_key_check').fetchall() == []
-    print('浏览器端到端检查通过：目录、配方、试算、捕获、证据、对比、停用、构建、认证、下载')
+
+    receipt = {'sha256': hashlib.sha256(database).hexdigest(), 'recipient': 'lab-b',
+               'counts': '{"assay": 2, "cassette": 2, "frame": 0, "substrate": 1}'}
+    _, pending = html(base, first + '/receipts')
+    assert '尚无签收记录' in pending
+    _, rejected = html(base, first + '/receipts', receipt | {'sha256': 'f' * 64})
+    assert '未签收' in rejected and '摘要不符' in rejected
+    _, invalid = html(base, first + '/receipts', receipt | {'sha256': 'xyz'}, expected=400)
+    assert '64 位十六进制' in invalid
+    receipt_url, signed = html(base, first + '/receipts', receipt)
+    assert '已签收' in signed and 'lab-b' in signed
+    _, detail = html(base, first + '/receipts')
+    assert '已签收' in detail and receipt_url.rsplit('/', 1)[1] in detail
+    receipt_id = receipt_url.rsplit('/', 1)[1]
+    _, record = html(base, first + '/receipts/' + receipt_id)
+    assert '3d7f' not in record and '已签收' in record and '仅摘要' not in record
+    _, old = html(base, first + '/receipts/' + receipt_id + '/correct')
+    assert '已签收' in old and hashlib.sha256(database).hexdigest() in old
+    corrected_url, corrected = html(base, first + '/receipts', receipt | {'corrects': receipt_id,
+                                                                          'recipient': 'lab-b2'})
+    assert '已签收' in corrected and 'lab-b2' in corrected
+    _, before = html(base, first + '/receipts/' + receipt_id)
+    assert corrected_url.rsplit('/', 1)[1] in before and 'lab-b' in before
+    print('浏览器端到端检查通过：目录、配方、试算、捕获、证据、对比、停用、构建、认证、下载、签收与更正')
 
 
 def main():

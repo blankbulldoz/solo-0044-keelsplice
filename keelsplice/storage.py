@@ -2,9 +2,11 @@
 
 import sqlite3
 from contextlib import closing, contextmanager
+from datetime import datetime, timezone
 from pathlib import Path
 from uuid import uuid4
 
+from . import receipt
 from .codec import Fault, dumps, loads
 
 REPOSITORY_DDL = '''
@@ -18,6 +20,16 @@ CREATE TABLE IF NOT EXISTS captures (
     artifact BLOB, certificate TEXT,
     FOREIGN KEY(name, version) REFERENCES recipes(name, version)
 );
+CREATE TABLE IF NOT EXISTS receipts (
+    id TEXT PRIMARY KEY, capture_id TEXT NOT NULL, recipient TEXT NOT NULL,
+    note TEXT NOT NULL, sha256 TEXT NOT NULL, counts TEXT,
+    status TEXT NOT NULL CHECK(status IN ('confirmed','mismatch','ambiguous')), reasons TEXT NOT NULL,
+    matched TEXT NOT NULL, certificate_sha256 TEXT NOT NULL, capture_digest TEXT NOT NULL,
+    corrects TEXT UNIQUE, created TEXT NOT NULL,
+    FOREIGN KEY(capture_id) REFERENCES captures(id),
+    FOREIGN KEY(corrects) REFERENCES receipts(id)
+);
+CREATE INDEX IF NOT EXISTS receipts_by_capture ON receipts(capture_id);
 '''
 
 
@@ -131,3 +143,73 @@ class Repository:
                 conn.execute("UPDATE captures SET state='certified',certificate=? WHERE id=? AND state='built'",
                              (dumps(certificate), capture_id))
         return self.load_capture(capture_id)
+
+    def add_receipt(self, capture_id, evidence, verdict, certificate):
+        receipt_id = uuid4().hex
+        created = datetime.now(timezone.utc).isoformat(timespec='seconds')
+        with self.session(write=True) as conn:
+            record = conn.execute('SELECT state,certificate FROM captures WHERE id=?', (capture_id,)).fetchone()
+            if record is None:
+                raise Fault('unknown_capture', 'Capture does not exist', 404)
+            if record['state'] != 'certified' or not record['certificate']:
+                raise Fault('fixture_not_certified', 'Certify the fixture before recording a receipt', 409)
+            if loads(record['certificate']) != certificate:
+                raise Fault('artifact_integrity', 'Capture certificate changed while recording the receipt', 409)
+            if evidence['corrects'] is not None:
+                target = conn.execute('SELECT capture_id FROM receipts WHERE id=?',
+                                      (evidence['corrects'],)).fetchone()
+                if target is None:
+                    raise Fault('unknown_receipt', 'Receipt to correct does not exist', 404)
+                if target['capture_id'] != capture_id:
+                    raise Fault('invalid_correction', 'A receipt may only be corrected on its own capture', 409)
+                if conn.execute('SELECT 1 FROM receipts WHERE corrects=?',
+                                (evidence['corrects'],)).fetchone() is not None:
+                    raise Fault('invalid_correction', 'This receipt was already corrected', 409)
+            try:
+                saved = conn.execute("""INSERT INTO receipts (id,capture_id,recipient,note,sha256,counts,status,
+                        reasons,matched,certificate_sha256,capture_digest,corrects,created)
+                        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                        (receipt_id, capture_id, evidence['recipient'], evidence['note'], evidence['sha256'],
+                         dumps(evidence['counts']) if evidence['counts'] is not None else None,
+                         verdict['status'], dumps(verdict['reasons']), dumps(verdict['matched']),
+                         certificate['sha256'], certificate['capture_digest'], evidence['corrects'], created))
+            except sqlite3.IntegrityError as exc:
+                raise Fault('invalid_correction', 'This receipt was already corrected', 409) from exc
+        return self.load_receipt(receipt_id)
+
+    @staticmethod
+    def expand_receipts(rows, certificates):
+        corrected = {row['corrects']: row['id'] for row in rows if row['corrects']}
+        return [receipt.reassess(dict(row) | {
+            'counts': loads(row['counts']) if row['counts'] is not None else None,
+            'reasons': loads(row['reasons']), 'matched': loads(row['matched']),
+            'superseded_by': [corrected[row['id']]] if row['id'] in corrected else []},
+            row['capture_id'], certificates)
+            for row in rows]
+
+    def load_receipt(self, receipt_id):
+        with self.session() as conn:
+            row = conn.execute('SELECT * FROM receipts WHERE id=?', (receipt_id,)).fetchone()
+            if row is None:
+                raise Fault('unknown_receipt', 'Receipt does not exist', 404)
+            corrected = conn.execute('SELECT id FROM receipts WHERE corrects=?', (receipt_id,)).fetchone()
+        certificates = self.certified_certificates()
+        record = receipt.reassess(dict(row) | {
+            'counts': loads(row['counts']) if row['counts'] is not None else None,
+            'reasons': loads(row['reasons']), 'matched': loads(row['matched']),
+            'superseded_by': [corrected['id']] if corrected else []},
+            row['capture_id'], certificates)
+        return record
+
+    def receipts(self, capture_id):
+        with self.session() as conn:
+            if conn.execute('SELECT 1 FROM captures WHERE id=?', (capture_id,)).fetchone() is None:
+                raise Fault('unknown_capture', 'Capture does not exist', 404)
+            rows = conn.execute('SELECT * FROM receipts WHERE capture_id=? ORDER BY rowid', (capture_id,)).fetchall()
+        return self.expand_receipts(rows, self.certified_certificates())
+
+    def certified_certificates(self):
+        with self.session() as conn:
+            rows = conn.execute("""SELECT id, certificate FROM captures
+                WHERE state='certified' AND certificate IS NOT NULL ORDER BY rowid""").fetchall()
+        return {row['id']: loads(row['certificate']) for row in rows}

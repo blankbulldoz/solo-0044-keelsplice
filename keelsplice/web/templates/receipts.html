@@ -1,0 +1,16 @@
+<div class="content">
+  <header class="pagehead"><div><p class="breadcrumb"><a href="$base">捕获详情</a> / 签收交接</p><h1>签收交接</h1></div>
+    <a class="button" href="$base">回到捕获</a></header>
+  <p class="muted">登记接收方离线核对的结果。只有能唯一确认本捕获的证据才计为已签收；更正会新增记录，旧记录保留可复查。计数可只填部分表。</p>
+  <dl class="facts"><div class="wide"><dt>捕获编号</dt><dd><code>$id</code></dd></div>
+    <div class="wide"><dt>证书文件 SHA-256</dt><dd><code>$digest</code></dd></div></dl>
+  $summary
+  $error
+  $correcting
+  <section><h2>登记接收方证据</h2>
+    $form
+  </section>
+  <section><h2>签收记录</h2>
+    <div class="scroll"><table><thead><tr><th scope="col">记录编号</th><th scope="col">核对结果</th><th scope="col">提交的 SHA-256</th><th scope="col">接收方</th><th scope="col">登记时间（UTC）</th><th scope="col">后续</th></tr></thead><tbody>$rows</tbody></table></div>
+  </section>
+</div>

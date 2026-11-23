@@ -36,6 +36,11 @@ MESSAGES = {
     'artifact_reference': '子库的外键复核失败。',
     'artifact_schema': '子库模式与封存模式不一致。',
     'artifact_content': '子库行内容与封存内容不一致。',
+    'invalid_digest': '接收方 SHA-256 须为 64 位十六进制文本。',
+    'invalid_counts': '表计数须为「表名: 非负整数」的 JSON 对象。',
+    'invalid_receipt': '签收记录的接收方或备注超出允许长度。',
+    'invalid_correction': '只能更正本捕获中尚未被更正的签收记录。',
+    'unknown_receipt': '找不到指定的签收记录。',
     'unknown_route': '找不到指定页面。',
 }
 

@@ -42,6 +42,11 @@
       "responsibility": "子库重建和内容认证"
     },
     {
+      "id": "receipt",
+      "path": "keelsplice/receipt.py",
+      "responsibility": "签收证据规范化、唯一交接判定与更正链"
+    },
+    {
       "id": "web",
       "path": "keelsplice/web",
       "responsibility": "服务端 HTML、类型化表单、目录、配方、追踪、对比及子库交接页面"
@@ -239,16 +244,37 @@
       ]
     },
     {
+      "id": "receipt",
+      "name": "登记签收交接",
+      "entry": "POST /captures/{id}/receipts",
+      "success": "接收方摘要（及可选计数）唯一指向已认证捕获时记为已签收，更正追加记录并保留旧结论",
+      "failure": "未认证、摘要或计数不符、证据同时匹配多个捕获时不显示已签收，无效证据不产生记录",
+      "verification": "python3 -m examples.walkthrough receipt",
+      "steps": [
+        "接收请求 POST /captures/{id}/receipts",
+        "规范化摘要与可选表计数，并按登记的证书判定唯一性",
+        "追加签收记录，保留被更正记录的原始结论"
+      ],
+      "module_ids": [
+        "api",
+        "service",
+        "storage",
+        "receipt",
+        "web"
+      ]
+    },
+    {
       "id": "workbench",
       "name": "浏览器端封存与交接",
       "entry": "GET /workbench",
-      "success": "从目录填写配方，试算实存根并封存，浏览关系证据和差异，下载独立验证的 SQLite 子库",
+      "success": "从目录填写配方，试算实存根并封存，浏览关系证据和差异，下载独立验证的 SQLite 子库并登记接收方签收",
       "failure": "模式漂移、错误主键、跨来源表单及未认证下载有明确页面且保留持久状态",
       "verification": "python3 -m examples.browser_walkthrough",
       "steps": [
         "用目录的主键和外键填写配方并绑定模式摘要",
         "在新读事务中封存闭包并保存证据",
-        "验证成果证书和下载文件"
+        "验证成果证书和下载文件",
+        "登记接收方摘要与计数签收，并保留更正前的旧记录"
       ],
       "module_ids": [
         "web",
@@ -259,7 +285,8 @@
         "recipe",
         "capture",
         "bundle",
-        "codec"
+        "codec",
+        "receipt"
       ]
     }
   ],
@@ -275,7 +302,9 @@
       "capacity",
       "idempotency",
       "lineage",
-      "snapshot_consistency"
+      "snapshot_consistency",
+      "uniqueness_resolution",
+      "append_only_correction"
     ]
   }
 }

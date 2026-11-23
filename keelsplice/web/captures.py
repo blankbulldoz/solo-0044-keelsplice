@@ -38,6 +38,7 @@ def detail(bench, capture_id):
                      recipe=f'/workbench/recipes/{segment(record["name"])}/{record["version"]}',
                      name=text(record['name']), number=record['version'], stage=stage(record['state']),
                      digest=text(record['schema_digest']), certificate=handoff.certificate(record),
+                     signed=handoff.signed(record['receipts'], base),
                      actions=handoff.actions(base, record['state']), roots=roots,
                      counts=preview.counts(record['summary']), rows=record['summary']['rows'],
                      witnesses=record['summary']['witnesses'])

@@ -1,0 +1,10 @@
+    <form method="post" action="$base/receipts">
+      <div class="form-grid">
+        <label>接收方 SHA-256<input name="sha256" value="$sha256" required pattern="[0-9a-fA-F]{64}" maxlength="64" spellcheck="false" placeholder="64 位十六进制"></label>
+        <label>接收方<input name="recipient" value="$recipient" maxlength="200" placeholder="可选"></label>
+      </div>
+      <label>表计数（可选，JSON）<textarea name="counts" rows="3" spellcheck="false" placeholder='{"assay": 2, "substrate": 1}'>$counts</textarea></label>
+      <label>备注<input name="note" value="$note" maxlength="2000" placeholder="可选"></label>
+      <input type="hidden" name="corrects" value="$corrects">
+      <div class="actions"><button class="primary">登记签收证据</button></div>
+    </form>

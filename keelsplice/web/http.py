@@ -4,7 +4,7 @@ import re
 import sqlite3
 from urllib.parse import urlsplit
 
-from . import assets, captures, comparison, directory, evidence, preview, selection, versions
+from . import assets, captures, comparison, directory, evidence, preview, receipts, selection, versions
 from .errors import invalid_route, message
 from .forms import MAX_BYTES, decode_form, field, version
 from .render import page, segment, text
@@ -75,6 +75,17 @@ def route(handler, path):
             status, body = captures.index(bench)
         case 'GET', ['workbench', 'captures', capture_id]:
             status, body = captures.detail(bench, capture_id)
+        case 'GET', ['workbench', 'captures', capture_id, 'receipts']:
+            status, body = receipts.show(bench, capture_id)
+        case 'POST', ['workbench', 'captures', capture_id, 'receipts']:
+            result = receipts.record(bench, capture_id, values)
+            if isinstance(result, tuple) and result[0] == 303:
+                return redirect(result[2])
+            status, body = result
+        case 'GET', ['workbench', 'captures', capture_id, 'receipts', receipt_id, 'correct']:
+            status, body = receipts.correct(bench, capture_id, receipt_id)
+        case 'GET', ['workbench', 'captures', capture_id, 'receipts', receipt_id]:
+            status, body = receipts.detail(bench, capture_id, receipt_id)
         case 'GET', ['workbench', 'captures', capture_id, 'database']:
             data, sha = bench.download(capture_id)
             return 200, data, 'application/vnd.sqlite3', {

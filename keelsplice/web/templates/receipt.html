@@ -1,0 +1,21 @@
+<div class="content">
+  <header class="pagehead"><div><p class="breadcrumb"><a href="$base">捕获详情</a> / <a href="$base/receipts">签收交接</a> / 记录</p><h1>签收记录</h1></div>$capture_status</header>
+  <dl class="facts">
+    <div class="wide"><dt>记录编号</dt><dd><code>$id</code></dd></div>
+    <div><dt>登记时间（UTC）</dt><dd>$created</dd></div>
+    <div class="wide"><dt>接收方提交的 SHA-256</dt><dd>$sha256</dd></div>
+    <div class="wide"><dt>接收方提交的表计数</dt><dd>$counts</dd></div>
+    <div class="wide"><dt>登记时证书的捕获摘要</dt><dd>$capture_digest</dd></div>
+    <div class="wide"><dt>登记时证书的文件 SHA-256</dt><dd>$certificate_sha256</dd></div>
+    <div><dt>接收方</dt><dd>$recipient</dd></div>
+    <div><dt>备注</dt><dd>$note</dd></div>
+    <div><dt>更正的旧记录</dt><dd>$corrects</dd></div>
+    <div><dt>后续记录</dt><dd>$superseded</dd></div>
+    <div class="wide"><dt>当前匹配到的认证捕获</dt><dd>$matched</dd></div>
+    <div class="wide"><dt>登记时结论</dt><dd>$registered</dd></div>
+  </dl>
+  $summary
+  <section><h2>本捕获的全部签收记录</h2>
+    <div class="scroll"><table><thead><tr><th scope="col">记录编号</th><th scope="col">核对结果</th><th scope="col">提交的 SHA-256</th><th scope="col">接收方</th><th scope="col">登记时间（UTC）</th><th scope="col">后续</th></tr></thead><tbody>$rows</tbody></table></div>
+  </section>
+</div>

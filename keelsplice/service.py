@@ -3,7 +3,7 @@
 import re
 import sqlite3
 
-from . import bundle, capture, catalog, recipe
+from . import bundle, capture, catalog, receipt, recipe
 from .codec import Fault
 
 NAME = re.compile(r'[a-z][a-z0-9_-]{0,63}\Z')
@@ -60,8 +60,10 @@ class Workbench:
 
     def describe(self, record):
         sealed = record['sealed']
+        receipts = self.repository.receipts(record['id'])
         return {k: record[k] for k in ('id', 'name', 'version', 'state', 'certificate')} | {
-            'schema_digest': sealed['schema_digest'], 'summary': capture.summarize(sealed['result']), 'roots': sealed['result']['roots']}
+            'schema_digest': sealed['schema_digest'], 'summary': capture.summarize(sealed['result']),
+            'roots': sealed['result']['roots'], 'receipts': receipt.summarize(receipts)}
 
     def status(self, capture_id):
         return self.describe(self.repository.load_capture(capture_id))
@@ -106,3 +108,22 @@ class Workbench:
         if bundle.digest_bytes(data) != sha:
             raise Fault('artifact_integrity', 'Stored fixture bytes do not match the certificate', 409)
         return data, sha
+
+    def acknowledge(self, capture_id, body):
+        supplied = receipt.evidence(body)
+        record = self.repository.load_capture(capture_id)
+        if record['state'] != 'certified':
+            raise Fault('fixture_not_certified', 'Certify the fixture before recording a receipt', 409)
+        verdict = receipt.judge(supplied, capture_id, self.repository.certified_certificates())
+        saved = self.repository.add_receipt(capture_id, supplied, verdict, record['certificate'])
+        return receipt.describe(saved) | {'capture': self.describe(record)}
+
+    def receipts(self, capture_id):
+        record = self.repository.load_capture(capture_id)
+        receipts = self.repository.receipts(capture_id)
+        return {'capture_id': capture_id, 'certificate': record['certificate'],
+                'receipts': [receipt.describe(row) for row in receipts],
+                'summary': receipt.summarize(receipts)}
+
+    def receipt(self, receipt_id):
+        return receipt.describe(self.repository.load_receipt(receipt_id))

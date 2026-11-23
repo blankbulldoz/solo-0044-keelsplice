@@ -13,7 +13,7 @@ from urllib.request import Request, urlopen
 
 from keelsplice.api import create_server
 
-WORKFLOWS = ('catalog', 'recipe', 'retire', 'preview', 'capture', 'trace', 'build', 'certify', 'compare', 'download')
+WORKFLOWS = ('catalog', 'recipe', 'retire', 'preview', 'capture', 'trace', 'build', 'certify', 'receipt', 'compare', 'download')
 
 
 def seed(file):
@@ -109,6 +109,41 @@ def walkthrough(base, selected, source, root):
     assert request(endpoint + '/certify', {}) == certified
     if observe('certify', certificate):
         return
+
+    assert request(endpoint + '/receipts', {'sha256': 'f' * 64}, 201)['status'] == 'mismatch'
+    assert request(endpoint + '/receipts', {'sha256': sha256(b'').hexdigest()}, 201)['status'] == 'mismatch'
+    accepted = request(endpoint + '/receipts', {'sha256': certificate['sha256'],
+                                                'recipient': 'lab-b'}, 201)
+    assert accepted['status'] == 'confirmed' and accepted['matched'] == [cap['id']]
+    assert accepted['capture']['receipts']['signed'] is True
+    assert request(endpoint + '/receipts', {'sha256': 'not-a-digest'}, 400)['error'] == 'invalid_digest'
+    assert request(endpoint + '/receipts', {'sha256': certificate['sha256'],
+                                            'counts': {'assay': 99}}, 201)['status'] == 'mismatch'
+    clear = request(endpoint + '/receipts', {'sha256': certificate['sha256'],
+                                             'counts': certificate['counts']}, 201)
+    assert clear['status'] == 'confirmed'
+    corrected = request(endpoint + '/receipts', {'sha256': certificate['sha256'],
+                                                 'counts': certificate['counts'],
+                                                 'corrects': accepted['id']}, 201)
+    stale = request('/receipts/' + accepted['id'])
+    assert stale['superseded_by'] == [corrected['id']] and corrected['corrects'] == accepted['id']
+    assert request(endpoint + '/receipts', {'sha256': certificate['sha256'],
+                                            'corrects': accepted['id']}, 409)['error'] == 'invalid_correction'
+    if observe('receipt', {'registered': accepted['status'], 'corrected': stale['superseded_by'],
+                           'signed': request(endpoint + '/receipts')['summary']['signed']}):
+        return
+
+    twin_ids, twins = [], []
+    for _ in range(2):
+        twin = request('/captures', lookup, 201)['id']
+        request('/captures/' + twin + '/build', {})
+        twins.append(request('/captures/' + twin + '/certify', {})['certificate'])
+        twin_ids.append(twin)
+    assert twins[0]['sha256'] == twins[1]['sha256'] and twins[0]['sha256'] != certificate['sha256']
+    disputed = request('/captures/' + twin_ids[0] + '/receipts',
+                       {'sha256': twins[0]['sha256'], 'counts': twins[0]['counts']}, 201)
+    assert disputed['status'] == 'ambiguous' and disputed['matched'] == sorted(twin_ids)
+    assert request('/captures/' + twin_ids[0] + '/receipts')['summary']['signed'] is False
 
     diff = request('/compare', {'left': cap['id'], 'right': newer['id']})
     assert diff['changes']['assay'] == {'added': [], 'removed': [], 'modified': [['S-01']]}
