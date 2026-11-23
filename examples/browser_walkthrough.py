@@ -86,7 +86,41 @@ def run(base, source, root):
     with closing(sqlite3.connect(handoff)) as conn:
         assert conn.execute("SELECT length_um FROM assay WHERE mark='S-01'").fetchone() == (3.25,)
         assert conn.execute('PRAGMA foreign_key_check').fetchall() == []
-    print('浏览器端到端检查通过：目录、配方、试算、捕获、证据、对比、停用、构建、认证、下载')
+    acceptance_flow(base, first, source)
+    print('浏览器端到端检查通过：目录、配方、试算、捕获、证据、对比、停用、构建、认证、下载、验收会话')
+
+
+def acceptance_flow(base, captured, source):
+    import json
+    _, _, catalog = open_page(base, '/sources/microscope/catalog')
+    edge = next(edge for edge in json.loads(catalog)['schema']['edges']
+                if edge['child'] == 'assay' and edge['parent'] == 'substrate')
+    clauses = json.dumps([
+        {'id': 'ordinary', 'kind': 'single', 'label': '普通条款',
+         'requirements': [{'kind': 'row', 'table': 'substrate', 'key': ['east', 'MICA']}]},
+        {'id': 'joint', 'kind': 'joint', 'label': '同一文件条款',
+         'requirements': [
+             {'kind': 'row', 'table': 'substrate', 'key': ['East', 'Mica']},
+             {'kind': 'link', 'edge': ['assay', edge['id']],
+              'origin': {'table': 'assay', 'key': ['S-01']},
+              'target': {'table': 'substrate', 'key': ['east', 'mica']}}]},
+    ], ensure_ascii=False)
+    _, page_body = html(base, '/workbench/acceptance')
+    assert '新建会话' in page_body
+    session, overview = html(base, '/workbench/acceptance',
+                             {'recipe_version': 'browser-swatch/1', 'groups': '光谱组, 结构组', 'clauses': clauses})
+    assert session.startswith('/workbench/acceptance/')
+    assert '同一文件条款' in overview and '缺口' in overview
+    assert '不能' not in overview or '缺口' in overview
+    _, clause = html(base, session + '/ordinary')
+    assert '需要补的样本' in clause or '已满足' in clause
+    capture_id = captured.rsplit('/', 1)[-1]
+    _, cited = html(base, session + '/ordinary/cite',
+                    {'clause': 'ordinary', 'capture': capture_id, 'group': '光谱组'})
+    assert '已满足' in cited and '同一文件' in cited
+    _, unknown = html(base, session + '/absent', expected=404)
+    assert '条款不存在' in unknown or '没有这个条款' in unknown
+    print('验收会话页面检查通过：冻结条款、缺口、引用证书、条款详情')
 
 
 def main():

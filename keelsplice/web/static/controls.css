@@ -30,3 +30,8 @@ legend { font-weight: 650; }
 .status.pending { background: var(--warning-bg); color: var(--warning); }
 .status.muted { background: #e7ebef; }
 .certificate { border-left: 3px solid var(--brand); padding-left: 12px; }
+.clause { border-top: 2px solid var(--line); padding-top: 22px; }
+.clause h2 { margin-bottom: 4px; }
+.clause h3 { font-size: 14px; color: var(--secondary); margin: 18px 0 9px; }
+.needed { border: 1px solid var(--line); border-left: 3px solid var(--warning); background: var(--paper); padding: 12px 14px; margin: 12px 0 18px; }
+.needed pre { margin-bottom: 10px; }

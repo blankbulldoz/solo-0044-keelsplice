@@ -4,7 +4,7 @@ import re
 import sqlite3
 from urllib.parse import urlsplit
 
-from . import assets, captures, comparison, directory, evidence, preview, selection, versions
+from . import acceptance, assets, captures, comparison, directory, evidence, preview, selection, versions
 from .errors import invalid_route, message
 from .forms import MAX_BYTES, decode_form, field, version
 from .render import page, segment, text
@@ -93,6 +93,24 @@ def route(handler, path):
             status, body = comparison.show(bench)
         case 'POST', ['workbench', 'compare']:
             status, body = comparison.show(bench, values)
+        case 'GET', ['workbench', 'acceptance']:
+            status, body = acceptance.index(bench)
+        case 'POST', ['workbench', 'acceptance']:
+            result = acceptance.create(bench, values)
+            if isinstance(result, str):
+                return redirect(result)
+            status, body = result
+        case 'GET', ['workbench', 'acceptance', session_id]:
+            status, body = acceptance.detail(bench, session_id)
+        case 'GET', ['workbench', 'acceptance', session_id, clause]:
+            status, body = acceptance.clause_page(bench, session_id, clause)
+        case 'POST', ['workbench', 'acceptance', session_id, clause, 'cite']:
+            bench.cite(session_id, dict(clause=field(values, 'clause'), capture=field(values, 'capture'),
+                                        group=field(values, 'group')))
+            return redirect(f'/workbench/acceptance/{segment(session_id)}')
+        case 'POST', ['workbench', 'acceptance', session_id, clause, 'supplement']:
+            bench.supplement(session_id, dict(clause=field(values, 'clause')))
+            return redirect(f'/workbench/acceptance/{segment(session_id)}')
         case _:
             raise invalid_route()
     return status, body, 'text/html; charset=utf-8', {}

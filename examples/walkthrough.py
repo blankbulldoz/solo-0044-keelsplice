@@ -13,7 +13,8 @@ from urllib.request import Request, urlopen
 
 from keelsplice.api import create_server
 
-WORKFLOWS = ('catalog', 'recipe', 'retire', 'preview', 'capture', 'trace', 'build', 'certify', 'compare', 'download')
+WORKFLOWS = ('catalog', 'recipe', 'retire', 'preview', 'capture', 'trace', 'build', 'certify', 'compare',
+             'download', 'acceptance')
 
 
 def seed(file):
@@ -132,6 +133,86 @@ def walkthrough(base, selected, source, root):
         assert conn.execute('SELECT texture FROM substrate').fetchone()[0] == b'\x00\x00\xff'
         assert conn.execute('SELECT count(*) FROM frame').fetchone()[0] == 0
     observe('download', {'sha256': etag, 'source_changes_isolated': True, 'length_and_generated': row})
+
+    if selected not in ('acceptance', 'all'):
+        return
+    fresh = request('/recipes/swatch/versions', body, 201)
+    first = request('/captures', {'name': 'swatch', 'version': fresh['version']}, 201)
+    request('/captures/' + first['id'] + '/build', {})
+    request('/captures/' + first['id'] + '/certify', {})
+    clauses = [
+        {'id': 'ordinary', 'kind': 'single', 'requirements': [
+            {'kind': 'row', 'table': 'substrate', 'key': ['east', 'MICA']}]},
+        {'id': 'joint', 'kind': 'joint', 'requirements': [
+            {'kind': 'row', 'table': 'substrate', 'key': ['East', 'Mica']},
+            {'kind': 'link', 'edge': ['assay', edge['id']],
+             'origin': {'table': 'assay', 'key': ['S-01']},
+             'target': {'table': 'substrate', 'key': ['east', 'mica']}}]},
+    ]
+    session = request('/acceptance', {'name': 'swatch', 'version': fresh['version'],
+                                      'groups': ['光谱组', '结构组'], 'clauses': clauses}, 201)
+    session_id = session['id']
+    assert session['schema_digest'] == fresh['schema_digest']
+    assert request('/acceptance/' + session_id) == session
+    assert session['clauses'][0]['requirements'][0]['key'] == ['East', 'Mica']
+    assert request('/acceptance/' + session_id + '/cite',
+                   {'clause': 'ordinary', 'capture': first['id'], 'group': '旁观组'}, 422)['error'] == 'invalid_group'
+    request('/acceptance/' + session_id + '/cite',
+            {'clause': 'ordinary', 'capture': first['id'], 'group': '光谱组'})
+    judged = request('/acceptance/' + session_id)
+    assert judged['clauses'][0]['status'] == 'satisfied'
+    assert judged['clauses'][0]['combination']['reason'] == 'same_file'
+    assert judged['clauses'][1]['reason'] == 'awaiting_citation'
+
+    # A different snapshot of the same active version: S-01 now points at West/Basalt.
+    with closing(sqlite3.connect(source)) as conn, conn:
+        conn.execute("UPDATE assay SET region='West', code='Basalt' WHERE mark='S-01'")
+    second = request('/captures', {'name': 'swatch', 'version': fresh['version']}, 201)
+    request('/captures/' + second['id'] + '/build', {})
+    request('/captures/' + second['id'] + '/certify', {})
+
+    # Each snapshot holds one of the two links; separately certified, they do not make one file.
+    link_body = {'source': 'microscope', 'roots': [{'table': 'assay', 'key': ['S-01']}], 'row_limit': 20}
+    link_version = request('/recipes/link/versions', link_body, 201)
+    def link_snapshot():
+        sealed = request('/captures', {'name': 'link', 'version': link_version['version']}, 201)
+        request('/captures/' + sealed['id'] + '/build', {})
+        request('/captures/' + sealed['id'] + '/certify', {})
+        return sealed['id']
+    west = link_snapshot()  # S-01 → West/Basalt
+    with closing(sqlite3.connect(source)) as conn, conn:
+        conn.execute("UPDATE assay SET region='East', code='Mica' WHERE mark='S-01'")
+    east = link_snapshot()  # S-01 → East/Mica
+    split = request('/acceptance', {'name': 'link', 'version': link_version['version'],
+                                    'groups': ['光谱组'], 'clauses': [
+        {'id': 'split', 'kind': 'joint', 'requirements': [
+            {'kind': 'link', 'edge': ['assay', edge['id']],
+             'origin': {'table': 'assay', 'key': ['S-01']},
+             'target': {'table': 'substrate', 'key': ['West', 'Basalt']}},
+            {'kind': 'link', 'edge': ['assay', edge['id']],
+             'origin': {'table': 'assay', 'key': ['S-01']},
+             'target': {'table': 'substrate', 'key': ['East', 'Mica']}}]}]}, 201)
+    split_id = split['id']
+    request('/acceptance/' + split_id + '/cite', {'clause': 'split', 'capture': west, 'group': '光谱组'})
+    combined = request('/acceptance/' + split_id + '/cite',
+                       {'clause': 'split', 'capture': east, 'group': '光谱组'})
+    verdict = combined['clauses'][0]
+    assert verdict['status'] == 'gap' and verdict['combination']['reason'] == 'separate_files'
+    assert len({piece['sha256'] for piece in verdict['combination']['pieces']}) == 2
+    assert verdict['needed_sample']['action'] == 'seal'
+
+    # A certificate from another version cannot be cited into the frozen session.
+    older = request('/recipes/swatch/versions', body, 201)
+    stale = request('/captures', {'name': 'swatch', 'version': older['version']}, 201)
+    request('/captures/' + stale['id'] + '/build', {})
+    request('/captures/' + stale['id'] + '/certify', {})
+    refusal = request('/acceptance/' + session_id + '/cite',
+                      {'clause': 'ordinary', 'capture': stale['id'], 'group': '光谱组'}, 409)
+    assert refusal['error'] == 'citation_version'
+    assert request('/acceptance/' + session_id + '/cite',
+                   {'clause': 'joint', 'capture': 'absent', 'group': '光谱组'}, 404)['error'] == 'unknown_capture'
+    observe('acceptance', {'session': session_id, 'satisfied': judged['summary']['satisfied'],
+                           'split': verdict['combination']['reason'], 'older': stale['id']})
 
 
 def main():

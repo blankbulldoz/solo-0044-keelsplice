@@ -76,6 +76,14 @@ class RequestHandler(BaseHTTPRequestHandler):
                 return 200, bench.certify(capture_id)
             case 'POST', ['compare']:
                 return 200, bench.compare(body)
+            case 'POST', ['acceptance']:
+                return 201, bench.accept(body)
+            case 'GET', ['acceptance', session_id]:
+                return 200, bench.acceptance(session_id)
+            case 'POST', ['acceptance', session_id, 'cite']:
+                return 200, bench.cite(session_id, body)
+            case 'POST', ['acceptance', session_id, 'supplement']:
+                return 201, bench.supplement(session_id, body)
             case 'GET', ['captures', capture_id, 'database']:
                 return 200, bench.download(capture_id)
         raise Fault('unknown_route', 'Unknown endpoint', 404)

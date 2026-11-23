@@ -18,6 +18,19 @@ CREATE TABLE IF NOT EXISTS captures (
     artifact BLOB, certificate TEXT,
     FOREIGN KEY(name, version) REFERENCES recipes(name, version)
 );
+CREATE TABLE IF NOT EXISTS acceptance_sessions (
+    id TEXT PRIMARY KEY, groups TEXT NOT NULL,
+    recipe_name TEXT NOT NULL, recipe_version INTEGER NOT NULL,
+    schema_digest TEXT NOT NULL, clauses TEXT NOT NULL, created TEXT NOT NULL,
+    FOREIGN KEY(recipe_name, recipe_version) REFERENCES recipes(name, version)
+);
+CREATE TABLE IF NOT EXISTS acceptance_citations (
+    session_id TEXT NOT NULL, clause_id TEXT NOT NULL, capture_id TEXT NOT NULL,
+    group_name TEXT NOT NULL, certificate TEXT NOT NULL, created TEXT NOT NULL,
+    PRIMARY KEY (session_id, clause_id, capture_id, group_name),
+    FOREIGN KEY(session_id) REFERENCES acceptance_sessions(id),
+    FOREIGN KEY(capture_id) REFERENCES captures(id)
+);
 '''
 
 
@@ -96,6 +109,17 @@ class Repository:
             """).fetchall()
         return [dict(row) for row in rows]
 
+    def named_captures(self, name):
+        with self.session() as conn:
+            rows = conn.execute("""
+                SELECT id, name, version, state, sealed, certificate,
+                       CASE WHEN state='certified' THEN artifact END AS artifact
+                FROM captures WHERE name=? ORDER BY rowid DESC LIMIT 50
+            """, (name,)).fetchall()
+        return [dict(row) | {'sealed': loads(row['sealed']),
+                             'certificate': loads(row['certificate']) if row['certificate'] else None}
+                for row in rows]
+
     def retire(self, name, number):
         with self.session(write=True) as conn:
             update = conn.execute('UPDATE recipes SET active=0 WHERE name=? AND version=?', (name, number))
@@ -131,3 +155,48 @@ class Repository:
                 conn.execute("UPDATE captures SET state='certified',certificate=? WHERE id=? AND state='built'",
                              (dumps(certificate), capture_id))
         return self.load_capture(capture_id)
+
+    def add_acceptance(self, session_id, groups, name, number, schema_digest, clauses, created):
+        with self.session(write=True) as conn:
+            conn.execute('INSERT INTO acceptance_sessions VALUES(?,?,?,?,?,?,?)',
+                         (session_id, dumps(groups), name, number, schema_digest, dumps(clauses), created))
+        return self.acceptance(session_id)
+
+    def acceptance(self, session_id):
+        with self.session() as conn:
+            row = conn.execute('SELECT * FROM acceptance_sessions WHERE id=?', (session_id,)).fetchone()
+        if row is None:
+            raise Fault('unknown_acceptance', 'Acceptance session does not exist', 404)
+        return dict(row) | {'groups': loads(row['groups']), 'clauses': loads(row['clauses'])}
+
+    def recent_acceptances(self):
+        with self.session() as conn:
+            rows = conn.execute("""
+                SELECT id, groups, recipe_name, recipe_version, created
+                FROM acceptance_sessions ORDER BY rowid DESC LIMIT 50
+            """).fetchall()
+        return [dict(row) | {'groups': loads(row['groups'])} for row in rows]
+
+    def add_citation(self, session_id, clause_id, capture_id, group, certificate, created):
+        stored = dumps(certificate)
+        with self.session(write=True) as conn:
+            session = conn.execute('SELECT 1 FROM acceptance_sessions WHERE id=?', (session_id,)).fetchone()
+            capture = conn.execute('SELECT 1 FROM captures WHERE id=?', (capture_id,)).fetchone()
+            if session is None:
+                raise Fault('unknown_acceptance', 'Acceptance session does not exist', 404)
+            if capture is None:
+                raise Fault('unknown_capture', 'Capture does not exist', 404)
+            existing = conn.execute("""SELECT certificate FROM acceptance_citations
+                WHERE session_id=? AND clause_id=? AND capture_id=? AND group_name=?""",
+                (session_id, clause_id, capture_id, group)).fetchone()
+            if existing and existing['certificate'] == stored:
+                return False
+            conn.execute("""INSERT OR REPLACE INTO acceptance_citations
+                VALUES(?,?,?,?,?,?)""", (session_id, clause_id, capture_id, group, stored, created))
+        return True
+
+    def citations(self, session_id):
+        with self.session() as conn:
+            rows = conn.execute("""SELECT session_id, clause_id, capture_id, group_name, certificate, created
+                FROM acceptance_citations WHERE session_id=? ORDER BY rowid""", (session_id,)).fetchall()
+        return [dict(row) | {'certificate': loads(row['certificate'])} for row in rows]

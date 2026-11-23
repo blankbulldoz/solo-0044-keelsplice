@@ -1,0 +1,26 @@
+<div class="content">
+  <header class="pagehead"><div><p class="breadcrumb">验收</p><h1>验收会话</h1></div></header>
+  $error
+  <section>
+    <h2>新建会话</h2>
+    <p class="muted">创建时冻结所选配方版本、当时的条款与模式摘要。普通条款可由不同认证文件分别举证；同一文件条款要求两项关联在同一认证文件中同时成立。同名配方的旧版本证书和同一活跃版本的不同快照都会单独判定。</p>
+    <form method="post" action="/workbench/acceptance">
+      <div class="form-grid">
+        <label>配方版本<select name="recipe_version" required$disabled>$recipe_options</select></label>
+        <label>接收组（逗号分隔）<input name="groups" value="$groups" required placeholder="例如 光谱组, 结构组"></label>
+      </div>
+      <label for="clauses">条款（JSON）</label>
+      <textarea id="clauses" name="clauses" rows="12" required spellcheck="false" placeholder='[{"id":"C1","kind":"single","requirements":[{"kind":"row","table":"substrate","key":["East","Mica"]}]}]'>$clauses</textarea>
+      <p class="muted">每项条款有 <code>id</code>、<code>kind</code>（<code>single</code> 或 <code>joint</code>）与 <code>requirements</code>。
+        普通条款 1 项要求，同一文件条款恰好 2 项。要求可为 <code>{"kind":"row","table":…,"key":[…]}</code>
+        或 <code>{"kind":"link","edge":["子表",外键编号],"origin":{…},"target":{…}}</code>。</p>
+      $hint
+      <div class="actions"><button class="primary">创建验收会话</button></div>
+    </form>
+  </section>
+  <section>
+    <h2>最近 50 个会话</h2>
+    <div class="scroll"><table><thead><tr><th scope="col">会话编号</th><th scope="col">配方版本</th><th scope="col">接收组</th><th scope="col">创建时间</th></tr></thead>
+      <tbody>$rows</tbody></table></div>
+  </section>
+</div>
