@@ -71,6 +71,21 @@ def run(base, source, root):
 
     with closing(sqlite3.connect(source)) as conn, conn:
         conn.execute("UPDATE assay SET length_um=7 WHERE mark='S-01'")
+    fault_url = first + '/fault'
+    _, fault = html(base, fault_url)
+    assert '选择一个封存表上的条件' in fault
+    _, fault = html(base, fault_url, {'column': 'assay.doubled', 'operator': '>=', 'value': '6'})
+    assert '样本内' in fault and '样本外' in fault and '仅后来观察' in fault
+    assert '后来观察来自' in fault and '回到原证据' in fault
+    _, fault = html(base, fault_url, {'column': 'cassette.prior', 'operator': 'IS NOT NULL'})
+    assert '循环边' in fault
+    _, bad = html(base, fault_url, {'column': 'assay.doubled', 'operator': '~', 'value': '1'}, expected=422)
+    assert '受支持的比较运算符' in bad
+    _, witness = html(base, fault_url + '/evidence', {
+        'table': 'cassette', 'key': '[12]', 'origin_table': 'cassette', 'origin_key': '[11]',
+        'edge': '["cassette",0]', 'direction': 'parent', 'condition_column': 'cassette.prior',
+        'condition_operator': 'IS NOT NULL', 'condition_value': ''})
+    assert '封存证据已确认' in witness and '回到断层地图' in witness
     second, _ = html(base, version + '/capture', {})
     args = {'left': first.rsplit('/', 1)[1], 'right': second.rsplit('/', 1)[1]}
     _, compare = html(base, '/workbench/compare', args)
@@ -86,7 +101,7 @@ def run(base, source, root):
     with closing(sqlite3.connect(handoff)) as conn:
         assert conn.execute("SELECT length_um FROM assay WHERE mark='S-01'").fetchone() == (3.25,)
         assert conn.execute('PRAGMA foreign_key_check').fetchall() == []
-    print('浏览器端到端检查通过：目录、配方、试算、捕获、证据、对比、停用、构建、认证、下载')
+    print('浏览器端到端检查通过：目录、配方、试算、捕获、证据、断层地图、对比、停用、构建、认证、下载')
 
 
 def main():

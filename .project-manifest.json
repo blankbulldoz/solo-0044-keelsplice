@@ -42,6 +42,11 @@
       "responsibility": "子库重建和内容认证"
     },
     {
+      "id": "fault",
+      "path": "keelsplice/fault.py",
+      "responsibility": "封存边界条件、样本内外相邻行与两次读取的分时标注"
+    },
+    {
       "id": "web",
       "path": "keelsplice/web",
       "responsibility": "服务端 HTML、类型化表单、目录、配方、追踪、对比及子库交接页面"
@@ -159,6 +164,30 @@
         "capture",
         "storage",
         "codec"
+      ]
+    },
+    {
+      "id": "fault",
+      "name": "绘制关系样本断层地图",
+      "entry": "POST /captures/{id}/fault-map",
+      "success": "在封存记录上按普通列或生成列条件列出边界行，逐条外键标注样本内外方向，并把封存证据与后来观察分开",
+      "failure": "未知列或运算符不改封存记录；模式漂移时只报告封存证据并说明未执行后来观察",
+      "verification": "python3 -m examples.walkthrough fault",
+      "steps": [
+        "针对封存模式校验表、列、运算符和值",
+        "重放封存行并读取封存时的边界行与入选关系证据",
+        "在独立读事务中观察同一条件，并标注只在后来出现的邻居",
+        "从任一邻居回到封存证据确认发现"
+      ],
+      "module_ids": [
+        "api",
+        "service",
+        "fault",
+        "capture",
+        "catalog",
+        "storage",
+        "codec",
+        "web"
       ]
     },
     {

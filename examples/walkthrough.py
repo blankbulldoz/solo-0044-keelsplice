@@ -13,7 +13,8 @@ from urllib.request import Request, urlopen
 
 from keelsplice.api import create_server
 
-WORKFLOWS = ('catalog', 'recipe', 'retire', 'preview', 'capture', 'trace', 'build', 'certify', 'compare', 'download')
+WORKFLOWS = ('catalog', 'recipe', 'retire', 'preview', 'capture', 'trace', 'fault',
+             'build', 'certify', 'compare', 'download')
 
 
 def seed(file):
@@ -94,6 +95,41 @@ def walkthrough(base, selected, source, root):
     assert traced['roots'] == [0] and len(traced['causes']) == 2
     assert request(endpoint + '/trace', {'table': 'substrate','key':['east','MICA']}, 404)['error'] == 'row_not_captured'
     if observe('trace', traced):
+        return
+
+    fault_map = request(endpoint + '/fault-map', {'table': 'cassette','column': 'prior','operator': 'IS NOT NULL'})
+    assert fault_map['sealed']['sealed_at'] and fault_map['observation']['state'] == 'current'
+    assert fault_map['condition']['column_kind'] == 'plain'
+    cycles = [row for row in fault_map['rows'] if row['key'] == [11]]
+    assert cycles and cycles[0]['sample'] == 'inside'
+    assert any(link['rows'] and link['rows'][0]['cycle'] for link in cycles[0]['neighbours'])
+    with closing(sqlite3.connect(source)) as conn, conn:
+        conn.execute("INSERT INTO cassette VALUES (14,11,'jasper')")
+        conn.execute("UPDATE assay SET length_um=12 WHERE mark='S-02'")
+    later = request(endpoint + '/fault-map', {'table': 'assay','column': 'doubled','operator': '>=','value': 8})
+    assert later['observation']['state'] == 'current' and later['observation']['at'] > fault_map['sealed']['sealed_at']
+    assert later['condition']['column_kind'] == 'stored'
+    by_key = {tuple(row['key']): row for row in later['rows']}
+    assert by_key[('S-02',)]['sample'] == 'inside' and by_key[('S-02',)]['changed'] is True
+    assert by_key[('S-04',)]['sample'] == 'outside' and by_key[('S-04',)]['current']['matches_condition']
+    current_only = [row for entry in by_key[('S-02',)]['neighbours'] if entry['direction'] == 'child'
+                    for row in entry['rows'] if not row['sealed']]
+    assert {tuple(item['key']) for item in current_only} == {(102,), (103,)}
+    assert all(item['sample'] == 'outside' for item in current_only)
+    assert request(endpoint + '/fault-map',
+                   {'table': 'assay', 'column': 'doubled', 'operator': '>', 'value': {'real': '0x1.8p+3'}},
+                   status=200)['summary']['rows'] >= 1
+    assert request(endpoint + '/fault-map', {'table': 'assay','column': 'absent','operator': '='}, 422)['error'] == 'unknown_identifier'
+    request('/recipes/pointer/versions', {'source': 'microscope',
+                                          'roots': [{'table': 'frame', 'key': [104]}], 'row_limit': 10}, 201)
+    pointer = request('/captures', {'name': 'pointer', 'version': 1}, 201)
+    pointer_map = request('/captures/' + pointer['id'] + '/fault-map',
+                          {'table': 'frame', 'column': 'note', 'operator': '=', 'value': 'blank'})
+    nullable = next(edge for edge in pointer_map['rows'][0]['neighbours'] if edge['direction'] == 'parent')
+    assert nullable['nullable'] is True and nullable['sealed']['reference'] == 'null' and not nullable['rows']
+    if observe('fault', {'sealed_at': later['sealed']['sealed_at'], 'observed_at': later['observation']['at'],
+                         'boundary': later['summary']['rows'], 'current_only': later['summary']['current_only'],
+                         'nullable_pointer': nullable['sealed']['reference']}):
         return
 
     assert request(endpoint + '/certify', {}, 409)['error'] == 'fixture_not_built'

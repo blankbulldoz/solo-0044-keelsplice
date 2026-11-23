@@ -3,8 +3,8 @@
 import re
 import sqlite3
 
-from . import bundle, capture, catalog, recipe
-from .codec import Fault
+from . import bundle, capture, catalog, fault, recipe
+from .codec import Fault, stamp
 
 NAME = re.compile(r'[a-z][a-z0-9_-]{0,63}\Z')
 
@@ -47,7 +47,8 @@ class Workbench:
             if disclosed['schema_digest'] != version['schema_digest']:
                 raise Fault('schema_conflict', 'Source schema differs from the recipe binding', 409)
             result = capture.collect(conn, disclosed['schema'], normalized)
-        return name, number, disclosed | {'recipe': normalized, 'result': result}
+        return name, number, disclosed | {'recipe': normalized, 'result': result,
+                                          'sealed_at': stamp()}
 
     def preview(self, body):
         name, number, sealed = self.execute(body)
@@ -68,6 +69,29 @@ class Workbench:
 
     def trace(self, capture_id, body):
         return capture.trace(self.repository.load_capture(capture_id)['sealed'], body)
+
+    def fault_map(self, capture_id, body, *, observe=True):
+        """Map boundary rows at sealed time and, when asked, at a fresh read.
+
+        The condition is validated against the sealed schema, never the current
+        one.  The later observation runs in its own read transaction so a source
+        change between the seal and now cannot rewrite the sealed half.
+        """
+        sealed = self.repository.load_capture(capture_id)['sealed']
+        the_condition = fault.condition(sealed['schema'], body)
+        if not observe:
+            return fault.map(sealed, the_condition, reason='observation_disabled')
+        try:
+            with self.repository.source(sealed['recipe']['source']) as conn:
+                disclosed = catalog.snapshot(conn)
+                if disclosed['schema_digest'] != sealed['schema_digest']:
+                    return fault.map(sealed, the_condition, reason='schema_drift')
+                return fault.map(sealed, the_condition, conn=conn, source_schema=sealed['schema'],
+                                 observed_at=stamp())
+        except Fault as exc:
+            if exc.code != 'unknown_source':
+                raise
+            return fault.map(sealed, the_condition, reason='source_unavailable')
 
     def compare(self, body):
         recipe.fields(body, ('left', 'right'))

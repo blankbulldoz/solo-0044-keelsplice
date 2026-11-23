@@ -37,7 +37,13 @@ def detail(bench, capture_id):
     return 200, page('捕获详情', 'capture', 'capture', id=text(capture_id), base=base,
                      recipe=f'/workbench/recipes/{segment(record["name"])}/{record["version"]}',
                      name=text(record['name']), number=record['version'], stage=stage(record['state']),
-                     digest=text(record['schema_digest']), certificate=handoff.certificate(record),
+                     digest=text(record['schema_digest']), sealed_at=text(sealed_at(record)),
+                     certificate=handoff.certificate(record),
                      actions=handoff.actions(base, record['state']), roots=roots,
                      counts=preview.counts(record['summary']), rows=record['summary']['rows'],
                      witnesses=record['summary']['witnesses'])
+
+
+def sealed_at(record):
+    sealed = record.get('sealed')
+    return sealed.get('sealed_at') if isinstance(sealed, dict) else None

@@ -4,6 +4,7 @@ import base64
 import binascii
 import hashlib
 import json
+from datetime import datetime, timezone
 
 
 class Fault(Exception):
@@ -19,6 +20,11 @@ def dumps(value):
 
 def loads(text):
     return json.loads(text)
+
+
+def stamp():
+    """UTC instant used to separate the sealed sample from a later read."""
+    return datetime.now(timezone.utc).isoformat(timespec='microseconds').replace('+00:00', 'Z')
 
 
 def digest(data):

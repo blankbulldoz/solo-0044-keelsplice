@@ -17,8 +17,14 @@ label { display: block; font-weight: 600; }
 label > input:not([type="checkbox"]), label > select, label[for="roots"] + textarea { display: block; width: 100%; margin-top: 5px; }
 .inline, .actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .actions, .source-toolbar { margin: 16px 0 24px; }
-.form-grid, .compare-form, .trace-form { display: flex; align-items: end; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
-.form-grid > label, .compare-form > label, .trace-form > label { min-width: 0; flex: 1 1 220px; }
+.form-grid, .compare-form, .trace-form, .fault-form { display: flex; align-items: end; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+.form-grid > label, .compare-form > label, .trace-form > label, .fault-form > label { min-width: 0; flex: 1 1 220px; }
+.fault-form > label:first-child { flex-basis: 300px; }
+details.boundary, details.edge { border: 1px solid var(--line); border-radius: 6px; background: var(--paper); margin-bottom: 10px; padding: 10px 14px; }
+details.boundary > summary { font-weight: 650; overflow-wrap: anywhere; }
+details.edge { background: var(--canvas); }
+details.edge > summary { font-size: 13px; color: var(--secondary); overflow-wrap: anywhere; }
+details.boundary > summary .status { margin-left: 6px; }
 fieldset { border: 1px solid var(--line); padding: 12px; min-width: 0; }
 legend { font-weight: 650; }
 .edge-grid { display: grid; gap: 8px; grid-template-columns: repeat(auto-fit, minmax(min(265px, 100%), 1fr)); }
@@ -29,4 +35,5 @@ legend { font-weight: 650; }
 .status.ready { background: var(--brand-soft); color: var(--brand); }
 .status.pending { background: var(--warning-bg); color: var(--warning); }
 .status.muted { background: #e7ebef; }
+.status.info { background: var(--highlight); color: #244e81; }
 .certificate { border-left: 3px solid var(--brand); padding-left: 12px; }

@@ -68,6 +68,8 @@ class RequestHandler(BaseHTTPRequestHandler):
                 return 200, bench.status(capture_id)
             case 'POST', ['captures', capture_id, 'trace']:
                 return 200, bench.trace(capture_id, body)
+            case 'POST', ['captures', capture_id, 'fault-map']:
+                return 200, bench.fault_map(capture_id, body)
             case 'POST', ['captures', capture_id, 'build']:
                 fields(body)
                 return 200, bench.build(capture_id)
