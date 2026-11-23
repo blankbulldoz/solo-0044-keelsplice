@@ -1,7 +1,9 @@
 """Run workflows through the actual JSON HTTP service against disposable files."""
 
 import json
+import os
 import sqlite3
+import subprocess
 import sys
 from contextlib import closing
 from hashlib import sha256
@@ -11,9 +13,10 @@ from threading import Thread
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
+from keelsplice import recheck
 from keelsplice.api import create_server
 
-WORKFLOWS = ('catalog', 'recipe', 'retire', 'preview', 'capture', 'trace', 'build', 'certify', 'compare', 'download')
+WORKFLOWS = ('catalog', 'recipe', 'retire', 'preview', 'capture', 'trace', 'build', 'certify', 'compare', 'download', 'recheck')
 
 
 def seed(file):
@@ -132,6 +135,69 @@ def walkthrough(base, selected, source, root):
         assert conn.execute('SELECT texture FROM substrate').fetchone()[0] == b'\x00\x00\xff'
         assert conn.execute('SELECT count(*) FROM frame').fetchone()[0] == 0
     observe('download', {'sha256': etag, 'source_changes_isolated': True, 'length_and_generated': row})
+
+    manifest = request(endpoint + '/recheck', {'table': 'substrate', 'key': ['East', 'Mica']})
+    assert manifest['format'] == 'keelsplice-recheck/1'
+    assert manifest['root'] == {'table': 'substrate', 'key': ['East', 'Mica']}
+    assert manifest['file'] == {'sha256': certificate['sha256'], 'bytes': certificate['bytes']}
+    assert manifest['tables']['frame'] == {'rows': 0, 'digests': []}
+    assert sum(table['rows'] for table in manifest['tables'].values()) == cap['summary']['rows']
+    assert request(endpoint + '/recheck', {'table': 'substrate', 'key': ['West', 'Basalt']}, 404)['error'] == 'unknown_root'
+    assert request(f'/captures/{newer["id"]}/recheck', {'table': 'substrate', 'key': ['East', 'Mica']}, 409)['error'] == 'fixture_not_certified'
+
+    env = os.environ | {'PYTHONPATH': str(Path(__file__).resolve().parent.parent)}
+    manifest_file = root / 'manifest.json'
+    manifest_file.write_text(json.dumps(manifest))
+    material_file = root / 'material.json'
+    command = [sys.executable, '-m', 'keelsplice.recheck']
+    run = subprocess.run([*command, 'probe', str(fixture), str(manifest_file), '-o', str(material_file)],
+                         env=env, capture_output=True)
+    assert run.returncode == 0, run.stderr
+    run = subprocess.run([*command, 'judge', str(manifest_file), str(material_file)],
+                         env=env, capture_output=True, text=True)
+    assert run.returncode == 0, run.stderr
+    cli = json.loads(run.stdout)
+    material = json.loads(material_file.read_text())
+    original = request(endpoint + '/recheck/verdict', {'root': manifest['root'], 'material': material})
+    assert cli['verdict'] == original['verdict'] == 'original' and original['bytes_match'] is True
+    assert original['tables'] == {name: {'missing': 0, 'extra': 0} for name in manifest['tables']}
+
+    def edited(name, *statements):
+        copy = root / name
+        copy.write_bytes(data)
+        with closing(sqlite3.connect(copy)) as conn, conn:
+            conn.execute('PRAGMA foreign_keys=ON')
+            for statement in statements:
+                conn.execute(statement)
+        return recheck.probe(copy, manifest)
+
+    def workstation(material):
+        return request(endpoint + '/recheck/verdict', {'root': manifest['root'], 'material': material})
+
+    appended = edited('appended.sqlite', "INSERT INTO cassette VALUES (99, NULL, 'field')",
+                      "INSERT INTO assay (mark, region, code, cassette, length_um) VALUES ('L-01', 'EAST', 'mica', 99, 1.5)")
+    assert recheck.judge(manifest, appended)['verdict'] == 'appended'
+    appended_verdict = workstation(appended)
+    assert appended_verdict['verdict'] == 'appended' and appended_verdict['appended_rows'] == 2
+    assert appended_verdict['missing_rows'] == 0 and appended_verdict['tables']['assay'] == {'missing': 0, 'extra': 1}
+
+    missing = edited('missing.sqlite', 'DELETE FROM assay', 'DELETE FROM substrate')
+    missing_verdict = workstation(missing)
+    assert missing_verdict['verdict'] == recheck.judge(manifest, missing)['verdict'] == 'missing_root'
+    assert missing_verdict['root']['found'] is False
+
+    tampered = edited('tampered.sqlite', "UPDATE substrate SET texture = x'ff00'")
+    tampered_verdict = workstation(tampered)
+    assert tampered_verdict['verdict'] == 'rejected' and tampered_verdict['reasons'] == ['content']
+    assert recheck.judge(manifest, tampered) == tampered_verdict
+
+    drifted = edited('drifted.sqlite', 'ALTER TABLE frame ADD COLUMN note2 TEXT')
+    drifted_verdict = workstation(drifted)
+    assert drifted_verdict['verdict'] == 'rejected' and drifted_verdict['reasons'] == ['schema']
+
+    observe('recheck', {'cli': cli['verdict'], 'original': original['verdict'],
+                        'appended': appended_verdict['appended_rows'], 'missing_root': missing_verdict['verdict'],
+                        'rejected': [tampered_verdict['reasons'][0], drifted_verdict['reasons'][0]]})
 
 
 def main():

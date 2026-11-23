@@ -53,6 +53,10 @@
     {
       "workflow_id": "workbench",
       "command": "python3 -m examples.browser_walkthrough"
+    },
+    {
+      "workflow_id": "recheck",
+      "command": "python3 -m examples.walkthrough recheck"
     }
   ]
 }

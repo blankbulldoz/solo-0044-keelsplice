@@ -29,4 +29,5 @@ legend { font-weight: 650; }
 .status.ready { background: var(--brand-soft); color: var(--brand); }
 .status.pending { background: var(--warning-bg); color: var(--warning); }
 .status.muted { background: #e7ebef; }
+.status.rejected { background: var(--error-bg); color: var(--error); }
 .certificate { border-left: 3px solid var(--brand); padding-left: 12px; }

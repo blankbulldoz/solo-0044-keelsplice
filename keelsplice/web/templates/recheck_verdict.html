@@ -1,0 +1,9 @@
+<div class="content">
+  <header class="pagehead"><div><p class="breadcrumb"><a href="$base">捕获详情</a> / 二次提取自查</p><h1>自查判定</h1></div><span class="status $style">$label</span></header>
+  <dl class="facts"><div><dt>指定根</dt><dd>$table $key</dd></div><div><dt>根实存</dt><dd>$found</dd></div>
+    <div><dt>原有行缺失</dt><dd>$missing</dd></div><div><dt>接收端追加</dt><dd>$appended</dd></div>
+    <div class="wide"><dt>文件字节</dt><dd>$bytes_note</dd></div></dl>
+  <section><h2>判定依据</h2><ul class="data-list">$reasons</ul></section>
+  <section><h2>逐表核对</h2><div class="scroll"><table><thead><tr><th scope="col">表</th><th scope="col">缺失行</th><th scope="col">追加行</th></tr></thead><tbody>$rows</tbody></table></div></section>
+  <p><a class="button" href="$base">回到捕获详情</a></p>
+</div>

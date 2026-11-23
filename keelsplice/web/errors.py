@@ -36,6 +36,10 @@ MESSAGES = {
     'artifact_reference': '子库的外键复核失败。',
     'artifact_schema': '子库模式与封存模式不一致。',
     'artifact_content': '子库行内容与封存内容不一致。',
+    'unknown_root': '指定根不在此次捕获的实存根中。',
+    'recheck_manifest': '自查清单的形状或摘要无效。',
+    'recheck_material': '接收端材料的形状或摘要无效，请确认材料文件完整未改。',
+    'recheck_mismatch': '材料对应的捕获或指定根与本次核验不一致。',
     'unknown_route': '找不到指定页面。',
 }
 

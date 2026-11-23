@@ -2,6 +2,7 @@
 
 import argparse
 import hashlib
+import json
 import re
 import sqlite3
 from contextlib import closing
@@ -12,9 +13,10 @@ from urllib.error import HTTPError
 from urllib.parse import urlencode, urlsplit
 from urllib.request import Request, urlopen
 
+from keelsplice import recheck
 from keelsplice.api import create_server
 
-from .walkthrough import seed
+from .walkthrough import call, seed
 
 
 def open_page(base, path, payload=None, expected=200, origin=None):
@@ -86,7 +88,20 @@ def run(base, source, root):
     with closing(sqlite3.connect(handoff)) as conn:
         assert conn.execute("SELECT length_um FROM assay WHERE mark='S-01'").fetchone() == (3.25,)
         assert conn.execute('PRAGMA foreign_key_check').fetchall() == []
-    print('浏览器端到端检查通过：目录、配方、试算、捕获、证据、对比、停用、构建、认证、下载')
+
+    capture_id = first.rsplit('/', 1)[1]
+    _, certified = html(base, first)
+    assert '二次提取自查' in certified
+    root_json = json.dumps(['substrate', ['East', 'Mica']])
+    _, listing = html(base, first + '/recheck', {'root': root_json})
+    assert '自查清单' in listing and 'keelsplice-recheck/1' in listing
+    manifest = call(base, f'/captures/{capture_id}/recheck', {'table': 'substrate', 'key': ['East', 'Mica']})
+    material = recheck.probe(handoff, manifest)
+    assert recheck.judge(manifest, material)['verdict'] == 'original'
+    _, ruling = html(base, first + '/verdict', {'root': root_json, 'material': json.dumps(material)})
+    assert '原文件' in ruling and '逐项一致' in ruling
+    assert '需先认证' in html(base, second + '/recheck', {'root': root_json}, expected=409)[1]
+    print('浏览器端到端检查通过：目录、配方、试算、捕获、证据、对比、停用、构建、认证、下载、自查')
 
 
 def main():

@@ -3,7 +3,7 @@
 import re
 import sqlite3
 
-from . import bundle, capture, catalog, recipe
+from . import bundle, capture, catalog, recheck, recipe
 from .codec import Fault
 
 NAME = re.compile(r'[a-z][a-z0-9_-]{0,63}\Z')
@@ -106,3 +106,17 @@ class Workbench:
         if bundle.digest_bytes(data) != sha:
             raise Fault('artifact_integrity', 'Stored fixture bytes do not match the certificate', 409)
         return data, sha
+
+    def recheck(self, capture_id, body):
+        record = self.repository.load_capture(capture_id)
+        if record['state'] != 'certified':
+            raise Fault('fixture_not_certified', 'Certify the fixture before issuing a self-check manifest', 409)
+        return recheck.manifest(record['sealed'], record['certificate'], body)
+
+    def verdict(self, capture_id, body):
+        record = self.repository.load_capture(capture_id)
+        if record['state'] != 'certified':
+            raise Fault('fixture_not_certified', 'Certify the fixture before judging self-check material', 409)
+        recipe.fields(body, ('root', 'material'))
+        manifest = recheck.manifest(record['sealed'], record['certificate'], body['root'])
+        return recheck.judge(manifest, body['material'])

@@ -1,0 +1,12 @@
+<div class="content">
+  <header class="pagehead"><div><p class="breadcrumb"><a href="$base">捕获详情</a> / 二次提取自查</p><h1>自查清单</h1></div></header>
+  <p class="notice info">清单只含摘要与计数，不含行值。请把下方 JSON 保存为 <code>manifest.json</code>，与认证子库一并交给接收人。</p>
+  <dl class="facts"><div><dt>指定根</dt><dd>$table $key</dd></div><div><dt>文件字节</dt><dd>$bytes</dd></div>
+    <div class="wide"><dt>捕获摘要</dt><dd>$digest</dd></div>
+    <div class="wide"><dt>文件 SHA-256</dt><dd>$sha</dd></div></dl>
+  <section><h2>清单 JSON</h2><textarea readonly rows="10" spellcheck="false">$manifest</textarea></section>
+  <section><h2>接收人本机复跑</h2><pre>python3 -m keelsplice.recheck probe 子库.sqlite manifest.json -o material.json
+python3 -m keelsplice.recheck judge manifest.json material.json</pre>
+    <p class="muted">接收人判定结果与工位核验同一材料的结果一致；发回 material.json 即可，无需发回子库。</p></section>
+  <p><a class="button" href="$base">回到捕获详情</a></p>
+</div>

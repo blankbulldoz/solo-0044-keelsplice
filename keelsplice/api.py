@@ -74,6 +74,10 @@ class RequestHandler(BaseHTTPRequestHandler):
             case 'POST', ['captures', capture_id, 'certify']:
                 fields(body)
                 return 200, bench.certify(capture_id)
+            case 'POST', ['captures', capture_id, 'recheck']:
+                return 200, bench.recheck(capture_id, body)
+            case 'POST', ['captures', capture_id, 'recheck', 'verdict']:
+                return 200, bench.verdict(capture_id, body)
             case 'POST', ['compare']:
                 return 200, bench.compare(body)
             case 'GET', ['captures', capture_id, 'database']:

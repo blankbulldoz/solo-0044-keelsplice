@@ -4,7 +4,7 @@ import re
 import sqlite3
 from urllib.parse import urlsplit
 
-from . import assets, captures, comparison, directory, evidence, preview, selection, versions
+from . import assets, captures, comparison, directory, evidence, preview, recheck, selection, versions
 from .errors import invalid_route, message
 from .forms import MAX_BYTES, decode_form, field, version
 from .render import page, segment, text
@@ -84,6 +84,10 @@ def route(handler, path):
         case 'POST', ['workbench', 'captures', capture_id, action]:
             if action == 'trace':
                 status, body = evidence.show(bench, capture_id, values)
+            elif action == 'recheck':
+                status, body = recheck.manifest(bench, capture_id, values)
+            elif action == 'verdict':
+                status, body = recheck.verdict(bench, capture_id, values)
             elif action in ('build', 'certify'):
                 (bench.build if action == 'build' else bench.certify)(capture_id)
                 return redirect(f'/workbench/captures/{segment(capture_id)}')

@@ -1,0 +1,12 @@
+<section><h2>二次提取自查</h2>
+  <p class="muted">交付认证子库时，按指定根出具自查清单一并发送。接收人离线生成本机材料（仅摘要，不含行值）并复跑同一判定；材料发回后在此核验。</p>
+  <form class="trace-form" method="post" action="$base/recheck">
+    <label>指定根<select name="root" required>$options</select></label>
+    <button>出具自查清单</button>
+  </form>
+  <form method="post" action="$base/verdict">
+    <div class="form-grid"><label>指定根<select name="root" required>$options</select></label></div>
+    <label>接收端自查材料（JSON）<textarea name="material" rows="6" required spellcheck="false"></textarea></label>
+    <div class="actions"><button class="primary">核验材料并判定</button></div>
+  </form>
+</section>

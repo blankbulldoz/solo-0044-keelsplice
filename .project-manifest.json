@@ -42,6 +42,11 @@
       "responsibility": "子库重建和内容认证"
     },
     {
+      "id": "recheck",
+      "path": "keelsplice/recheck.py",
+      "responsibility": "自查清单、接收端材料探查与共享判定"
+    },
+    {
       "id": "web",
       "path": "keelsplice/web",
       "responsibility": "服务端 HTML、类型化表单、目录、配方、追踪、对比及子库交接页面"
@@ -236,6 +241,29 @@
         "service",
         "storage",
         "bundle"
+      ]
+    },
+    {
+      "id": "recheck",
+      "name": "二次提取自查",
+      "entry": "POST /captures/{id}/recheck",
+      "success": "按指定实存根出具只含摘要的清单，接收人本机生成材料并复跑同一判定，工位核验区分原文件、合法追加与缺根",
+      "failure": "未认证捕获、非实存根或形状无效的材料被明确拒绝",
+      "verification": "python3 -m examples.walkthrough recheck",
+      "steps": [
+        "对已认证捕获按指定实存根出具只含摘要的自查清单",
+        "接收人离线探查子库生成只含摘要的自查材料",
+        "工位与接收人用同一判定函数区分原文件、合法追加与缺根文件"
+      ],
+      "module_ids": [
+        "api",
+        "service",
+        "recheck",
+        "catalog",
+        "capture",
+        "codec",
+        "storage",
+        "web"
       ]
     },
     {

@@ -1,6 +1,6 @@
 """Browse persistent capture records without reading artifact BLOBs."""
 
-from . import handoff, preview
+from . import handoff, preview, recheck
 from .render import code, page, segment, text, typed
 from ..codec import dumps
 
@@ -39,5 +39,6 @@ def detail(bench, capture_id):
                      name=text(record['name']), number=record['version'], stage=stage(record['state']),
                      digest=text(record['schema_digest']), certificate=handoff.certificate(record),
                      actions=handoff.actions(base, record['state']), roots=roots,
+                     recheck=recheck.section(base, record),
                      counts=preview.counts(record['summary']), rows=record['summary']['rows'],
                      witnesses=record['summary']['witnesses'])

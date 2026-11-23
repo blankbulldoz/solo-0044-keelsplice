@@ -22,6 +22,7 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 3. 试算查看逐表计数和实存根。点「封存当前样本」时服务重新读取源。配方绑定的模式有变化时，需要重新核对目录。
 4. 在捕获详情按实存主键追踪。可从直接入选原因或必需父行继续查看相关记录。对比页面按实存带类型主键显示两个同模式捕获的新增、移除和修改。
 5. 构建后再认证。认证后可下载文件并用其 SHA-256 或独立 SQLite 连接核对。停用配方后，既有捕获仍可完成这些操作。
+6. 交付后如需二次提取自查：在捕获详情为指定实存根出具自查清单，随子库一并发给接收人。接收人离线生成自查材料并复跑判定，工位核验发回的材料，区分原文件、接收端合法追加与缺根文件。
 
 ## JSON 接口
 
@@ -39,8 +40,21 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 | `POST /captures/{id}/build`、`POST /captures/{id}/certify` | 接收空对象，构建或认证该捕获的子库 |
 | `POST /compare` | 接收 `{"left":"id-a","right":"id-b"}`，按表报告带类型主键的差异 |
 | `GET /captures/{id}/database` | 返回已认证 SQLite 字节，`ETag` 为带引号的 SHA-256 |
+| `POST /captures/{id}/recheck` | 接收实存根如 `{"table":"substrate","key":["East","Mica"]}`，返回只含摘要的自查清单 |
+| `POST /captures/{id}/recheck/verdict` | 接收 `{"root":{...},"material":{...}}`，返回与接收人本机一致的判定 |
 
 根记录中的键按目录的列顺序填写。整数为有符号 64 位 JSON 数字。字节用 `{"blob":"AAD/"}`，实数用 `{"real":"0x1.a000000000000p+1"}`，文本用 JSON 字符串。配方可以用不同拼写定位同一个 NOCASE 根，封存与追踪使用实存键。结果中的行去重，输入根出现项保留顺序。工作台近期列表显示最后登记的 50 个配方版本和最后封存的 50 次捕获，历史详情地址依然可访问。
+
+## 二次提取自查
+
+接收人离线且不能回传库文件时，自查清单与自查材料都只含类型化摘要、计数和自检标志，不含任何行值。工位对已认证捕获按指定实存根出具清单（`POST /captures/{id}/recheck` 或捕获详情页表单），保存为 `manifest.json` 随子库一并交付。接收人在本机生成材料并复跑同一项判定：
+
+```sh
+python3 -m keelsplice.recheck probe handoff.sqlite manifest.json -o material.json
+python3 -m keelsplice.recheck judge manifest.json material.json
+```
+
+`probe` 在独立只读连接上检查完整性、外键、模式摘要和指定根（沿用 SQLite 比较语义，NOCASE 拼写差异不影响命中），并逐表记录行摘要；空表记为零行。`judge` 与工位的核验是同一个函数：同一清单与材料在两侧结果一致。把 `material.json` 发回工位后，工位经 `POST /captures/{id}/recheck/verdict` 或捕获详情页表单核验。判定类别：`original` 原文件（`bytes_match` 表示字节是否也与证书一致）、`appended` 接收端合法追加、`missing_root` 仍有表定义但缺指定根、`rejected` 无法确认（完整性或外键失败、模式漂移、根键被改写、原有行被改删）。
 
 ## 复跑
 
