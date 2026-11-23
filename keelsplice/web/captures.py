@@ -1,7 +1,7 @@
 """Browse persistent capture records without reading artifact BLOBs."""
 
-from . import handoff, preview
-from .render import code, page, segment, text, typed
+from . import handoff
+from .render import code, location, page, segment, text, typed
 from ..codec import dumps
 
 STAGES = {'sealed': '已封存', 'built': '已构建', 'certified': '已认证'}
@@ -10,6 +10,14 @@ STAGES = {'sealed': '已封存', 'built': '已构建', 'certified': '已认证'}
 def stage(state):
     style = {'sealed': 'muted', 'built': 'pending', 'certified': 'ready'}[state]
     return f'<span class="status {style}">{STAGES[state]}</span>'
+
+
+def count_rows(base, counts):
+    return ''.join(
+        '<tr><th scope="row"><a href="{}">{}</a></th><td>{}</td></tr>'.format(
+            text(location(base + '/rows', table=name)), code(name), count)
+        for name, count in counts.items()
+    )
 
 
 def index(bench):
@@ -39,5 +47,5 @@ def detail(bench, capture_id):
                      name=text(record['name']), number=record['version'], stage=stage(record['state']),
                      digest=text(record['schema_digest']), certificate=handoff.certificate(record),
                      actions=handoff.actions(base, record['state']), roots=roots,
-                     counts=preview.counts(record['summary']), rows=record['summary']['rows'],
+                     counts=count_rows(base, record['summary']['counts']), rows=record['summary']['rows'],
                      witnesses=record['summary']['witnesses'])

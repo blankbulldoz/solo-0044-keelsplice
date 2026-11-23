@@ -46,10 +46,31 @@ th[scope="row"] code { white-space: nowrap; }
 thead { color: var(--secondary); background: #edf1f5; }
 tbody tr:last-child > * { border-bottom: 0; }
 .empty, .muted { color: var(--secondary); }
+.hint { margin: 8px 2px 0; font-size: 13px; }
 .editor-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
 .data-list, .key-list { padding-left: 24px; overflow-wrap: anywhere; }
 .data-list li, .key-list li { margin-bottom: 6px; }
 .key-list span { color: var(--secondary); margin-left: 6px; }
+.table-picker { display: flex; align-items: end; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+.table-picker label { min-width: min(320px, 100%); flex: 1 1 240px; }
+.type-badge { display: inline-block; font-size: 12px; font-weight: 700; padding: 1px 7px; border-radius: 999px; margin-right: 6px; white-space: nowrap; }
+.type-badge.null { background: #e7ebef; color: var(--secondary); }
+.type-badge.integer { background: #e6f4ed; color: var(--brand); }
+.type-badge.real { background: #e9f0fc; color: #244e81; }
+.type-badge.text { background: var(--warning-bg); color: var(--warning); }
+.type-badge.blob { background: #f3e9fc; color: #65328f; }
+.truncated { color: var(--error); font-weight: 700; margin-left: 6px; white-space: nowrap; }
+a.expand { white-space: nowrap; font-size: 13px; }
+th.generated .col-name::after { content: " ↻"; color: var(--focus); }
+.col-name { font-weight: 650; }
+.col-meta { display: block; font-size: 12px; font-weight: 400; color: var(--secondary); margin-top: 2px; }
+.row-index { color: var(--secondary); white-space: nowrap; }
+.pager { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+.page-step { border: 1px solid #aab8c3; border-radius: 5px; padding: 4px 12px; text-decoration: none; background: var(--paper); }
+.page-step.muted { border-color: var(--line); color: var(--secondary); }
+.page-current { font-weight: 650; }
+.value-full { max-height: 320px; overflow: auto; margin: 0; }
+td .value-full { min-width: min(360px, 40vw); }
 @media (max-width: 720px) {
   .topbar { gap: 8px 18px; padding: 12px 15px; flex-wrap: wrap; }
   .topbar nav { order: 3; width: 100%; gap: 2px; }

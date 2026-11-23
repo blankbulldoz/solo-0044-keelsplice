@@ -2,8 +2,11 @@
 
 from collections import defaultdict, deque
 
+from .catalog import resolve
 from .codec import Fault, decode, dumps, key, loads, quote, row_values
 from .recipe import MAX_ARCS, MAX_BYTES, identity
+
+PAGE_SIZE = 20
 
 
 def condition(columns, alias):
@@ -115,6 +118,44 @@ def trace(sealed, address):
     return {'row': target, 'roots': [i for i, root in enumerate(result['roots']) if root == target],
             'causes': [arc for arc in result['arcs'] if arc['target'] == target],
             'dependencies': [arc for arc in result['arcs'] if arc['origin'] == target and arc['direction'] == 'parent']}
+
+
+def page_number(value):
+    if type(value) is not int or value < 1:
+        raise Fault('invalid_page', 'Page numbers start at 1', 400)
+    return value
+
+
+def browse(sealed, table_name, page):
+    """Page the sealed rows of one table without opening the live source."""
+    page = page_number(page)
+    schema = sealed['schema']
+    name = resolve(schema['tables'], table_name)
+    meta = schema['tables'][name]
+    stored = sealed['result']['rows'][name]
+    total = len(stored)
+    pages = max(1, (total + PAGE_SIZE - 1) // PAGE_SIZE)
+    if page > pages:
+        raise Fault('invalid_page', f'{name} only has {pages} page(s) of selected rows', 404)
+    start = (page - 1) * PAGE_SIZE
+    tokens = sorted(stored)
+    window = tokens[start:start + PAGE_SIZE]
+    rows = [[loads(token), stored[token]] for token in window]
+    return {'table': name, 'columns': meta['columns'], 'pk': meta['pk'], 'rows': rows,
+            'page': page, 'pages': pages, 'total': total, 'page_size': PAGE_SIZE}
+
+
+def open_cell(sealed, table_name, column_name):
+    """Resolve one sealed column so the full value is shown without truncation."""
+    schema = sealed['schema']
+    name = resolve(schema['tables'], table_name)
+    columns = schema['tables'][name]['columns']
+    match = next((col for col in columns if col['name'] == column_name), None)
+    if match is None:
+        raise Fault('unknown_identifier', f'{name} has no column {column_name!r}', 404)
+    index = columns.index(match)
+    return {'table': name, 'column': match, 'index': index,
+            'rows': [[loads(token), values[index]] for token, values in sorted(sealed['result']['rows'][name].items())]}
 
 
 def compare(left, right):

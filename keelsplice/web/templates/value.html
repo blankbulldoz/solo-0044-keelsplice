@@ -1,0 +1,24 @@
+<div class="content">
+  <header class="pagehead">
+    <div><p class="breadcrumb"><a href="/workbench/captures">封存捕获</a> / <a href="$base">详情</a> / <a href="$back">入选行</a> / 原值</p>
+    <h1>$table · $column</h1></div>
+    <span class="status ready">原捕获 <code>$id</code></span>
+  </header>
+  <p class="notice info">完整值直接来自封存记录（模式摘要 <code>$digest</code>），未做截短；逐值摘要可用于核对两个表面相同的值是否真的一致。</p>
+  <dl class="facts">
+    <div><dt>表</dt><dd>$table</dd></div>
+    <div><dt>列</dt><dd>$column</dd></div>
+    <div><dt>值来源</dt><dd>$source</dd></div>
+    <div><dt>声明类型</dt><dd>$declared</dd></div>
+    <div class="wide"><dt>封存模式摘要</dt><dd><code>$digest</code></dd></div>
+  </dl>
+  <section aria-labelledby="value-title">
+    <h2 id="value-title">逐行原值</h2>
+    <div class="scroll">
+      <table>
+        <thead><tr><th scope="col">实存主键</th><th scope="col">存储类型</th><th scope="col">长度</th><th scope="col">值 SHA-256</th><th scope="col">完整值</th><th scope="col">操作</th></tr></thead>
+        <tbody>$entries</tbody>
+      </table>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,25 @@
+<div class="content">
+  <header class="pagehead">
+    <div><p class="breadcrumb"><a href="/workbench/captures">封存捕获</a> / <a href="$base">详情</a> / 入选行</p>
+    <h1>$table · 封存入选行</h1></div>
+    <span class="status ready">原捕获 <code>$id</code></span>
+  </header>
+  <p class="notice info">下列值全部取自封存记录（模式摘要 <code>$digest</code>），不会回读已变化的源库；标有「已截短」的单元格只显示前缀，展开后才是原值。</p>
+  <dl class="facts">
+    <div><dt>本表入选行</dt><dd>$total</dd></div>
+    <div><dt>每页行数</dt><dd>$page_size</dd></div>
+    <div class="wide"><dt>封存模式摘要</dt><dd><code>$digest</code></dd></div>
+  </dl>
+  $picker
+  $empty_notice
+  <section aria-labelledby="rows-title">
+    <h2 id="rows-title">封存值与生成值</h2>
+    <div class="scroll">
+      <table>
+        <thead><tr><th scope="col">#</th>$columns<th scope="col">操作</th></tr></thead>
+        <tbody>$rows</tbody>
+      </table>
+    </div>
+    $pager
+  </section>
+</div>

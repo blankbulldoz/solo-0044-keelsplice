@@ -12,6 +12,7 @@ from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
 from keelsplice.api import create_server
+from keelsplice.codec import dumps
 
 WORKFLOWS = ('catalog', 'recipe', 'retire', 'preview', 'capture', 'trace', 'build', 'certify', 'compare', 'download')
 
@@ -37,7 +38,7 @@ def call(base, route, body=None, status=200):
         return json.loads(data)
 
 
-def walkthrough(base, selected, source, root):
+def walkthrough(base, selected, source, root, workbench):
     def request(route, body=None, status=200):
         return call(base, route, body, status)
 
@@ -73,7 +74,8 @@ def walkthrough(base, selected, source, root):
         assert request('/preview', lookup | {'version': 2}, 422)['error'] == 'row_budget'
 
     preview = request('/preview', lookup)
-    assert preview['summary']['counts'] == {'substrate': 1, 'cassette': 2, 'assay': 2, 'frame': 0}
+    assert preview['summary']['counts'] == {
+        'substrate': 1, 'cassette': 2, 'assay': 2, 'frame': 0, 'specimen': 0}
     request('/recipes/tight/versions', body | {'row_limit': 1}, 201)
     assert request('/preview', {'name': 'tight','version': 1}, 422)['error'] == 'row_budget'
     if observe('preview', preview['summary']):
@@ -93,6 +95,17 @@ def walkthrough(base, selected, source, root):
     traced = request(endpoint + '/trace', {'table': 'substrate','key':['East','Mica']})
     assert traced['roots'] == [0] and len(traced['causes']) == 2
     assert request(endpoint + '/trace', {'table': 'substrate','key':['east','MICA']}, 404)['error'] == 'row_not_captured'
+    # 行浏览只读封存记录：零入选表保留 DDL，排序按带类型主键，源库后续改动不回灌。
+    frame_page = workbench.browse(cap['id'], 'frame', 1)
+    assert frame_page['total'] == 0 and frame_page['rows'] == [] and frame_page['pages'] == 1
+    assay_page = workbench.browse(cap['id'], 'assay', 1)
+    assert [row[0] for row in assay_page['rows']] == [['S-01'], ['S-02']]
+    sealed_lengths = {dumps(token): value for token, value in
+                      workbench.cell(cap['id'], 'assay', 'length_um')['rows']}
+    with closing(sqlite3.connect(source)) as conn, conn:
+        conn.execute("UPDATE assay SET length_um=99.5 WHERE mark='S-01'")
+    assert {dumps(token): value for token, value in
+            workbench.cell(cap['id'], 'assay', 'length_um')['rows']} == sealed_lengths
     if observe('trace', traced):
         return
 
@@ -146,7 +159,8 @@ def main():
             thread = Thread(target=server.serve_forever, kwargs={'poll_interval': 0.05})
             thread.start()
             try:
-                walkthrough(f'http://127.0.0.1:{server.server_port}', selected, source, root)
+                walkthrough(f'http://127.0.0.1:{server.server_port}', selected, source, root,
+                            server.workbench)
             finally:
                 server.shutdown()
                 thread.join()

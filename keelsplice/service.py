@@ -69,6 +69,12 @@ class Workbench:
     def trace(self, capture_id, body):
         return capture.trace(self.repository.load_capture(capture_id)['sealed'], body)
 
+    def browse(self, capture_id, table, page):
+        return capture.browse(self.repository.load_capture(capture_id)['sealed'], table, page)
+
+    def cell(self, capture_id, table, column):
+        return capture.open_cell(self.repository.load_capture(capture_id)['sealed'], table, column)
+
     def compare(self, body):
         recipe.fields(body, ('left', 'right'))
         if any(not isinstance(body[k], str) for k in ('left', 'right')):
