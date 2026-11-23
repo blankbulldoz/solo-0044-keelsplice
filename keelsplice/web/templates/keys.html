@@ -1,0 +1,30 @@
+<div class="workspace">
+  <aside class="rail" aria-label="关系表目录">
+    <form class="source-picker" method="get" action="/workbench/keys">
+      <label for="source">SQLite 数据源</label>
+      <div class="inline"><select id="source" name="source">$options</select><button>打开</button></div>
+    </form>
+    <div class="rail-label"><span>数据表</span></div>
+    <nav class="table-links" aria-label="数据表">$table_links</nav>
+  </aside>
+  <div class="workarea">
+    <header class="pagehead">
+      <div><p class="breadcrumb">实存主键 / $alias</p><h1>$selected</h1></div>
+      <div class="actions"><a class="button quiet" href="/workbench/selections">选取记录</a><a class="button" href="$recipe">登记配方</a></div>
+    </header>
+    <dl class="facts">
+      <div class="wide"><dt>键序（主键索引中的顺序）</dt><dd>$layout</dd></div>
+      <div><dt>本窗口</dt><dd>$window_count 个键</dd></div>
+      <div><dt>本次浏览累计</dt><dd>$walked 个键</dd></div>
+      <div class="wide"><dt>模式摘要</dt><dd><code>$digest…</code></dd></div>
+    </dl>
+    <p class="notice ${state_style}" role="status"><strong>$headline</strong> $explanation</p>
+    <p class="status ${coverage_style}">$coverage</p>
+    $cursor_note
+    <section aria-labelledby="keys">
+      <h2 id="keys">实存主键窗口</h2>
+      <div class="scroll"><table><thead><tr><th scope="col">序号</th><th scope="col">主键元组</th><th scope="col">操作</th></tr></thead><tbody>$rows</tbody></table></div>
+    </section>
+    $navigation
+  </div>
+</div>

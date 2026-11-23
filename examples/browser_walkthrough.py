@@ -2,9 +2,11 @@
 
 import argparse
 import hashlib
+import json
 import re
 import sqlite3
 from contextlib import closing
+from html import unescape
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from threading import Thread
@@ -15,6 +17,8 @@ from urllib.request import Request, urlopen
 from keelsplice.api import create_server
 
 from .walkthrough import seed
+
+html_unquote = unescape
 
 
 def open_page(base, path, payload=None, expected=200, origin=None):
@@ -43,6 +47,29 @@ def run(base, source, root):
     assert 'region → code' in table and 'cassette' in table
     assert open_page(base, '/workbench/assets/workspace.css')[1].get_content_type() == 'text/css'
     assert '未注册' in html(base, '/workbench?source=missing', expected=404)[1]
+
+    _, keys = html(base, '/workbench/keys?source=microscope&table=substrate')
+    assert 'region (NOCASE ASC), code (NOCASE ASC)' in keys and '&quot;Mica&quot;' in keys
+    assert '已核对到表尾' in keys
+    session = html_unquote(re.search(r'name="session" value="([^"]+)"', keys)[1])
+    steady_url = '/workbench/keys?' + urlencode({'source': 'microscope', 'table': 'substrate', 'session': session})
+    _, steady = html(base, steady_url)
+    assert '与上一页同一来源状态' in steady
+    with closing(sqlite3.connect(source)) as conn, conn:
+        conn.execute("INSERT INTO substrate VALUES('North','Quartz',x'00')")
+    _, drifted = html(base, steady_url)
+    assert '来源在翻页期间发生了变化' in drifted
+    with closing(sqlite3.connect(source)) as conn, conn:
+        conn.execute("DELETE FROM substrate WHERE region='North'")
+    chosen_id, evidence = html(base, '/workbench/keys/select',
+                               {'source': 'microscope', 'table': 'substrate',
+                                'key': '["East","Mica"]', 'session': session})
+    assert '选取证据' in evidence and 'East' in evidence and 'Mica' in evidence
+    assert '带入配方登记' in evidence
+    prefilled = html_unquote(re.search(r'name="roots" value="([^"]+)"', evidence)[1])
+    assert json.loads(prefilled) == [{'table': 'substrate', 'key': ['East', 'Mica']}]
+    _, listing = html(base, '/workbench/selections')
+    assert chosen_id.rsplit('/', 1)[1][:12] in listing
 
     editor_url = '/workbench/recipes/new'
     _, editor = html(base, editor_url)
@@ -79,6 +106,20 @@ def run(base, source, root):
     assert '已停止投用' in html(base, version + '/capture', {}, expected=409)[1]
     assert '已构建' in html(base, first + '/build', {})[1]
     assert '已认证' in html(base, first + '/certify', {})[1]
+    with closing(sqlite3.connect(source)) as conn, conn:
+        conn.executemany("INSERT INTO frame(frame_id, mark, note) VALUES (?, NULL, 'extra')",
+                        ((200 + index,) for index in range(8)))
+    _, wide = html(base, '/workbench/keys?source=microscope&table=frame&limit=5')
+    assert '下一页' in wide and '尚未覆盖全表' in wide
+    frame_session = html_unquote(re.search(r'name="session" value="([^"]+)"', wide)[1])
+    frame_after = html_unquote(re.search(r'name="after" value="([^"]+)"', wide)[1])
+    next_url = '/workbench/keys?' + urlencode({'source': 'microscope', 'table': 'frame', 'limit': 5,
+                                               'session': frame_session, 'after': frame_after})
+    _, second = html(base, next_url)
+    assert '与上一页同一来源状态' in second and '<code>204</code>' in second
+    with closing(sqlite3.connect(source)) as conn, conn:
+        conn.execute('DELETE FROM frame WHERE frame_id >= 200')
+
     _, headers, database = open_page(base, first + '/database')
     assert headers['ETag'] == '"' + hashlib.sha256(database).hexdigest() + '"'
     handoff = root / 'handoff.sqlite'
@@ -86,7 +127,7 @@ def run(base, source, root):
     with closing(sqlite3.connect(handoff)) as conn:
         assert conn.execute("SELECT length_um FROM assay WHERE mark='S-01'").fetchone() == (3.25,)
         assert conn.execute('PRAGMA foreign_key_check').fetchall() == []
-    print('浏览器端到端检查通过：目录、配方、试算、捕获、证据、对比、停用、构建、认证、下载')
+    print('浏览器端到端检查通过：目录、实存主键浏览与选取、配方、试算、捕获、证据、对比、停用、构建、认证、下载')
 
 
 def main():

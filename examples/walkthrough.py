@@ -13,7 +13,7 @@ from urllib.request import Request, urlopen
 
 from keelsplice.api import create_server
 
-WORKFLOWS = ('catalog', 'recipe', 'retire', 'preview', 'capture', 'trace', 'build', 'certify', 'compare', 'download')
+WORKFLOWS = ('catalog', 'keys', 'recipe', 'retire', 'preview', 'capture', 'trace', 'build', 'certify', 'compare', 'download')
 
 
 def seed(file):
@@ -51,6 +51,33 @@ def walkthrough(base, selected, source, root):
     assert edge['parent_cols'] == ['region','code']
     assert request('/sources/absent/catalog', status=404)['error'] == 'unknown_source'
     if observe('catalog', edge):
+        return
+
+    # Browse stored primary keys by table, page with typed cursors, and record a
+    # selection whose evidence names the walk it came from.
+    first = request('/sources/microscope/tables/substrate/keys')
+    assert first['layout_text'] == 'region (NOCASE ASC), code (NOCASE ASC)'
+    assert first['window']['rows'] == [['East','Mica'], ['West','Basalt']]
+    assert first['session']['complete'] is True and first['state'] == 'start'
+    assay_start = request('/sources/microscope/tables/assay/keys', {'limit': 5})
+    assay_page = request('/sources/microscope/tables/assay/keys',
+                         {'after': ['S-01'], 'limit': 5, 'session': assay_start['session']})
+    assert assay_page['window']['rows'] == [['S-02'], ['S-03'], ['S-04']]
+    assert assay_page['window']['has_more'] is False and assay_page['state'] == 'same'
+    # A marker from a different table is not accepted as the same walk.
+    assert request('/sources/microscope/tables/assay/keys',
+                   {'session': first['session']})['state'] == 'drift'
+    chosen = request('/sources/microscope/tables/substrate/select',
+                     {'key': ['east', 'MICA'], 'session': first['session'], 'note': 'reviewed'}, 201)
+    assert chosen['key'] == ['East', 'Mica'] and chosen['evidence']['same_spelling'] is False
+    assert chosen['evidence']['state'] == 'same'
+    reread = request('/selections/' + chosen['id'])
+    assert reread['recheck'] == 'present' and reread['present'] is True
+    assert request('/sources/microscope/tables/substrate/select', {'key': ['Only']}, 422)['error'] == 'invalid_key'
+    assert request('/sources/microscope/tables/substrate/keys', {'limit': 1}, 422)['error'] == 'invalid_page'
+    drift = request('/sources/microscope/tables/substrate/keys', {'session': {'x': 1}}, 400)
+    assert drift['error'] == 'invalid_session'
+    if observe('keys', {'rows': assay_page['window']['rows'], 'selection': chosen['id']}):
         return
 
     body = {'source': 'microscope', 'roots': [{'table': 'SUBSTRATE', 'key': ['east', 'MICA']}],

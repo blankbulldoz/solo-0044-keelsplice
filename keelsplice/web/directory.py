@@ -11,9 +11,9 @@ def source_options(bench, active):
     return options(((alias, alias) for alias in aliases), active)
 
 
-def table_links(tables, alias, active):
+def table_links(tables, alias, active, path='/workbench'):
     return ''.join(
-        f'<a class="table-link" href="{text(location("/workbench", source=alias, table=name))}"'
+        f'<a class="table-link" href="{text(location(path, source=alias, table=name))}"'
         f'{" aria-current=page" if name == active else ""}>{code(name)}</a>'
         for name in tables
     )
@@ -68,4 +68,5 @@ def show(bench, query):
                      edges=edge_rows(catalog['schema']['edges'], selected),
                      indexes=index_items or '<li class="empty">无显式索引。</li>',
                      recipe=text(location('/workbench/recipes/new', source=alias)),
+                     keys=text(location('/workbench/keys', source=alias, table=selected)),
                      ddl=text(table['ddl']))

@@ -4,7 +4,7 @@ import re
 import sqlite3
 from urllib.parse import urlsplit
 
-from . import assets, captures, comparison, directory, evidence, preview, selection, versions
+from . import assets, captures, comparison, directory, evidence, keybrowse, preview, selection, versions
 from .errors import invalid_route, message
 from .forms import MAX_BYTES, decode_form, field, version
 from .render import page, segment, text
@@ -50,7 +50,7 @@ def route(handler, path):
             status, body = versions.index(bench)
         case 'GET', ['workbench', 'recipes', 'new']:
             source = field(query, 'source', next(iter(sorted(bench.repository.sources)), ''))
-            status, body = selection.editor(bench, source)
+            status, body = selection.editor(bench, source, roots=field(query, 'roots'))
         case 'POST', ['workbench', 'recipes', 'new']:
             result = selection.register(bench, values)
             if isinstance(result, str):
@@ -93,6 +93,14 @@ def route(handler, path):
             status, body = comparison.show(bench)
         case 'POST', ['workbench', 'compare']:
             status, body = comparison.show(bench, values)
+        case 'GET', ['workbench', 'keys']:
+            status, body = keybrowse.show(bench, query)
+        case 'POST', ['workbench', 'keys', 'select']:
+            return redirect(keybrowse.choose(bench, values))
+        case 'GET', ['workbench', 'selections']:
+            status, body = keybrowse.index(bench, query)
+        case 'GET', ['workbench', 'selections', selection_id]:
+            status, body = keybrowse.detail(bench, selection_id)
         case _:
             raise invalid_route()
     return status, body, 'text/html; charset=utf-8', {}

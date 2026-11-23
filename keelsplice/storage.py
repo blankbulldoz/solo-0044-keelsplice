@@ -18,7 +18,67 @@ CREATE TABLE IF NOT EXISTS captures (
     artifact BLOB, certificate TEXT,
     FOREIGN KEY(name, version) REFERENCES recipes(name, version)
 );
+CREATE TABLE IF NOT EXISTS selections (
+    id TEXT PRIMARY KEY, source TEXT NOT NULL, table_name TEXT NOT NULL,
+    key TEXT NOT NULL, schema_digest TEXT NOT NULL,
+    layout TEXT NOT NULL, witness TEXT NOT NULL, evidence TEXT NOT NULL
+);
 '''
+SCAN_LIMIT = 5000
+
+
+class SourceReader:
+    """A read-only connection whose per-turn work can be budgeted and checked.
+
+    Each :meth:`read` call is one consistent transaction, so a page or a root
+    lookup sees a single source snapshot. The budget aborts a runaway query with
+    ``scan_budget`` rather than letting it run unbounded.
+    """
+
+    def __init__(self, path):
+        self.conn = sqlite3.connect(path.as_uri() + '?mode=ro', uri=True,
+                                    timeout=2, isolation_level=None, check_same_thread=False)
+        self.conn.row_factory = sqlite3.Row
+        self.conn.execute('PRAGMA query_only=ON')
+        self.conn.execute('PRAGMA trusted_schema=OFF')
+        self.conn.setlimit(sqlite3.SQLITE_LIMIT_LENGTH, 8 * 1024 * 1024)
+        self.work = 0
+        self.conn.set_progress_handler(self._progress, 1000)
+
+    def _progress(self):
+        self.work += 1
+        return self.work > SCAN_LIMIT
+
+    @contextmanager
+    def read(self):
+        """One consistent read transaction, budgeted like the existing source reads."""
+        self.work = 0
+        self.conn.execute('BEGIN')
+        try:
+            yield self.conn
+        except sqlite3.OperationalError as exc:
+            self._rollback()
+            if self.work > SCAN_LIMIT:
+                raise Fault('scan_budget', 'Source query work exceeded the snapshot budget') from exc
+            raise
+        except BaseException:
+            self._rollback()
+            raise
+        try:
+            self.conn.execute('COMMIT')
+        except sqlite3.Error:
+            self._rollback()
+            raise
+
+    def _rollback(self):
+        try:
+            self.conn.execute('ROLLBACK')
+        except sqlite3.Error:
+            pass
+
+    def close(self):
+        with closing(self.conn):
+            pass
 
 
 class Repository:
@@ -42,31 +102,22 @@ class Repository:
                     conn.execute('BEGIN IMMEDIATE')
                 yield conn
 
-    @contextmanager
-    def source(self, alias):
+    def reader(self, alias):
         if not isinstance(alias, str) or alias not in self.sources:
             raise Fault('unknown_source', 'Source alias is not registered', 404)
-        work = 0
+        try:
+            return SourceReader(self.sources[alias])
+        except sqlite3.Error as exc:
+            raise Fault('database_input', 'SQLite could not open the source file') from exc
 
-        def check_work():
-            nonlocal work
-            work += 1
-            return work > 5000
-
-        with closing(sqlite3.connect(self.sources[alias].as_uri() + '?mode=ro', uri=True,
-                                     timeout=2, isolation_level=None)) as conn:
-            conn.row_factory = sqlite3.Row
-            conn.execute('PRAGMA query_only=ON')
-            conn.execute('PRAGMA trusted_schema=OFF')
-            conn.setlimit(sqlite3.SQLITE_LIMIT_LENGTH, 8 * 1024 * 1024)
-            conn.set_progress_handler(check_work, 1000)
-            conn.execute('BEGIN')
-            try:
+    @contextmanager
+    def source(self, alias):
+        reader = self.reader(alias)
+        try:
+            with reader.read() as conn:
                 yield conn
-            except sqlite3.OperationalError as exc:
-                if work > 5000:
-                    raise Fault('scan_budget', 'Source query work exceeded the snapshot budget') from exc
-                raise
+        finally:
+            reader.close()
 
     def add_recipe(self, name, schema_digest, recipe):
         with self.session(write=True) as conn:
@@ -121,6 +172,42 @@ class Repository:
             raise Fault('unknown_capture', 'Capture does not exist', 404)
         return dict(row) | {'sealed': loads(row['sealed']),
                             'certificate': loads(row['certificate']) if row['certificate'] else None}
+
+    def add_selection(self, record):
+        selection_id = uuid4().hex
+        with self.session(write=True) as conn:
+            conn.execute(
+                'INSERT INTO selections VALUES(?,?,?,?,?,?,?,?)',
+                (selection_id, record['source'], record['table'], dumps(record['key']),
+                 record['schema_digest'], dumps(record['layout']), dumps(record['witness']),
+                 dumps(record['evidence'])))
+        return self.selection(selection_id)
+
+    def selection(self, selection_id):
+        with self.session() as conn:
+            row = conn.execute('SELECT * FROM selections WHERE id=?', (selection_id,)).fetchone()
+        if row is None:
+            raise Fault('unknown_selection', 'Selection does not exist', 404)
+        return {'id': row['id'], 'source': row['source'], 'table': row['table_name'],
+                'key': loads(row['key']), 'schema_digest': row['schema_digest'],
+                'layout': loads(row['layout']), 'witness': loads(row['witness']),
+                'evidence': loads(row['evidence'])}
+
+    def recent_selections(self, alias=None, table=None, limit=50):
+        clauses, args = [], []
+        if alias is not None:
+            clauses.append('source=?')
+            args.append(alias)
+        if table is not None:
+            clauses.append('table_name=?')
+            args.append(table)
+        where = ' WHERE ' + ' AND '.join(clauses) if clauses else ''
+        with self.session() as conn:
+            rows = conn.execute(
+                f'SELECT id, source, table_name, key, evidence FROM selections{where} '
+                f'ORDER BY rowid DESC LIMIT ?', args + [limit]).fetchall()
+        return [{'id': row['id'], 'source': row['source'], 'table': row['table_name'],
+                 'key': loads(row['key']), 'evidence': loads(row['evidence'])} for row in rows]
 
     def promote(self, capture_id, *, artifact=None, certificate=None):
         with self.session(write=True) as conn:

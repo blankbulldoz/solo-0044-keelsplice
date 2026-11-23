@@ -1,0 +1,36 @@
+<div class="content">
+  <header class="pagehead"><div><p class="breadcrumb"><a href="$browse">实存主键</a> / 选取证据</p><h1>选取证据</h1></div><a class="button" href="$browse">返回该表</a></header>
+  <dl class="facts">
+    <div><dt>数据源</dt><dd>$source</dd></div>
+    <div><dt>表</dt><dd>$table</dd></div>
+    <div><dt>实存主键</dt><dd>$key</dd></div>
+    <div><dt>选取时该表键数</dt><dd>$counted</dd></div>
+    <div class="wide"><dt>备注</dt><dd>$note</dd></div>
+  </dl>
+  <p class="status $selected_style">$selected</p>
+  <p class="notice ${recheck_style}" role="status">$recheck</p>
+  <div class="editor-grid">
+    <section>
+      <h2>选取依据</h2>
+      <dl class="facts">
+        <div class="wide"><dt>输入的键</dt><dd>$requested</dd></div>
+        <div class="wide"><dt>拼写</dt><dd>$spelling</dd></div>
+      </dl>
+      <div class="scroll"><table><caption>浏览会话快照（封存于本次选取）</caption><tbody>$session_rows</tbody></table></div>
+    </section>
+    <section>
+      <h2>当前来源复核</h2>
+      <div class="scroll"><table><caption>重新读取当前数据源的结果</caption><tbody>$current_rows</tbody></table></div>
+    </section>
+  </div>
+  <section>
+    <h2>作为根使用</h2>
+    <p class="muted">下面是根据实存主键生成的根记录。试算与封存都会重新读取当前源，并按当前数据判定；这里记录的是选取当时的证据，不是对未来数据的承诺。</p>
+    <pre id="root-record">$root_json</pre>
+    <form class="inline" method="get" action="/workbench/recipes/new">
+      <input type="hidden" name="source" value="$source">
+      <input type="hidden" name="roots" value="$root_value">
+      <button class="primary">带入配方登记</button>
+    </form>
+  </section>
+</div>

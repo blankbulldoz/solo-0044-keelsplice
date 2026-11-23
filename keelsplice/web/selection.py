@@ -7,7 +7,7 @@ from .render import code, location, page, segment, text
 from ..codec import Fault
 
 
-def editor(bench, alias, values=None, error='', status=200):
+def editor(bench, alias, values=None, error='', status=200, roots=''):
     values = values or {}
     catalog = bench.catalog(alias)
     schema = catalog['schema']
@@ -25,7 +25,8 @@ def editor(bench, alias, values=None, error='', status=200):
                         options=source_options(bench, alias), source=text(alias),
                         digest=text(catalog['schema_digest']), keys=pk_items,
                         edges=''.join(edges) or '<p class="empty">此源库没有可选关系。</p>',
-                        name=text(field(values, 'name')), roots=text(field(values, 'roots')),
+                        name=text(field(values, 'name')),
+                        roots=text(field(values, 'roots', roots)),
                         limit=text(field(values, 'row_limit', '1000')),
                         error=f'<p role="alert" class="notice">{text(error)}</p>' if error else '')
 
