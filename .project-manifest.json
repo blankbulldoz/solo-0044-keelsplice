@@ -67,6 +67,25 @@
       ]
     },
     {
+      "id": "relation-map",
+      "name": "查看关系列映射",
+      "entry": "GET /workbench/relations",
+      "success": "按数据源、外键编号和列映射识别一条关系，逐列显示子表列与父表列，并说明正向补父与反向纳入的依据",
+      "failure": "链接无效或跨来源时明确拒绝；编号改为另一组列或已消失时保留旧映射供复查并要求重新选择",
+      "verification": "python3 -m examples.browser_walkthrough",
+      "steps": [
+        "从目录或配方编辑器打开带列映射的关系链接",
+        "在同一读事务中比对当前外键编号与保存的列映射",
+        "渲染当前映射、可空性、正向与反向依据及同表其余外键"
+      ],
+      "module_ids": [
+        "web",
+        "catalog",
+        "service",
+        "storage"
+      ]
+    },
+    {
       "id": "recipe",
       "name": "创建配方版本",
       "entry": "POST /recipes/{name}/versions",

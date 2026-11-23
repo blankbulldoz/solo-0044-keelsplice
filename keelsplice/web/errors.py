@@ -8,6 +8,7 @@ MESSAGES = {
     'invalid_name': '配方名须以小写字母开头，只能包含小写字母、数字、短横线或下划线，最多 64 字符。',
     'invalid_request': '提交的数据形状不符合此操作的要求。',
     'unknown_identifier': '输入的表名或列名不在当前目录中。',
+    'invalid_edge_token': '关系链接无效或不属于此数据源，请从关系目录重新打开。',
     'invalid_key': '请按目录中的列顺序填写完整主键，各分量均须有值。',
     'invalid_value': '主键值须使用有效的 SQLite 类型编码。',
     'invalid_roots': '根记录须为包含 1 至 256 项的 JSON 数组。',

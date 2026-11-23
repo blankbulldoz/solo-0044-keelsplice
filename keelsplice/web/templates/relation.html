@@ -1,0 +1,34 @@
+<div class="content">
+  <header class="pagehead">
+    <div><p class="breadcrumb"><a href="$directory">关系目录</a> / $alias / 关系</p><h1>$heading</h1></div>
+    <span class="status muted">外键编号 $edge_id</span>
+  </header>
+  $notice
+  <dl class="facts">
+    <div><dt>数据源</dt><dd><code>$alias</code></dd></div>
+    <div><dt>外键编号</dt><dd>$edge_id</dd></div>
+    <div class="wide"><dt>当前模式摘要</dt><dd><code>$digest</code>（仅显示，不参与关系识别）</dd></div>
+  </dl>
+  $navigation
+  $old_mapping
+  $current_now
+  $mapping_section
+  $reselect
+  <div class="editor-grid">
+    <section aria-labelledby="forward">
+      <h2 id="forward">正向补齐父行提供什么依据</h2>
+      $forward
+    </section>
+    <section aria-labelledby="reverse">
+      <h2 id="reverse">反向纳入子行提供什么依据</h2>
+      $reverse
+    </section>
+  </div>
+  <section aria-labelledby="siblings">
+    <h2 id="siblings">同一子表的其余外键</h2>
+    <p class="muted">子表、自引用与指向同一父表的双边都会同时出现在这里，请按列映射与外键编号区分。</p>
+    $siblings
+  </section>
+  <p class="muted"><a href="$directory">返回关系目录</a></p>
+  $link_note
+</div>

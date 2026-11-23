@@ -1,5 +1,6 @@
 """HTML recipe forms bind the visible relationship choices to a schema digest."""
 
+from . import relations
 from .directory import source_options
 from .errors import message
 from .forms import field, typed_json
@@ -16,9 +17,12 @@ def editor(bench, alias, values=None, error='', status=200):
     for edge in schema['edges']:
         token = f'{edge["id"]}:{edge["child"]}'
         checked = ' checked' if token in picked else ''
-        content = f'{edge["parent"]} → {edge["child"]} ({", ".join(edge["child_cols"])})'
+        pairs = ', '.join(f'{child} → {parent}'
+                          for child, parent in zip(edge['child_cols'], edge['parent_cols']))
+        content = (f'{edge["child"]} → {edge["parent"]} · 外键 #{edge["id"]} · {pairs}')
+        detail = relations.link(alias, edge, '查看列映射')
         edges.append(f'<label class="edge-choice"><input type="checkbox" name="edge" value="{text(token)}"'
-                     f'{checked}> {code(content)}</label>')
+                     f'{checked}> {code(content)} {detail}</label>')
     pk_items = ''.join(f'<li>{code(name)} <span>{code(", ".join(table["pk"]))}</span></li>'
                        for name, table in schema['tables'].items())
     return status, page('登记配方', 'recipe', 'recipe_editor',

@@ -15,9 +15,12 @@ CREATE TABLE assay (
     mark TEXT PRIMARY KEY NOT NULL,
     region TEXT,
     code TEXT,
+    fallback_region TEXT,
+    fallback_code TEXT,
     cassette INTEGER NOT NULL REFERENCES cassette,
     length_um REAL NOT NULL,
     doubled REAL GENERATED ALWAYS AS (length_um * 2) STORED,
+    FOREIGN KEY (fallback_region, fallback_code) REFERENCES substrate,
     FOREIGN KEY (region, code) REFERENCES substrate
 );
 CREATE TABLE frame (

@@ -15,6 +15,10 @@
       "command": "python3 -m examples.walkthrough catalog"
     },
     {
+      "workflow_id": "relation-map",
+      "command": "python3 -m examples.browser_walkthrough"
+    },
+    {
       "workflow_id": "recipe",
       "command": "python3 -m examples.walkthrough recipe"
     },

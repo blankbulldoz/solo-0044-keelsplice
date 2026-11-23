@@ -1,7 +1,9 @@
 """Exercise the production workbench with the disposable microscope database."""
 
 import argparse
+import base64
 import hashlib
+import json
 import re
 import sqlite3
 from contextlib import closing
@@ -36,6 +38,49 @@ def html(base, path, payload=None, expected=200, origin=None):
     return path, body.decode('utf-8')
 
 
+def parse_edge(link):
+    token = re.search(r'edge=([^"&]+)', link)[1]
+    return json.loads(base64.urlsafe_b64decode(token + '=' * (-len(token) % 4)))
+
+
+def edge_links(page):
+    """Return every relationship mapping address rendered in a page, with its stored reference."""
+    result = []
+    for link in re.findall(r'href="(/workbench/relations\?edge=[^"]+)"', page):
+        result.append((link.replace('&amp;', '&'), parse_edge(link)))
+    return result
+
+
+def browse_relationships(base):
+    _, cassette = html(base, '/workbench?source=microscope&table=cassette')
+    assert '自引用' in cassette and '查看列映射' in cassette
+    self_link = next(link for link, ref in edge_links(cassette) if ref['child'] == 'cassette')
+    _, self_page = html(base, self_link)
+    assert '正向补齐父行' in self_page and '反向纳入子行' in self_page
+    assert '查看本表' in self_page and '自引用' in self_page
+    assert '正在考察' in self_page
+
+    _, assay = html(base, '/workbench?source=microscope&table=assay')
+    assert '查看列映射' in assay and '同父多边' in assay
+    links = edge_links(assay)
+    composite = next((link, ref) for link, ref in links if ref['child_cols'] == ['region', 'code'])
+    sibling = next((link, ref) for link, ref in links if ref['child_cols'] == ['fallback_region', 'fallback_code'])
+    assert composite[1]['parent'] == sibling[1]['parent'] == 'substrate'
+    assert composite[1]['id'] != sibling[1]['id']
+    _, mapping = html(base, composite[0])
+    assert '必需父关系' in mapping and '配方反向纳入' in mapping and '可空列' in mapping
+    assert '另一条关系' in mapping and '正在考察' in mapping
+    _, sparse = html(base, sibling[0])
+    assert 'fallback_region' in sparse and '可空列' in sparse
+    return assay, composite[0]
+
+
+def focus_notice(base, path, expected):
+    _, page = html(base, path)
+    assert expected in page, page[:400]
+    return page
+
+
 def run(base, source, root):
     path, directory = html(base, '/')
     assert path == '/workbench' and '外键关系' in directory
@@ -43,6 +88,7 @@ def run(base, source, root):
     assert 'region → code' in table and 'cassette' in table
     assert open_page(base, '/workbench/assets/workspace.css')[1].get_content_type() == 'text/css'
     assert '未注册' in html(base, '/workbench?source=missing', expected=404)[1]
+    _, focused = browse_relationships(base)
 
     editor_url = '/workbench/recipes/new'
     _, editor = html(base, editor_url)
@@ -75,6 +121,27 @@ def run(base, source, root):
     args = {'left': first.rsplit('/', 1)[1], 'right': second.rsplit('/', 1)[1]}
     _, compare = html(base, '/workbench/compare', args)
     assert 'S-01' in compare and '修改' in compare
+
+    token = re.search(r'edge=([^"&]+)', focused)[1]
+    directory_focus = '/workbench?source=microscope&table=assay&edge=' + token
+    assert '正在考察' in focus_notice(base, directory_focus, '正在考察')
+    with closing(sqlite3.connect(source)) as conn, conn:
+        conn.execute('CREATE INDEX frame_note_lookup ON frame(note)')
+    still = focus_notice(base, directory_focus, '正在考察')
+    assert '另一组列' not in still
+
+    with closing(sqlite3.connect(source)) as conn, conn:
+        conn.execute('ALTER TABLE assay RENAME COLUMN region TO sample_region')
+    drifted = focus_notice(base, directory_focus, '现在指向另一组列')
+    assert '复查旧关系并重新选择' in drifted
+    _, mapping = html(base, focused)
+    assert '原先考察的关系' in mapping and '已指向另一组列' in mapping
+    assert 'region' in mapping and 'sample_region' in mapping and '重新选择' in mapping
+    with closing(sqlite3.connect(source)) as conn, conn:
+        conn.execute('ALTER TABLE assay RENAME COLUMN sample_region TO region')
+    assert '正在考察' in focus_notice(base, directory_focus, '正在考察')
+    assert '正在考察' in html(base, focused)[1]
+
     assert '已停用' in html(base, version + '/retire', {})[1]
     assert '已停止投用' in html(base, version + '/capture', {}, expected=409)[1]
     assert '已构建' in html(base, first + '/build', {})[1]
