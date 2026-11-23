@@ -1,0 +1,21 @@
+<div class="content">
+  <header class="pagehead"><div><p class="breadcrumb"><a href="/workbench/revisits">交接回访</a> / 详情</p>
+    <h1>回访详情</h1></div>$overall</header>
+  <dl class="facts">
+    <div class="wide"><dt>回访编号</dt><dd><code>$id</code></dd></div>
+    <div><dt>对应交付</dt><dd><a href="$capture_href"><code>$capture</code></a></dd></div>
+    <div class="wide"><dt>材料锚点 SHA-256</dt><dd><code>$anchor</code></dd></div>
+    <div class="wide"><dt>备注</dt><dd>$note</dd></div>
+    <div class="wide"><dt>结论计数</dt><dd><code>$summary</code></dd></div>
+  </dl>
+  <section><h2>接收方材料文件</h2><ul class="data-list">$materials</ul>
+    <p class="empty">每条结论都可追溯到下列文件；点击可查看服务端保存的材料原文（仅含模式、计数与摘要）。</p></section>
+  $sections
+  <section><h2>管理员独立复查</h2>
+    <form class="revisit-form" method="post" action="/workbench/revisits/$id/recheck">
+      <label>选择结论编号<select name="subject" required>$recheck_options</select></label>
+      <button>从封存记录独立重算</button>
+    </form>
+    $recheck
+  </section>
+</div>

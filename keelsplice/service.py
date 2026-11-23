@@ -2,8 +2,9 @@
 
 import re
 import sqlite3
+from uuid import uuid4
 
-from . import bundle, capture, catalog, recipe
+from . import bundle, capture, catalog, recipe, revisit
 from .codec import Fault
 
 NAME = re.compile(r'[a-z][a-z0-9_-]{0,63}\Z')
@@ -106,3 +107,44 @@ class Workbench:
         if bundle.digest_bytes(data) != sha:
             raise Fault('artifact_integrity', 'Stored fixture bytes do not match the certificate', 409)
         return data, sha
+
+    def submit_revisit(self, capture_id, body):
+        recipe.fields(body, ('files',), ('note',))
+        record = self.repository.load_capture(capture_id, with_artifact=True)
+        if record['state'] != 'certified' or record['certificate'] is None:
+            raise Fault('fixture_not_certified', '只有已认证的交付才能登记回访。', 409)
+        materials = revisit.open_package(body)
+        anchor = revisit.anchor_of(materials)
+        revisit.verify_anchor(anchor, record['certificate'])
+        note = body.get('note', '')
+        if not isinstance(note, str) or len(note) > 1024:
+            raise Fault('invalid_revisit', '备注须为不超过 1024 字符的字符串。', 400)
+        report = revisit.compare(record['sealed'], record['certificate'], materials)
+        revisit_id = uuid4().hex
+        self.repository.add_revisit(revisit_id, capture_id, anchor['sha256'], note, materials, report)
+        return self.describe_revisit(self.repository.load_revisit(revisit_id))
+
+    def list_revisits(self):
+        return self.repository.recent_revisits()
+
+    def revisit_status(self, revisit_id):
+        return self.describe_revisit(self.repository.load_revisit(revisit_id))
+
+    def revisit_material(self, revisit_id, filename):
+        if filename not in revisit.MATERIAL_FILES:
+            raise Fault('unknown_route', 'Unknown material file', 404)
+        saved = self.repository.load_revisit(revisit_id)
+        return filename, saved['materials'][filename]
+
+    def recheck_revisit(self, revisit_id, body):
+        recipe.fields(body, ('subject',))
+        subject = body['subject']
+        if not isinstance(subject, str) or not subject or len(subject) > 256:
+            raise Fault('invalid_revisit', '请指定要复查的结论编号。', 400)
+        saved = self.repository.load_revisit(revisit_id)
+        record = self.repository.load_capture(saved['capture_id'], with_artifact=True)
+        return revisit.recheck(record['sealed'], record['certificate'], saved['materials'], subject)
+
+    def describe_revisit(self, saved):
+        return {'id': saved['id'], 'capture_id': saved['capture_id'],
+                'anchor_sha256': saved['anchor_sha'], 'note': saved['note'], 'report': saved['report']}

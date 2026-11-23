@@ -4,16 +4,17 @@ import re
 import sqlite3
 from urllib.parse import urlsplit
 
-from . import assets, captures, comparison, directory, evidence, preview, selection, versions
+from . import assets, captures, comparison, directory, evidence, preview, revisits, selection, versions
 from .errors import invalid_route, message
 from .forms import MAX_BYTES, decode_form, field, version
 from .render import page, segment, text
 from ..codec import Fault
 
 LOOPBACK_HOST = re.compile(r'(?:127\.0\.0\.1|localhost)(?::[0-9]{1,5})?\Z')
+REVISIT_FORM_BYTES = 4 * 1024 * 1024
 
 
-def form(handler):
+def form(handler, limit=MAX_BYTES):
     host = handler.headers.get('Host', '')
     origin = handler.headers.get('Origin')
     if not LOOPBACK_HOST.fullmatch(host) or origin != 'http://' + host:
@@ -22,8 +23,8 @@ def form(handler):
     if not re.fullmatch('[0-9]{1,8}', length):
         raise Fault('browser_form', '表单长度无效。', 400)
     length = int(length)
-    if length > MAX_BYTES:
-        raise Fault('browser_form', '表单超过 256 KiB。', 413)
+    if length > limit:
+        raise Fault('browser_form', '表单超过允许的体积上限。', 413)
     if length and handler.headers.get_content_type() != 'application/x-www-form-urlencoded':
         raise Fault('browser_form', '请使用工作台表单格式。', 415)
     return decode_form(handler.rfile.read(length))
@@ -42,7 +43,10 @@ def route(handler, path):
     if method == 'GET' and parts[:2] == ['workbench', 'assets'] and len(parts) == 3:
         return 200, assets.serve(parts[2]), 'text/css; charset=utf-8', {}
     query = decode_form(path.query.encode('ascii'))
-    values = form(handler) if method == 'POST' else {}
+    revisit_post = method == 'POST' and (
+        parts == ['workbench', 'revisits'] or
+        (len(parts) == 4 and parts[:2] == ['workbench', 'revisits'] and parts[3] == 'recheck'))
+    values = form(handler, REVISIT_FORM_BYTES if revisit_post else MAX_BYTES) if method == 'POST' else {}
     match method, parts:
         case 'GET', ['workbench']:
             status, body = directory.show(bench, query)
@@ -93,6 +97,16 @@ def route(handler, path):
             status, body = comparison.show(bench)
         case 'POST', ['workbench', 'compare']:
             status, body = comparison.show(bench, values)
+        case 'GET', ['workbench', 'revisits']:
+            status, body = revisits.index(bench)
+        case 'POST', ['workbench', 'revisits']:
+            status, body = revisits.submit(bench, values)
+        case 'GET', ['workbench', 'revisits', revisit_id]:
+            status, body = revisits.detail(bench, revisit_id)
+        case 'GET', ['workbench', 'revisits', revisit_id, 'materials', filename]:
+            status, body = revisits.material_page(bench, revisit_id, filename)
+        case 'POST', ['workbench', 'revisits', revisit_id, 'recheck']:
+            status, body = revisits.recheck(bench, revisit_id, values)
         case _:
             raise invalid_route()
     return status, body, 'text/html; charset=utf-8', {}

@@ -39,8 +39,29 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 | `POST /captures/{id}/build`、`POST /captures/{id}/certify` | 接收空对象，构建或认证该捕获的子库 |
 | `POST /compare` | 接收 `{"left":"id-a","right":"id-b"}`，按表报告带类型主键的差异 |
 | `GET /captures/{id}/database` | 返回已认证 SQLite 字节，`ETag` 为带引号的 SHA-256 |
+| `POST /captures/{id}/revisits` | 提交不含行原文的回访材料包，返回三类结论报告（上限 4 MiB） |
+| `GET /revisits`、`GET /revisits/{id}` | 列出回访或读取某次回访的完整报告 |
+| `GET /revisits/{id}/materials/{file}` | 读取保存的 `manifest/file/schema/tables` 材料原文 |
+| `POST /revisits/{id}/recheck` | 接收 `{"subject":"结论编号"}`，从封存记录独立重算该结论 |
 
 根记录中的键按目录的列顺序填写。整数为有符号 64 位 JSON 数字。字节用 `{"blob":"AAD/"}`，实数用 `{"real":"0x1.a000000000000p+1"}`，文本用 JSON 字符串。配方可以用不同拼写定位同一个 NOCASE 根，封存与追踪使用实存键。结果中的行去重，输入根出现项保留顺序。工作台近期列表显示最后登记的 50 个配方版本和最后封存的 50 次捕获，历史详情地址依然可访问。
+
+## 交接回访
+
+接收方保留的本机库可能只做过 VACUUM，也可能改了索引、生成列或某张表的 BLOB。库本身不回传，只回传不含行原文的材料。
+
+1. 在接收方现场对保留库只读生成四份材料（锚点取自交付证书的 `sha256` 与 `capture_digest`）：
+
+   ```sh
+   python3 -m keelsplice.revisit_materials --database receiver.sqlite \
+     --anchor-sha256 <证书 sha256> --anchor-capture <证书 capture_digest> \
+     --out revisit-materials
+   ```
+
+   材料只有 `manifest.json`、`file.json`、`schema.json`、`tables.json`，内容是文件摘要、模式文本、计数与逐行/逐列摘要；行身份用行键摘要表达，不含主键明文或任何单元格原文。
+2. 在「交接回访」页选择对应交付，把四份文件打包成 `{"files":{...},"note":"..."}` 提交，或调用 `POST /captures/{id}/revisits`。锚点与证书不符、或 manifest 摘要链断裂的材料会被拒绝。
+3. 报告对照原交付记录分成三组：**可证实的逻辑等价**（仅 VACUUM 改变字节但逻辑摘要全一致时，字节结论也归入此组）、**可定位的结构或值变化**（精确到表 DDL、索引、外键或具体行键与列）、**材料不足**（缺材料时明确不下结论）。每条结论都标注依据的是哪份材料文件。
+4. 在详情页对任意结论发起「独立复查」，服务端从封存记录重算同一编号的证据并给出成立/不成立/需现场判断；完整性检查等只能接触现场库才能执行的项目会明确标注无法独立复算。
 
 ## 复跑
 
@@ -48,6 +69,7 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 python3 -m compileall -q keelsplice examples
 python3 -m examples.walkthrough all
 python3 -m examples.browser_walkthrough
+python3 -m examples.revisit_walkthrough
 ```
 
-两份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。独立自动化测试套件延后。
+两份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。回访演练额外覆盖 VACUUM 等价、索引/DDL/BLOB/生成列变化、行增删、材料篡改与外来锚点拒绝。独立自动化测试套件延后。

@@ -49,6 +49,8 @@ tbody tr:last-child > * { border-bottom: 0; }
 .editor-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
 .data-list, .key-list { padding-left: 24px; overflow-wrap: anywhere; }
 .data-list li, .key-list li { margin-bottom: 6px; }
+.file-refs { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.file-refs li code { background: var(--canvas); border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px; }
 .key-list span { color: var(--secondary); margin-left: 6px; }
 @media (max-width: 720px) {
   .topbar { gap: 8px 18px; padding: 12px 15px; flex-wrap: wrap; }

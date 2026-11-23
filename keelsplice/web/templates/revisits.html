@@ -1,0 +1,19 @@
+<div class="content">
+  <header class="pagehead"><h1>交接回访</h1>
+    <p class="breadcrumb">接收方只发回不含行原文的材料（模式、计数、摘要），工作台对照原交付记录给出三类结论，并标明每条结论依据的材料文件。</p>
+  </header>
+  <section><h2>登记回访材料</h2>
+    <form class="revisit-form" method="post" action="/workbench/revisits">
+      <label>对应已认证交付<select name="capture" required>$captures</select></label>
+      <label>材料包 JSON（manifest.json / file.json / schema.json / tables.json 打包为 <code>{"files":{...},"note":...}</code>，可用 <code>python -m keelsplice.revisit_materials</code> 生成）
+        <textarea name="bundle" rows="10" required placeholder='{"files":{"manifest.json":{...},"file.json":{...},"schema.json":{...},"tables.json":{...}}}'>$bundle</textarea></label>
+      <label>备注<input name="note" value="$note" maxlength="1024"></label>
+      <button class="primary">提交回访</button>
+    </form>
+    $error
+  </section>
+  <section><h2>近期回访</h2>
+    <div class="scroll"><table><thead><tr><th scope="col">回访编号</th><th scope="col">交付捕获</th><th scope="col">配方</th><th scope="col">锚点 SHA-256</th><th scope="col">备注</th></tr></thead>
+      <tbody>$rows</tbody></table></div>
+  </section>
+</div>

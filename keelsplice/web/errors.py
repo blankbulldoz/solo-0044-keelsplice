@@ -36,6 +36,12 @@ MESSAGES = {
     'artifact_reference': '子库的外键复核失败。',
     'artifact_schema': '子库模式与封存模式不一致。',
     'artifact_content': '子库行内容与封存内容不一致。',
+    'invalid_revisit': '回访材料的形状不符合要求。',
+    'material_tampered': '材料文件摘要与 manifest 记录不一致，材料不可信。',
+    'invalid_anchor': '回访材料缺少有效的交付锚点。',
+    'anchor_mismatch': '材料锚点与该交付证书不一致，材料不属于这份交付。',
+    'unknown_revisit': '回访记录不存在。',
+    'unknown_finding': '要复查的结论编号不存在。',
     'unknown_route': '找不到指定页面。',
 }
 

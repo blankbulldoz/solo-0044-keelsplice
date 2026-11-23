@@ -18,6 +18,12 @@ CREATE TABLE IF NOT EXISTS captures (
     artifact BLOB, certificate TEXT,
     FOREIGN KEY(name, version) REFERENCES recipes(name, version)
 );
+CREATE TABLE IF NOT EXISTS revisits (
+    id TEXT PRIMARY KEY, capture_id TEXT NOT NULL,
+    anchor_sha TEXT NOT NULL, note TEXT NOT NULL,
+    materials TEXT NOT NULL, report TEXT NOT NULL,
+    FOREIGN KEY(capture_id) REFERENCES captures(id)
+);
 '''
 
 
@@ -131,3 +137,30 @@ class Repository:
                 conn.execute("UPDATE captures SET state='certified',certificate=? WHERE id=? AND state='built'",
                              (dumps(certificate), capture_id))
         return self.load_capture(capture_id)
+
+    def add_revisit(self, revisit_id, capture_id, anchor_sha, note, materials, report):
+        with self.session(write=True) as conn:
+            inserted = conn.execute("""INSERT INTO revisits (id,capture_id,anchor_sha,note,materials,report)
+                SELECT ?,?,?,?,?,? FROM captures WHERE id=? AND state='certified'""",
+                                    (revisit_id, capture_id, anchor_sha, note, dumps(materials), dumps(report), capture_id))
+            if inserted.rowcount != 1:
+                exists = conn.execute('SELECT 1 FROM captures WHERE id=?', (capture_id,)).fetchone()
+                if exists is None:
+                    raise Fault('unknown_capture', 'Capture does not exist', 404)
+                raise Fault('fixture_not_certified', '只有已认证的交付才能登记回访。', 409)
+
+    def load_revisit(self, revisit_id):
+        with self.session() as conn:
+            row = conn.execute('SELECT * FROM revisits WHERE id=?', (revisit_id,)).fetchone()
+        if row is None:
+            raise Fault('unknown_revisit', '回访记录不存在。', 404)
+        return dict(row) | {'materials': loads(row['materials']), 'report': loads(row['report'])}
+
+    def recent_revisits(self):
+        with self.session() as conn:
+            rows = conn.execute("""
+                SELECT r.id, r.capture_id, r.anchor_sha, r.note, c.name, c.version
+                FROM revisits r JOIN captures c ON c.id = r.capture_id
+                ORDER BY r.rowid DESC LIMIT 50
+            """).fetchall()
+        return [dict(row) for row in rows]

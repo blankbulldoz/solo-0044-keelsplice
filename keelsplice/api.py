@@ -13,6 +13,7 @@ from .storage import Repository
 from .web import http as web
 
 MAX_REQUEST_BYTES = 256 * 1024
+MAX_REVISIT_BYTES = 4 * 1024 * 1024
 VERSION = re.compile('[1-9][0-9]{0,18}')
 
 
@@ -27,13 +28,13 @@ class RequestHandler(BaseHTTPRequestHandler):
         self.request.settimeout(10)
         super().setup()
 
-    def read_body(self):
+    def read_body(self, limit=MAX_REQUEST_BYTES):
         length = self.headers.get('Content-Length', '0')
         if not re.fullmatch('[0-9]{1,8}', length):
             raise Fault('invalid_length', 'Invalid Content-Length', 400)
         size = int(length)
-        if size > MAX_REQUEST_BYTES:
-            raise Fault('payload_too_large', 'JSON request exceeds 256 KiB', 413)
+        if size > limit:
+            raise Fault('payload_too_large', 'JSON request exceeds the allowed size', 413)
         if not size:
             return {}
         if self.headers.get_content_type() != 'application/json':
@@ -49,7 +50,10 @@ class RequestHandler(BaseHTTPRequestHandler):
         if path.query or path.fragment:
             raise Fault('invalid_query', 'Use the JSON body for parameters', 400)
         bench = self.server.workbench
-        body = self.read_body() if self.command == 'POST' else None
+        is_revisit = parts[0] == 'revisits' or (
+            len(parts) == 4 and parts[0] == 'captures' and parts[2] == 'revisits')
+        body = self.read_body(MAX_REVISIT_BYTES if is_revisit and self.command == 'POST' else MAX_REQUEST_BYTES) \
+            if self.command == 'POST' else None
         match self.command, parts:
             case 'GET', ['sources', alias, 'catalog']:
                 return 200, bench.catalog(alias)
@@ -78,6 +82,17 @@ class RequestHandler(BaseHTTPRequestHandler):
                 return 200, bench.compare(body)
             case 'GET', ['captures', capture_id, 'database']:
                 return 200, bench.download(capture_id)
+            case 'POST', ['captures', capture_id, 'revisits']:
+                return 201, bench.submit_revisit(capture_id, body)
+            case 'GET', ['revisits']:
+                return 200, {'revisits': bench.list_revisits()}
+            case 'GET', ['revisits', revisit_id]:
+                return 200, bench.revisit_status(revisit_id)
+            case 'GET', ['revisits', revisit_id, 'materials', filename]:
+                name, material = bench.revisit_material(revisit_id, filename)
+                return 200, {'file': name, 'material': material}
+            case 'POST', ['revisits', revisit_id, 'recheck']:
+                return 200, bench.recheck_revisit(revisit_id, body)
         raise Fault('unknown_route', 'Unknown endpoint', 404)
 
     def send_result(self, status, payload):
