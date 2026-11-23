@@ -1,0 +1,18 @@
+<div class="workspace">
+  <aside class="rail" aria-label="关系表目录">
+    <form class="source-picker" method="get" action="/workbench/lineage">
+      <label for="source">SQLite 数据源</label>
+      <div class="inline"><select id="source" name="source">$options</select><button>打开</button></div>
+    </form>
+    <div class="rail-label"><span>数据表</span><span>$table_count</span></div>
+    <nav class="table-links" aria-label="数据表">$table_links</nav>
+  </aside>
+  <div class="workarea">
+    <header class="pagehead">
+      <div><p class="breadcrumb">交叉引用 / $alias</p><h1>$heading</h1></div>
+      <a class="button" href="$catalog">查看目录定义</a>
+    </header>
+    <p class="muted">按当前模式的定义对齐历史记录。外键号只是单次模式的局部编号：关系按子表、父表与列映射匹配，编号变化或改派会分别说明。</p>
+    $body
+  </div>
+</div>

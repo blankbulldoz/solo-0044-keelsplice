@@ -21,7 +21,8 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 2. 登记配方，填写一个或多个根及封存行上限。样例可填 `[{"table":"substrate","key":["east","MICA"]}]`，再选 `substrate → assay`。
 3. 试算查看逐表计数和实存根。点「封存当前样本」时服务重新读取源。配方绑定的模式有变化时，需要重新核对目录。
 4. 在捕获详情按实存主键追踪。可从直接入选原因或必需父行继续查看相关记录。对比页面按实存带类型主键显示两个同模式捕获的新增、移除和修改。
-5. 构建后再认证。认证后可下载文件并用其 SHA-256 或独立 SQLite 连接核对。停用配方后，既有捕获仍可完成这些操作。
+5. 用「交叉引用」从当前目录的任一张表出发，查看哪些配方版本与封存捕获用过这张表以及其中每条具体关系。旧捕获的模式可以与当前不同，页面按子表、父表与列映射对齐，并区分真实对应、同名但不同定义与历史关系已不可比，可直接跳回对应的封存证据。
+6. 构建后再认证。认证后可下载文件并用其 SHA-256 或独立 SQLite 连接核对。停用配方后，既有捕获仍可完成这些操作。
 
 ## JSON 接口
 
@@ -48,6 +49,7 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 python3 -m compileall -q keelsplice examples
 python3 -m examples.walkthrough all
 python3 -m examples.browser_walkthrough
+python3 -m examples.lineage_walkthrough
 ```
 
-两份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。独立自动化测试套件延后。
+三份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。`lineage_walkthrough` 还会改写源库以制造外键号改派、同名不同定义和关系消失，确认交叉引用页的三种判定。独立自动化测试套件延后。

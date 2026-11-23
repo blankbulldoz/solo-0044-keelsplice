@@ -53,6 +53,10 @@
     {
       "workflow_id": "workbench",
       "command": "python3 -m examples.browser_walkthrough"
+    },
+    {
+      "workflow_id": "lineage",
+      "command": "python3 -m examples.lineage_walkthrough"
     }
   ]
 }

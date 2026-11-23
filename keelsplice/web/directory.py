@@ -30,7 +30,7 @@ def column_rows(table):
     return ''.join(rows)
 
 
-def edge_rows(edges, current):
+def edge_rows(edges, current, alias=None):
     result = []
     for edge in edges:
         if current not in (edge['child'], edge['parent']):
@@ -38,9 +38,16 @@ def edge_rows(edges, current):
         direction = '自引用' if edge['child'] == edge['parent'] else ('指向父表' if current == edge['child'] else '来自子表')
         child = ', '.join(edge['child_cols'])
         parent = ', '.join(edge['parent_cols'])
+        link = ''
+        if alias is not None:
+            target = location('/workbench/lineage', source=alias, table=current,
+                              edge=edge['id'], child=edge['child'])
+            link = f'<td><a class="button quiet" href="{text(target)}">历史使用</a></td>'
+        else:
+            link = '<td></td>'
         result.append(f'<tr><td>{direction}</td><td>{code(edge["child"])} → {code(edge["parent"])}</td>'
-                      f'<td>{code(child)} → {code(parent)}</td><td>{edge["id"]}</td></tr>')
-    return ''.join(result) or '<tr><td colspan="4" class="empty">此表没有外键关系。</td></tr>'
+                      f'<td>{code(child)} → {code(parent)}</td><td>{edge["id"]}</td>{link}</tr>')
+    return ''.join(result) or '<tr><td colspan="5" class="empty">此表没有外键关系。</td></tr>'
 
 
 def show(bench, query):
@@ -65,7 +72,8 @@ def show(bench, query):
                      alias=text(alias), selected=text(selected), digest=text(catalog['schema_digest']),
                      table_count=len(tables), column_count=len(table['columns']),
                      pk=code(' → '.join(table['pk'])), columns=column_rows(table),
-                     edges=edge_rows(catalog['schema']['edges'], selected),
+                     edges=edge_rows(catalog['schema']['edges'], selected, alias),
                      indexes=index_items or '<li class="empty">无显式索引。</li>',
                      recipe=text(location('/workbench/recipes/new', source=alias)),
+                     lineage=text(location('/workbench/lineage', source=alias, table=selected)),
                      ddl=text(table['ddl']))

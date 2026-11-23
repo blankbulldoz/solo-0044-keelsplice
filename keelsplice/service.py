@@ -3,7 +3,7 @@
 import re
 import sqlite3
 
-from . import bundle, capture, catalog, recipe
+from . import bundle, capture, catalog, lineage, recipe
 from .codec import Fault
 
 NAME = re.compile(r'[a-z][a-z0-9_-]{0,63}\Z')
@@ -75,6 +75,24 @@ class Workbench:
             raise Fault('invalid_capture', 'Supply two capture identifiers')
         left, right = (self.repository.load_capture(body[k])['sealed'] for k in ('left', 'right'))
         return {'left': body['left'], 'right': body['right'], 'changes': capture.compare(left, right)}
+
+    def find_edge(self, catalog, table, number):
+        return next((edge for edge in catalog['schema']['edges']
+                     if edge['child'] == table and edge['id'] == number), None)
+
+    def has_edge(self, catalog, table, number):
+        return self.find_edge(catalog, table, number) is not None
+
+    def cross_reference(self, alias, table, child=None, number=None):
+        disclosed = self.catalog(alias)
+        edge = None
+        if number is not None:
+            edge = self.find_edge(disclosed, child or table, number)
+            if edge is None:
+                raise Fault('invalid_edge', 'Unknown key number in table', 404)
+        with self.repository.history() as history:
+            return lineage.cross_reference(disclosed, alias, table, edge,
+                                           history['captures'], history['recipes'], history['totals'])
 
     def build(self, capture_id):
         record = self.repository.load_capture(capture_id)

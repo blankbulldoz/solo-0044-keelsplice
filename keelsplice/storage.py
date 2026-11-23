@@ -96,6 +96,39 @@ class Repository:
             """).fetchall()
         return [dict(row) for row in rows]
 
+    HISTORY_LIMIT = 200
+
+    @contextmanager
+    def history(self):
+        """Yield bounded newest-first versions plus a lazy capture stream.
+
+        One read transaction covers the totals, the recipe versions and the
+        sealed documents, so the cross-reference page sees one repository
+        snapshot.  Captures are streamed a batch at a time and the artifact
+        BLOB is never selected.
+        """
+        with self.session() as conn:
+            totals = {'recipes': conn.execute('SELECT COUNT(*) FROM recipes').fetchone()[0],
+                      'captures': conn.execute('SELECT COUNT(*) FROM captures').fetchone()[0]}
+            recipes = [dict(row) | {'recipe': loads(row['recipe'])} for row in conn.execute("""
+                SELECT name, version, active, schema_digest, recipe
+                FROM recipes ORDER BY rowid DESC LIMIT ?
+            """, (self.HISTORY_LIMIT,))]
+            cursor = conn.execute("""
+                SELECT id, name, version, sealed, state
+                FROM captures ORDER BY rowid DESC LIMIT ?
+            """, (self.HISTORY_LIMIT,))
+
+            def captures():
+                while True:
+                    batch = cursor.fetchmany(8)
+                    if not batch:
+                        return
+                    for row in batch:
+                        yield dict(row) | {'sealed': loads(row['sealed'])}
+
+            yield {'recipes': recipes, 'captures': captures(), 'totals': totals}
+
     def retire(self, name, number):
         with self.session(write=True) as conn:
             update = conn.execute('UPDATE recipes SET active=0 WHERE name=? AND version=?', (name, number))
