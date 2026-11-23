@@ -76,6 +76,8 @@ class RequestHandler(BaseHTTPRequestHandler):
                 return 200, bench.certify(capture_id)
             case 'POST', ['compare']:
                 return 200, bench.compare(body)
+            case 'POST', ['paths']:
+                return 200, bench.path_check(body)
             case 'GET', ['captures', capture_id, 'database']:
                 return 200, bench.download(capture_id)
         raise Fault('unknown_route', 'Unknown endpoint', 404)

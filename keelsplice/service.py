@@ -3,7 +3,7 @@
 import re
 import sqlite3
 
-from . import bundle, capture, catalog, recipe
+from . import bundle, capture, catalog, pathboard, recipe
 from .codec import Fault
 
 NAME = re.compile(r'[a-z][a-z0-9_-]{0,63}\Z')
@@ -75,6 +75,21 @@ class Workbench:
             raise Fault('invalid_capture', 'Supply two capture identifiers')
         left, right = (self.repository.load_capture(body[k])['sealed'] for k in ('left', 'right'))
         return {'left': body['left'], 'right': body['right'], 'changes': capture.compare(left, right)}
+
+    def path_check(self, body):
+        recipe.fields(body, ('start', 'end', 'left', 'right'), ('max_steps',))
+        start, end = pathboard.endpoints(body['start'], body['end'])
+        max_steps = pathboard.step_limit(body.get('max_steps', pathboard.DEFAULT_STEPS))
+        sides = {}
+        for key in ('left', 'right'):
+            spec = body[key]
+            recipe.fields(spec, ('source', 'edges'))
+            with self.repository.source(spec['source']) as conn:
+                disclosed = catalog.snapshot(conn)
+            sides[key] = dict(source=spec['source'], schema=disclosed['schema'],
+                              schema_digest=disclosed['schema_digest'],
+                              allowed=recipe.edge_selection(disclosed['schema'], spec['edges']))
+        return pathboard.compare(sides, start, end, max_steps)
 
     def build(self, capture_id):
         record = self.repository.load_capture(capture_id)

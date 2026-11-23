@@ -13,12 +13,17 @@ from urllib.request import Request, urlopen
 
 from keelsplice.api import create_server
 
-WORKFLOWS = ('catalog', 'recipe', 'retire', 'preview', 'capture', 'trace', 'build', 'certify', 'compare', 'download')
+WORKFLOWS = ('catalog', 'recipe', 'retire', 'preview', 'capture', 'trace', 'build', 'certify', 'compare', 'download',
+             'paths')
 
 
 def seed(file):
+    seed_with(file, 'microscope.sql')
+
+
+def seed_with(file, script):
     with closing(sqlite3.connect(file)) as conn:
-        conn.executescript(Path(__file__).with_name('microscope.sql').read_text())
+        conn.executescript(Path(__file__).with_name(script).read_text())
 
 
 def call(base, route, body=None, status=200):
@@ -133,6 +138,69 @@ def walkthrough(base, selected, source, root):
         assert conn.execute('SELECT count(*) FROM frame').fetchone()[0] == 0
     observe('download', {'sha256': etag, 'source_changes_isolated': True, 'length_and_generated': row})
 
+    if selected in ('paths', 'all'):
+        board = paths(base, request)
+        observe('paths', {'outcome': board['outcome'], 'shared_count': board['shared_count']})
+
+
+def paths(base, request):
+    def catalog_of(alias):
+        return request(f'/sources/{alias}/catalog')
+
+    def edge_list(schema):
+        return [{'child': edge['child'], 'id': edge['id']} for edge in schema['edges']]
+
+    crossroad = catalog_of('crossroad_a')['schema']
+    tether = next(edge for edge in crossroad['edges'] if edge['child'] == 'tether')
+    assert tether['parent'] == 'tether'
+    allowed = edge_list(crossroad)
+    body = {'start': 'hub', 'end': 'probe',
+            'left': {'source': 'crossroad_a', 'edges': allowed},
+            'right': {'source': 'crossroad_b', 'edges': allowed}}
+
+    verdict = request('/paths', body)
+    assert verdict['outcome'] == 'compatible' and verdict['shared_count'] == 1
+    solution = verdict['shared'][0]
+    assert solution['signature'] == [{'origin': 'hub', 'target': 'probe',
+                                      'origin_cols': ['zone', 'code'], 'target_cols': ['zone', 'code']}]
+    hub_edge = next(edge for edge in crossroad['edges'] if edge['child'] == 'probe' and edge['parent'] == 'hub')
+    step = solution['left']['steps'][0]
+    assert step['direction'] == 'child' and step['edge'] == {'child': 'probe', 'id': hub_edge['id']}
+    assert verdict['left']['endpoints'] == {'start': 'hub', 'end': 'probe'}
+
+    loop_only = [{'child': 'tether', 'id': tether['id']}]
+    stuck = request('/paths', body | {'left': {'source': 'crossroad_a', 'edges': loop_only},
+                                      'right': {'source': 'crossroad_b', 'edges': loop_only}})
+    assert stuck['outcome'] == 'no_path' and stuck['left']['paths'] == 0
+
+    duplicate = request('/paths', body | {'start': 'probe', 'end': 'spoke'})
+    assert duplicate['outcome'] == 'ambiguous' and duplicate['shared_count'] == 2
+    chosen = {tuple(sol['signature'][0]['origin_cols']) for sol in duplicate['shared']}
+    assert chosen == {('spoke_id',), ('backup_spoke',)}
+
+    microscope = catalog_of('microscope')['schema']
+    drift = catalog_of('drift')['schema']
+    drift_edge = next(edge for edge in drift['edges'] if edge['child'] == 'assay' and edge['parent'] == 'substrate')
+    assert drift_edge['child_cols'] == ['area', 'code'] and drift_edge['parent_cols'] == ['region', 'code']
+    mismatch = request('/paths', {'start': 'frame', 'end': 'substrate',
+                                  'left': {'source': 'microscope', 'edges': edge_list(microscope)},
+                                  'right': {'source': 'drift', 'edges': edge_list(drift)}})
+    assert mismatch['outcome'] == 'mapping_mismatch' and mismatch['shared_count'] == 0
+    assert mismatch['left']['paths'] == 1 and mismatch['right']['paths'] == 1
+    assert mismatch['left']['sample'][0][1]['origin_cols'] == ['region', 'code']
+    assert mismatch['right']['sample'][0][1]['origin_cols'] == ['area', 'code']
+
+    ghost = request('/paths', body | {'start': 'ghost'})
+    assert ghost['outcome'] == 'no_path' and ghost['left']['endpoints']['start'] is None
+
+    assert request('/paths', body | {'end': 'HUB'}, 422)['error'] == 'invalid_endpoints'
+    assert request('/paths', body | {'max_steps': 0}, 422)['error'] == 'invalid_steps'
+    bad_edge = {'left': {'source': 'crossroad_a', 'edges': [{'child': 'probe', 'id': 99}]}}
+    assert request('/paths', body | bad_edge, 422)['error'] == 'invalid_edge'
+    bad_source = {'left': {'source': 'ghost', 'edges': []}}
+    assert request('/paths', body | bad_source, 404)['error'] == 'unknown_source'
+    return verdict
+
 
 def main():
     selected = sys.argv[1] if len(sys.argv) == 2 else 'all'
@@ -142,7 +210,12 @@ def main():
         root = Path(directory)
         source = root / 'microscope.sqlite'
         seed(source)
-        with create_server(('127.0.0.1', 0), root / 'repo.sqlite', {'microscope': source}) as server:
+        seed_with(root / 'crossroad_a.sqlite', 'crossroad.sql')
+        seed_with(root / 'crossroad_b.sqlite', 'crossroad.sql')
+        seed_with(root / 'drift.sqlite', 'microscope_drift.sql')
+        sources = {'microscope': source, 'drift': root / 'drift.sqlite',
+                   'crossroad_a': root / 'crossroad_a.sqlite', 'crossroad_b': root / 'crossroad_b.sqlite'}
+        with create_server(('127.0.0.1', 0), root / 'repo.sqlite', sources) as server:
             thread = Thread(target=server.serve_forever, kwargs={'poll_interval': 0.05})
             thread.start()
             try:

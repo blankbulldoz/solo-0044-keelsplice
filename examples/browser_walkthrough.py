@@ -2,6 +2,7 @@
 
 import argparse
 import hashlib
+import json
 import re
 import sqlite3
 from contextlib import closing
@@ -38,7 +39,7 @@ def html(base, path, payload=None, expected=200, origin=None):
 
 def run(base, source, root):
     path, directory = html(base, '/')
-    assert path == '/workbench' and '外键关系' in directory
+    assert path == '/workbench' and '外键关系' in directory and '路径排障' in directory
     _, table = html(base, '/workbench?source=microscope&table=substrate')
     assert 'region → code' in table and 'cassette' in table
     assert open_page(base, '/workbench/assets/workspace.css')[1].get_content_type() == 'text/css'
@@ -75,6 +76,18 @@ def run(base, source, root):
     args = {'left': first.rsplit('/', 1)[1], 'right': second.rsplit('/', 1)[1]}
     _, compare = html(base, '/workbench/compare', args)
     assert 'S-01' in compare and '修改' in compare
+
+    _, board = html(base, '/workbench/paths')
+    assert '关系路径排障板' in board and '允许经过的关系' in board
+    _, _, raw = open_page(base, '/sources/microscope/catalog')
+    tokens = [f'{edge["id"]}:{edge["child"]}' for edge in json.loads(raw)['schema']['edges']]
+    form = {'left_source': 'microscope', 'right_source': 'peer',
+            'start': 'frame', 'end': 'substrate', 'max_steps': '6'}
+    _, verdict = html(base, '/workbench/paths', form | {'left_edge': tokens, 'right_edge': tokens})
+    assert '唯一共同路径方案' in verdict and 'table=assay' in verdict
+    _, stuck = html(base, '/workbench/paths', form)
+    assert '没有路径' in stuck
+
     assert '已停用' in html(base, version + '/retire', {})[1]
     assert '已停止投用' in html(base, version + '/capture', {}, expected=409)[1]
     assert '已构建' in html(base, first + '/build', {})[1]
@@ -86,7 +99,7 @@ def run(base, source, root):
     with closing(sqlite3.connect(handoff)) as conn:
         assert conn.execute("SELECT length_um FROM assay WHERE mark='S-01'").fetchone() == (3.25,)
         assert conn.execute('PRAGMA foreign_key_check').fetchall() == []
-    print('浏览器端到端检查通过：目录、配方、试算、捕获、证据、对比、停用、构建、认证、下载')
+    print('浏览器端到端检查通过：目录、配方、试算、捕获、证据、对比、路径排障、停用、构建、认证、下载')
 
 
 def main():
@@ -95,8 +108,11 @@ def main():
     with TemporaryDirectory(prefix='keelsplice-browser-') as directory:
         root = Path(directory)
         source = root / 'source.sqlite'
+        peer = root / 'peer.sqlite'
         seed(source)
-        with create_server(('127.0.0.1', 0), root / 'state.sqlite', {'microscope': source}) as server:
+        seed(peer)
+        with create_server(('127.0.0.1', 0), root / 'state.sqlite',
+                           {'microscope': source, 'peer': peer}) as server:
             thread = Thread(target=server.serve_forever)
             thread.start()
             try:

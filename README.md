@@ -23,6 +23,10 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 4. 在捕获详情按实存主键追踪。可从直接入选原因或必需父行继续查看相关记录。对比页面按实存带类型主键显示两个同模式捕获的新增、移除和修改。
 5. 构建后再认证。认证后可下载文件并用其 SHA-256 或独立 SQLite 连接核对。停用配方后，既有捕获仍可完成这些操作。
 
+## 关系路径排障
+
+「路径排障」面向两份分别维护的源库：给定起点表、终点表和两侧各自允许经过的外键，工作台在两个源各自的读事务中提取目录，枚举步数上限内的简单依赖路径（不重复经过同一张表，自环因此不提供连通性），再按 SQLite 标识符语义归一化比较逐跳列映射。结论分四种：`compatible` 唯一对接、`ambiguous` 方案不唯一、`mapping_mismatch` 列映射不一致、`no_path` 没有路径。结果中每个方案的步骤都回链两侧目录里的实际表定义。
+
 ## JSON 接口
 
 同一后端继续提供既有接口。JSON 请求使用 `Content-Type: application/json`。捕获 ID 是不透明字符串。
@@ -38,6 +42,7 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 | `POST /captures/{id}/trace` | 接收如 `{"table":"substrate","key":["East","Mica"]}`，返回直接证据和从零开始的根序号 |
 | `POST /captures/{id}/build`、`POST /captures/{id}/certify` | 接收空对象，构建或认证该捕获的子库 |
 | `POST /compare` | 接收 `{"left":"id-a","right":"id-b"}`，按表报告带类型主键的差异 |
+| `POST /paths` | 接收 `start`、`end`、两侧 `left`/`right`（各含 `source` 与允许经过的 `edges`）及可选 `max_steps`，返回两侧路径对接结论 |
 | `GET /captures/{id}/database` | 返回已认证 SQLite 字节，`ETag` 为带引号的 SHA-256 |
 
 根记录中的键按目录的列顺序填写。整数为有符号 64 位 JSON 数字。字节用 `{"blob":"AAD/"}`，实数用 `{"real":"0x1.a000000000000p+1"}`，文本用 JSON 字符串。配方可以用不同拼写定位同一个 NOCASE 根，封存与追踪使用实存键。结果中的行去重，输入根出现项保留顺序。工作台近期列表显示最后登记的 50 个配方版本和最后封存的 50 次捕获，历史详情地址依然可访问。

@@ -32,6 +32,11 @@
       "responsibility": "沿入出关系选样、追踪和比较"
     },
     {
+      "id": "pathboard",
+      "path": "keelsplice/pathboard.py",
+      "responsibility": "双源允许关系下的简单路径枚举与对接签名比较"
+    },
+    {
       "id": "codec",
       "path": "keelsplice/codec.py",
       "responsibility": "SQLite 值类型、主键及稳定摘要"
@@ -218,6 +223,27 @@
         "capture",
         "storage",
         "codec"
+      ]
+    },
+    {
+      "id": "paths",
+      "name": "排障两侧关系路径",
+      "entry": "POST /paths",
+      "success": "按两侧各自允许的关系枚举简单路径并比较归一化列映射，区分唯一对接、方案不唯一、列映射不一致与没有路径",
+      "failure": "未知源、无效关系、相同端点或超预算的路径枚举被明确拒绝",
+      "verification": "python3 -m examples.walkthrough paths",
+      "steps": [
+        "接收请求 POST /paths",
+        "在两个源各自的读事务中提取目录并校验允许关系",
+        "枚举两侧简单路径并按归一化列映射比较对接结论"
+      ],
+      "module_ids": [
+        "api",
+        "service",
+        "pathboard",
+        "catalog",
+        "recipe",
+        "storage"
       ]
     },
     {

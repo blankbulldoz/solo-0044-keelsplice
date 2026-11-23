@@ -1,0 +1,23 @@
+<div class="content">
+  <header class="pagehead"><div><p class="breadcrumb">关系目录 / 路径排障</p><h1>关系路径排障板</h1></div></header>
+  <form class="inline source-toolbar" method="get" action="/workbench/paths">
+    <label for="left">左侧数据源</label><select id="left" name="left">$left_options</select>
+    <label for="right">右侧数据源</label><select id="right" name="right">$right_options</select>
+    <button>载入两侧目录</button>
+  </form>
+  <form method="post" action="/workbench/paths">
+    <input type="hidden" name="left_source" value="$left_source"><input type="hidden" name="right_source" value="$right_source">
+    <div class="form-grid">
+      <label>起点表<input name="start" value="$start" required></label>
+      <label>终点表<input name="end" value="$end" required></label>
+      <label>步数上限<input type="number" name="max_steps" value="$max_steps" min="1" max="$max_limit" required></label>
+    </div>
+    <div class="editor-grid">
+      <fieldset><legend>左侧允许经过的关系（$left_source）</legend><div class="edge-grid">$left_edges</div></fieldset>
+      <fieldset><legend>右侧允许经过的关系（$right_source）</legend><div class="edge-grid">$right_edges</div></fieldset>
+    </div>
+    <div class="actions"><button class="primary">检查对接路径</button></div>
+  </form>
+  $error
+  $result
+</div>
