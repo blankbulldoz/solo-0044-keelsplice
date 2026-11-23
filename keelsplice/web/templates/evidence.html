@@ -1,6 +1,19 @@
 <div class="content">
   <header class="pagehead"><div><p class="breadcrumb"><a href="$base">捕获详情</a> / 追踪</p><h1>入选证据</h1></div></header>
-  <dl class="facts"><div><dt>表</dt><dd>$table</dd></div><div><dt>实存主键</dt><dd>$key</dd></div><div><dt>根序号</dt><dd>$occurrences</dd></div></dl>
-  <section><h2>直接入选原因</h2><div class="scroll"><table><thead><tr><th scope="col">类型</th><th scope="col">外键</th><th scope="col">来源行</th><th scope="col">操作</th></tr></thead><tbody>$causes</tbody></table></div></section>
-  <section><h2>指向的必需父行</h2><div class="scroll"><table><thead><tr><th scope="col">类型</th><th scope="col">外键</th><th scope="col">目标行</th><th scope="col">操作</th></tr></thead><tbody>$dependencies</tbody></table></div></section>
+  <dl class="facts"><div><dt>表</dt><dd>$table</dd></div><div><dt>实存主键</dt><dd>$key</dd></div><div class="wide"><dt>根命中位置</dt><dd>$root_positions</dd></div></dl>
+  <section aria-labelledby="totals">
+    <h2 id="totals">本捕获内的关系分组与合计</h2>
+    <dl class="facts">
+      <div><dt>直接入选原因</dt><dd>$cause_total 条 · $cause_groups 组</dd></div>
+      <div><dt>指向的必需父行</dt><dd>$dependency_total 条 · $dependency_groups 组</dd></div>
+      <div><dt>关系分组</dt><dd>$group_total 组</dd></div>
+      <div><dt>直接证据（去重）</dt><dd>$record_total 条</dd></div>
+    </dl>
+    <p class="notice info">方向、子表与复合外键编号共同构成一个分组；编号只在各自子表内唯一，因此同号不同表分开列出，重复根位置也各自保留。先看下表选组，再分段展开。</p>
+    <div class="scroll"><table><thead><tr><th scope="col">角色</th><th scope="col">关系</th><th scope="col">外键</th><th scope="col">方向</th><th scope="col">条数</th><th scope="col">分段</th></tr></thead><tbody>$groups</tbody></table></div>
+  </section>
+  <section aria-labelledby="segment">
+    <h2 id="segment">分组明细</h2>
+    $detail
+  </section>
 </div>

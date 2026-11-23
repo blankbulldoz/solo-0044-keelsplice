@@ -75,6 +75,8 @@ def route(handler, path):
             status, body = captures.index(bench)
         case 'GET', ['workbench', 'captures', capture_id]:
             status, body = captures.detail(bench, capture_id)
+        case 'GET', ['workbench', 'captures', capture_id, 'trace']:
+            status, body = evidence.show(bench, capture_id, query)
         case 'GET', ['workbench', 'captures', capture_id, 'database']:
             data, sha = bench.download(capture_id)
             return 200, data, 'application/vnd.sqlite3', {

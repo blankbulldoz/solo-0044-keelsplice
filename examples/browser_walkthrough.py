@@ -9,7 +9,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from threading import Thread
 from urllib.error import HTTPError
-from urllib.parse import urlencode, urlsplit
+from urllib.parse import quote, urlencode, urlsplit
 from urllib.request import Request, urlopen
 
 from keelsplice.api import create_server
@@ -36,6 +36,17 @@ def html(base, path, payload=None, expected=200, origin=None):
     return path, body.decode('utf-8')
 
 
+def seed_fanout(file):
+    with closing(sqlite3.connect(file)) as conn, conn:
+        conn.executescript('''
+            CREATE TABLE parent (id INTEGER PRIMARY KEY, note TEXT);
+            CREATE TABLE child (id INTEGER PRIMARY KEY, parent_id INTEGER REFERENCES parent, tag TEXT);
+        ''')
+        conn.execute("INSERT INTO parent VALUES (1,'p1')")
+        conn.executemany('INSERT INTO child VALUES (?,?,?)',
+                         [(number, 1, f't{number}') for number in range(1, 61)])
+
+
 def run(base, source, root):
     path, directory = html(base, '/')
     assert path == '/workbench' and '外键关系' in directory
@@ -44,7 +55,7 @@ def run(base, source, root):
     assert open_page(base, '/workbench/assets/workspace.css')[1].get_content_type() == 'text/css'
     assert '未注册' in html(base, '/workbench?source=missing', expected=404)[1]
 
-    editor_url = '/workbench/recipes/new'
+    editor_url = '/workbench/recipes/new?source=microscope'
     _, editor = html(base, editor_url)
     digest = re.search(r'name="digest" value="([0-9a-f]{64})"', editor)[1]
     form = {'source': 'microscope', 'name': 'browser-swatch', 'digest': digest,
@@ -63,8 +74,17 @@ def run(base, source, root):
     first, sealed = html(base, version + '/capture', {})
     assert '已封存' in sealed and '下载认证子库' not in sealed
     assert first in html(base, '/workbench/captures')[1]
-    _, evidence = html(base, first + '/trace', {'table': 'substrate', 'key': '["East","Mica"]'})
-    assert '直接入选原因' in evidence and 'S-01' in evidence
+    root_key = '["East","Mica"]'
+    _, evidence = html(base, first + '/trace', {'table': 'substrate', 'key': root_key})
+    assert '关系分组' in evidence and '直接入选原因' in evidence
+    assert '<code>assay</code> #0' in evidence and 'S-01' not in evidence
+    assert '先在上表选一组关系' in evidence
+    segment_url = (first + '/trace?table=substrate&key=' + quote(root_key) + '&group=0')
+    _, segment = html(base, segment_url)
+    assert 'S-01' in segment and 'S-02' in segment and '第 1 / 1 段' in segment
+    assert first + '/trace?table=substrate' in segment and 'substrate' in segment
+    assert '超出范围' in html(base, first + '/trace?table=substrate&key='
+                             + quote(root_key) + '&group=99', expected=400)[1]
     assert '实存主键' in html(base, first + '/trace',
                             {'table': 'substrate', 'key': '["east","MICA"]'}, expected=404)[1]
     assert '需先认证' in html(base, first + '/database', expected=409)[1]
@@ -86,7 +106,32 @@ def run(base, source, root):
     with closing(sqlite3.connect(handoff)) as conn:
         assert conn.execute("SELECT length_um FROM assay WHERE mark='S-01'").fetchone() == (3.25,)
         assert conn.execute('PRAGMA foreign_key_check').fetchall() == []
-    print('浏览器端到端检查通过：目录、配方、试算、捕获、证据、对比、停用、构建、认证、下载')
+    run_fanout(base)
+    print('浏览器端到端检查通过：目录、配方、试算、捕获、证据分组与分段、对比、停用、构建、认证、下载')
+
+
+def run_fanout(base):
+    editor_url = '/workbench/recipes/new'
+    digest = re.search(r'name="digest" value="([0-9a-f]{64})"',
+                       html(base, editor_url + '?source=fanout')[1])[1]
+    form = {'source': 'fanout', 'name': 'fanout-swatch', 'digest': digest, 'row_limit': '200',
+            'edge': ['0:child'], 'roots': '[{"table":"parent","key":[1]}]'}
+    version, _ = html(base, editor_url, form)
+    capture, _ = html(base, version + '/capture', {})
+    key = quote('[1]')
+    _, overview = html(base, capture + '/trace', {'table': 'parent', 'key': '[1]'})
+    assert '>60<' in overview and 't1' not in overview
+    seen = []
+    for offset in (0, 25, 50):
+        _, segment = html(base, capture + f'/trace?table=parent&key={key}&group=0&offset={offset}')
+        assert capture + '/trace?table=parent' in segment
+        seen.extend(re.findall(r'name="key" value="\[(\d+)\]"', segment))
+    assert len(seen) == 60 and len(set(seen)) == 60
+    assert '第 3 / 3 段 · 第 51–60 条，共 60 条' in segment
+    _, clamped = html(base, capture + f'/trace?table=parent&key={key}&group=0&offset=999')
+    assert '第 3 / 3 段' in clamped and '共 60 条' in clamped
+    assert '非负整数' in html(base, capture + f'/trace?table=parent&key={key}&group=0&offset=-1',
+                             expected=400)[1]
 
 
 def main():
@@ -96,7 +141,10 @@ def main():
         root = Path(directory)
         source = root / 'source.sqlite'
         seed(source)
-        with create_server(('127.0.0.1', 0), root / 'state.sqlite', {'microscope': source}) as server:
+        fanout = root / 'fanout.sqlite'
+        seed_fanout(fanout)
+        with create_server(('127.0.0.1', 0), root / 'state.sqlite',
+                           {'microscope': source, 'fanout': fanout}) as server:
             thread = Thread(target=server.serve_forever)
             thread.start()
             try:

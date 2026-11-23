@@ -20,7 +20,7 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 1. 在「关系目录」选源和表。主键顺序用于填写根，外键映射用于判断哪些子行需要反向纳入。
 2. 登记配方，填写一个或多个根及封存行上限。样例可填 `[{"table":"substrate","key":["east","MICA"]}]`，再选 `substrate → assay`。
 3. 试算查看逐表计数和实存根。点「封存当前样本」时服务重新读取源。配方绑定的模式有变化时，需要重新核对目录。
-4. 在捕获详情按实存主键追踪。可从直接入选原因或必需父行继续查看相关记录。对比页面按实存带类型主键显示两个同模式捕获的新增、移除和修改。
+4. 在捕获详情按实存主键追踪。证据页先按方向、子表和外键编号列出该捕获内的准确分组与合计，再按固定大小分段展开所选的组；每段的相关行仍定位到本次捕获及其封存键。可从直接入选原因或必需父行继续查看相关记录。对比页面按实存带类型主键显示两个同模式捕获的新增、移除和修改。
 5. 构建后再认证。认证后可下载文件并用其 SHA-256 或独立 SQLite 连接核对。停用配方后，既有捕获仍可完成这些操作。
 
 ## JSON 接口
@@ -35,7 +35,7 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 | `POST /recipes/{name}/versions/{version}/retire` | 接收空对象并停用版本 |
 | `POST /preview`、`POST /captures` | 接收 `{"name":"swatch","version":1}`，分别试算和封存 |
 | `GET /captures/{id}` | 读取捕获状态、实存根、计数和证书 |
-| `POST /captures/{id}/trace` | 接收如 `{"table":"substrate","key":["East","Mica"]}`，返回直接证据和从零开始的根序号 |
+| `POST /captures/{id}/trace` | 接收如 `{"table":"substrate","key":["East","Mica"]}`，返回直接证据、从零开始的根序号，以及按方向和外键归并的分组合计 |
 | `POST /captures/{id}/build`、`POST /captures/{id}/certify` | 接收空对象，构建或认证该捕获的子库 |
 | `POST /compare` | 接收 `{"left":"id-a","right":"id-b"}`，按表报告带类型主键的差异 |
 | `GET /captures/{id}/database` | 返回已认证 SQLite 字节，`ETag` 为带引号的 SHA-256 |

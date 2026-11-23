@@ -42,7 +42,7 @@ MESSAGES = {
 
 def message(exc):
     return MESSAGES.get(exc.code, str(exc) if exc.code in {
-        'browser_form', 'browser_origin', 'browser_schema', 'invalid_json', 'invalid_version'
+        'browser_form', 'browser_origin', 'browser_schema', 'invalid_json', 'invalid_version', 'invalid_segment'
     } else '工作台无法完成这次操作。')
 
 

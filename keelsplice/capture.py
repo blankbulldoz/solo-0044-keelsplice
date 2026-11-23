@@ -106,15 +106,58 @@ def summarize(result):
             'root_occurrences': len(result['roots'])}
 
 
+DIRECTION_ORDER = {'child': 0, 'parent': 1}
+
+
+def groups(schema, arcs):
+    """Count arcs by direction and by the child table plus foreign-key number.
+
+    A foreign-key number is only unique inside one child table, so the table
+    name is part of the identity.  Direction stays separate as well: the same
+    edge can witness both a reverse inclusion and a required parent.
+    """
+    lookup = {(edge['child'], edge['id']): edge for edge in schema['edges']}
+    buckets = {}
+    for arc in arcs:
+        child, number = arc['edge']
+        token = (arc['direction'], child, number)
+        bucket = buckets.get(token)
+        if bucket is None:
+            edge = lookup[(child, number)]
+            bucket = buckets[token] = {
+                'direction': arc['direction'], 'edge': [child, number],
+                'child': child, 'id': number, 'parent': edge['parent'],
+                'child_cols': list(edge['child_cols']), 'parent_cols': list(edge['parent_cols']),
+                'count': 0,
+            }
+        bucket['count'] += 1
+    return sorted(buckets.values(), key=lambda item: (DIRECTION_ORDER[item['direction']], item['child'], item['id']))
+
+
+def grouping(schema, causes, dependencies):
+    cause_groups = groups(schema, causes)
+    dependency_groups = groups(schema, dependencies)
+    records = {dumps(arc) for arc in causes} | {dumps(arc) for arc in dependencies}
+    return {
+        'causes': cause_groups,
+        'dependencies': dependency_groups,
+        'totals': {'causes': len(causes), 'dependencies': len(dependencies),
+                   'cause_groups': len(cause_groups), 'dependency_groups': len(dependency_groups),
+                   'groups': len(cause_groups) + len(dependency_groups), 'records': len(records)},
+    }
+
+
 def trace(sealed, address):
     lookup = identity(sealed['schema'], address)
     target = [lookup['table'], lookup['key']]
     result = sealed['result']
     if key(target[1]) not in result['rows'][target[0]]:
         raise Fault('row_not_captured', 'Use the actual typed key stored in the capture', 404)
+    causes = [arc for arc in result['arcs'] if arc['target'] == target]
+    dependencies = [arc for arc in result['arcs'] if arc['origin'] == target and arc['direction'] == 'parent']
     return {'row': target, 'roots': [i for i, root in enumerate(result['roots']) if root == target],
-            'causes': [arc for arc in result['arcs'] if arc['target'] == target],
-            'dependencies': [arc for arc in result['arcs'] if arc['origin'] == target and arc['direction'] == 'parent']}
+            'causes': causes, 'dependencies': dependencies,
+            'grouping': grouping(sealed['schema'], causes, dependencies)}
 
 
 def compare(left, right):

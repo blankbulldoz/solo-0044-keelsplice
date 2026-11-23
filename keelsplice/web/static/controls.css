@@ -25,6 +25,11 @@ legend { font-weight: 650; }
 .edge-choice { overflow-wrap: anywhere; }
 .notice { margin: 14px 0; padding: 10px 12px; border-left: 3px solid currentColor; background: var(--error-bg); color: var(--error); }
 .notice.info { background: var(--warning-bg); color: var(--warning); }
+.pager-note { color: var(--secondary); font-size: 13px; }
+.button.disabled { opacity: .55; cursor: default; }
+.button.disabled:hover { background: var(--paper); }
+tr.selected > * { background: var(--highlight); }
+h3 { font-size: 14px; margin: 0 0 10px; overflow-wrap: anywhere; }
 .status { display: inline-block; font-size: 13px; padding: 3px 8px; border-radius: 4px; white-space: nowrap; }
 .status.ready { background: var(--brand-soft); color: var(--brand); }
 .status.pending { background: var(--warning-bg); color: var(--warning); }
