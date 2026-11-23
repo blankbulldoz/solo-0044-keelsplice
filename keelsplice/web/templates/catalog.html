@@ -12,10 +12,12 @@
       <div><p class="breadcrumb">关系目录 / $alias</p><h1>$selected</h1></div>
       <a class="button primary" href="$recipe">登记配方</a>
     </header>
+    $handoff
     <dl class="facts">
       <div><dt>有序主键</dt><dd>$pk</dd></div>
       <div><dt>列数</dt><dd>$column_count</dd></div>
       <div class="wide"><dt>模式摘要</dt><dd><code>$digest</code></dd></div>
+      <div class="wide"><dt>交接链接</dt><dd><input id="handoff-link" class="link-copy" readonly value="$handoff_link"></dd></div>
     </dl>
     <section aria-labelledby="columns">
       <h2 id="columns">列定义</h2>

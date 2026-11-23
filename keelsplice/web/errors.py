@@ -37,6 +37,7 @@ MESSAGES = {
     'artifact_schema': '子库模式与封存模式不一致。',
     'artifact_content': '子库行内容与封存内容不一致。',
     'unknown_route': '找不到指定页面。',
+    'handoff_link': '交接链接中的交接依据无法解析，可能已损坏或被截断。',
 }
 
 

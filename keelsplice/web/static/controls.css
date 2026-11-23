@@ -13,6 +13,7 @@ button.primary, .button.primary { background: var(--brand); color: white; border
 button.primary:hover, .button.primary:hover { background: #0a5237; }
 button.quiet { min-height: 28px; padding: 2px 8px; font-size: 13px; }
 textarea { width: 100%; resize: vertical; font-family: var(--mono); }
+.link-copy { width: 100%; min-height: 30px; font: 12px var(--mono); color: var(--secondary); }
 label { display: block; font-weight: 600; }
 label > input:not([type="checkbox"]), label > select, label[for="roots"] + textarea { display: block; width: 100%; margin-top: 5px; }
 .inline, .actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
