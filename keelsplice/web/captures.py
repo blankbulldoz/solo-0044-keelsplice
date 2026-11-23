@@ -26,6 +26,7 @@ def index(bench):
 
 def detail(bench, capture_id):
     record = bench.status(capture_id)
+    view = bench.reviews(capture_id)
     base = f'/workbench/captures/{segment(capture_id)}'
     roots = ''.join(
         f'<li><form class="inline" method="post" action="{base}/trace">'
@@ -38,6 +39,7 @@ def detail(bench, capture_id):
                      recipe=f'/workbench/recipes/{segment(record["name"])}/{record["version"]}',
                      name=text(record['name']), number=record['version'], stage=stage(record['state']),
                      digest=text(record['schema_digest']), certificate=handoff.certificate(record),
+                     handoff=handoff.panel(base, view),
                      actions=handoff.actions(base, record['state']), roots=roots,
                      counts=preview.counts(record['summary']), rows=record['summary']['rows'],
                      witnesses=record['summary']['witnesses'])

@@ -79,6 +79,16 @@ def run(base, source, root):
     assert '已停止投用' in html(base, version + '/capture', {}, expected=409)[1]
     assert '已构建' in html(base, first + '/build', {})[1]
     assert '已认证' in html(base, first + '/certify', {})[1]
+    _, reviewed = html(base, first + '/review', {'station': 'A'})
+    assert '可转交' in reviewed and '当前' in reviewed
+    digest = re.search(r'文件 SHA-256</dt><dd><code>([0-9a-f]{64})</code>', reviewed)[1]
+    assert digest[:12] in reviewed
+    _, rebuilt = html(base, first + '/rebuild', {})
+    assert '只看到历史证书' in rebuilt and '已构建' in rebuilt
+    _, expired = html(base, first + '/certify', {})
+    assert '结果过期' in expired
+    _, reviewed = html(base, first + '/review', {'station': 'A'})
+    assert '可转交' in reviewed
     _, headers, database = open_page(base, first + '/database')
     assert headers['ETag'] == '"' + hashlib.sha256(database).hexdigest() + '"'
     handoff = root / 'handoff.sqlite'
@@ -86,7 +96,7 @@ def run(base, source, root):
     with closing(sqlite3.connect(handoff)) as conn:
         assert conn.execute("SELECT length_um FROM assay WHERE mark='S-01'").fetchone() == (3.25,)
         assert conn.execute('PRAGMA foreign_key_check').fetchall() == []
-    print('浏览器端到端检查通过：目录、配方、试算、捕获、证据、对比、停用、构建、认证、下载')
+    print('浏览器端到端检查通过：目录、配方、试算、捕获、证据、对比、停用、构建、认证、审核、重建、下载')
 
 
 def main():

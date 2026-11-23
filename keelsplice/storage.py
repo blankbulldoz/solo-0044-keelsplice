@@ -2,6 +2,7 @@
 
 import sqlite3
 from contextlib import closing, contextmanager
+from datetime import datetime, timezone
 from pathlib import Path
 from uuid import uuid4
 
@@ -18,7 +19,31 @@ CREATE TABLE IF NOT EXISTS captures (
     artifact BLOB, certificate TEXT,
     FOREIGN KEY(name, version) REFERENCES recipes(name, version)
 );
+CREATE TABLE IF NOT EXISTS certificates (
+    id TEXT PRIMARY KEY, capture TEXT NOT NULL REFERENCES captures(id),
+    certificate TEXT NOT NULL, current INTEGER NOT NULL CHECK(current IN (0,1)),
+    created TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS reviews (
+    id TEXT PRIMARY KEY, capture TEXT NOT NULL REFERENCES captures(id),
+    station TEXT NOT NULL, certificate_id TEXT NOT NULL REFERENCES certificates(id),
+    certificate_sha256 TEXT NOT NULL, artifact_sha256 TEXT NOT NULL,
+    artifact_bytes INTEGER NOT NULL,
+    verdict TEXT NOT NULL CHECK(verdict IN ('transferable','blocked')),
+    created TEXT NOT NULL
+);
 '''
+
+MIGRATION = '''
+INSERT OR IGNORE INTO certificates (id, capture, certificate, current, created)
+SELECT 'legacy-' || id, id, certificate, 1, '' FROM captures
+WHERE certificate IS NOT NULL
+  AND NOT EXISTS (SELECT 1 FROM certificates WHERE certificates.capture = captures.id)
+'''
+
+
+def now():
+    return datetime.now(timezone.utc).isoformat(timespec='seconds').replace('+00:00', 'Z')
 
 
 class Repository:
@@ -29,8 +54,9 @@ class Repository:
             raise ValueError('Source files must exist and be separate from the repository')
         if self.path.exists() and any(self.path.samefile(path) for path in self.sources.values()):
             raise ValueError('Source files must not alias the repository')
-        with self.session() as conn:
+        with self.session(write=True) as conn:
             conn.executescript(REPOSITORY_DDL)
+            conn.execute(MIGRATION)
 
     @contextmanager
     def session(self, write=False):
@@ -122,6 +148,13 @@ class Repository:
         return dict(row) | {'sealed': loads(row['sealed']),
                             'certificate': loads(row['certificate']) if row['certificate'] else None}
 
+    def archive_certificate(self, conn, capture_id, certificate):
+        conn.execute('UPDATE certificates SET current=0 WHERE capture=? AND current=1', (capture_id,))
+        certificate_id = uuid4().hex
+        conn.execute('INSERT INTO certificates VALUES(?,?,?,1,?)',
+                     (certificate_id, capture_id, dumps(certificate), now()))
+        return certificate_id
+
     def promote(self, capture_id, *, artifact=None, certificate=None):
         with self.session(write=True) as conn:
             if artifact is not None:
@@ -130,4 +163,56 @@ class Repository:
             else:
                 conn.execute("UPDATE captures SET state='certified',certificate=? WHERE id=? AND state='built'",
                              (dumps(certificate), capture_id))
+                self.archive_certificate(conn, capture_id, certificate)
         return self.load_capture(capture_id)
+
+    def rebuild(self, capture_id, artifact):
+        with self.session(write=True) as conn:
+            updated = conn.execute(
+                "UPDATE captures SET state='built',artifact=?,certificate=NULL WHERE id=? AND state='certified'",
+                (artifact, capture_id))
+            if updated.rowcount != 1:
+                raise Fault('fixture_not_certified', 'Only a certified capture can be rebuilt', 409)
+            conn.execute('UPDATE certificates SET current=0 WHERE capture=? AND current=1', (capture_id,))
+        return self.load_capture(capture_id)
+
+    def current_certificate(self, capture_id):
+        with self.session() as conn:
+            row = conn.execute(
+                'SELECT id, certificate FROM certificates WHERE capture=? AND current=1', (capture_id,)).fetchone()
+        return None if row is None else {'id': row['id'], 'certificate': loads(row['certificate'])}
+
+    def register_certificate(self, capture_id, certificate):
+        with self.session(write=True) as conn:
+            row = conn.execute('SELECT id FROM certificates WHERE capture=? AND current=1',
+                               (capture_id,)).fetchone()
+            if row is None:
+                self.archive_certificate(conn, capture_id, certificate)
+        return self.current_certificate(capture_id)
+
+    def certificates(self, capture_id):
+        with self.session() as conn:
+            rows = conn.execute(
+                'SELECT id, certificate, current, created FROM certificates WHERE capture=? ORDER BY rowid DESC',
+                (capture_id,)).fetchall()
+        return [dict(id=row['id'], sha256=loads(row['certificate'])['sha256'],
+                     bytes=loads(row['certificate'])['bytes'],
+                     current=bool(row['current']), created=row['created']) for row in rows]
+
+    def add_review(self, capture_id, station, certificate_id, certificate_sha256,
+                   artifact_sha256, artifact_bytes, verdict):
+        review_id = uuid4().hex
+        created = now()
+        with self.session(write=True) as conn:
+            conn.execute('INSERT INTO reviews VALUES(?,?,?,?,?,?,?,?,?)',
+                         (review_id, capture_id, station, certificate_id, certificate_sha256,
+                          artifact_sha256, artifact_bytes, verdict, created))
+        return dict(id=review_id, capture=capture_id, station=station, certificate_id=certificate_id,
+                    certificate_sha256=certificate_sha256, artifact_sha256=artifact_sha256,
+                    artifact_bytes=artifact_bytes, verdict=verdict, created=created)
+
+    def reviews(self, capture_id):
+        with self.session() as conn:
+            rows = conn.execute(
+                'SELECT * FROM reviews WHERE capture=? ORDER BY rowid DESC LIMIT 100', (capture_id,)).fetchall()
+        return [dict(row) for row in rows]

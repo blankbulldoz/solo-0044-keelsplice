@@ -1,0 +1,6 @@
+<section class="handoff"><h2>交接审核</h2>
+  <dl class="facts"><div class="wide"><dt>交接结论</dt><dd>$conclusion</dd></div></dl>
+  $forms
+  <div class="scroll"><table><caption>审核记录（最新在前；核验字节为判断当时读取的实存字节）</caption><thead><tr><th scope="col">时间</th><th scope="col">工位</th><th scope="col">结论</th><th scope="col">证书 SHA-256</th><th scope="col">核验字节 SHA-256</th><th scope="col">字节数</th><th scope="col">判断状态</th></tr></thead><tbody>$reviews</tbody></table></div>
+  <div class="scroll"><table><caption>证书历史（最新在前）</caption><thead><tr><th scope="col">收入时间</th><th scope="col">文件 SHA-256</th><th scope="col">字节</th><th scope="col">状态</th></tr></thead><tbody>$certificates</tbody></table></div>
+</section>

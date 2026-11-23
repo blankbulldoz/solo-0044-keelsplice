@@ -3,10 +3,11 @@
 import re
 import sqlite3
 
-from . import bundle, capture, catalog, recipe
+from . import bundle, capture, catalog, judgment, recipe
 from .codec import Fault
 
 NAME = re.compile(r'[a-z][a-z0-9_-]{0,63}\Z')
+STATION = re.compile(r'[^\x00-\x1f\x7f]{1,32}\Z')
 
 
 class Workbench:
@@ -98,11 +99,49 @@ class Workbench:
             record = self.repository.promote(capture_id, certificate=certificate)
         return self.describe(record)
 
+    def review(self, capture_id, station):
+        if not isinstance(station, str):
+            raise Fault('invalid_station', 'Supply a station label of 1-32 characters', 400)
+        station = station.strip()
+        if not STATION.fullmatch(station):
+            raise Fault('invalid_station', 'Supply a station label of 1-32 characters', 400)
+        record = self.repository.load_capture(capture_id, with_artifact=True)
+        if record['state'] != 'certified':
+            raise Fault('fixture_not_certified', 'Certify the fixture before review', 409)
+        current = self.repository.register_certificate(capture_id, record['certificate'])
+        data = record['artifact']
+        sha = bundle.digest_bytes(data) if data is not None else ''
+        certificate_sha = current['certificate']['sha256']
+        verdict = 'transferable' if sha and sha == certificate_sha else 'blocked'
+        saved = self.repository.add_review(capture_id, station, current['id'], certificate_sha,
+                                           sha, len(data) if data is not None else 0, verdict)
+        return judgment.describe(saved, current['id'])
+
+    def reviews(self, capture_id):
+        record = self.repository.load_capture(capture_id)
+        current = self.repository.current_certificate(capture_id)
+        current_id = current['id'] if current else None
+        records = [judgment.describe(row, current_id) for row in self.repository.reviews(capture_id)]
+        history = self.repository.certificates(capture_id)
+        return {'capture': capture_id, 'state': record['state'],
+                'conclusion': judgment.conclusion(record['state'], current_id, records, history),
+                'reviews': records, 'certificates': history}
+
+    def rebuild(self, capture_id):
+        record = self.repository.load_capture(capture_id)
+        if record['state'] != 'certified':
+            raise Fault('fixture_not_certified', 'Only a certified capture can be rebuilt', 409)
+        try:
+            data = bundle.build(record['sealed'])
+        except sqlite3.Error as exc:
+            raise Fault('artifact_build', 'SQLite rejected the sealed schema or values') from exc
+        return self.describe(self.repository.rebuild(capture_id, data))
+
     def download(self, capture_id):
         record = self.repository.load_capture(capture_id, with_artifact=True)
         if record['state'] != 'certified':
             raise Fault('fixture_not_certified', 'Certify the fixture before handing it off', 409)
         data, sha = record['artifact'], record['certificate']['sha256']
-        if bundle.digest_bytes(data) != sha:
+        if data is None or bundle.digest_bytes(data) != sha:
             raise Fault('artifact_integrity', 'Stored fixture bytes do not match the certificate', 409)
         return data, sha

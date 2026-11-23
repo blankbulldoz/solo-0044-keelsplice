@@ -84,6 +84,12 @@ def route(handler, path):
         case 'POST', ['workbench', 'captures', capture_id, action]:
             if action == 'trace':
                 status, body = evidence.show(bench, capture_id, values)
+            elif action == 'review':
+                bench.review(capture_id, field(values, 'station'))
+                return redirect(f'/workbench/captures/{segment(capture_id)}')
+            elif action == 'rebuild':
+                bench.rebuild(capture_id)
+                return redirect(f'/workbench/captures/{segment(capture_id)}')
             elif action in ('build', 'certify'):
                 (bench.build if action == 'build' else bench.certify)(capture_id)
                 return redirect(f'/workbench/captures/{segment(capture_id)}')
