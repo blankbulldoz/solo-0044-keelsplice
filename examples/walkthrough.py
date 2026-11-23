@@ -13,7 +13,7 @@ from urllib.request import Request, urlopen
 
 from keelsplice.api import create_server
 
-WORKFLOWS = ('catalog', 'recipe', 'retire', 'preview', 'capture', 'trace', 'build', 'certify', 'compare', 'download')
+WORKFLOWS = ('catalog', 'template', 'recipe', 'retire', 'preview', 'capture', 'trace', 'build', 'certify', 'compare', 'download')
 
 
 def seed(file):
@@ -51,6 +51,18 @@ def walkthrough(base, selected, source, root):
     assert edge['parent_cols'] == ['region','code']
     assert request('/sources/absent/catalog', status=404)['error'] == 'unknown_source'
     if observe('catalog', edge):
+        return
+
+    template = request('/key-templates', {'source': 'microscope', 'table': 'substrate',
+                                          'ordinal': [1, 2],
+                                          'legacy': [{'position': 1, 'name': 'region'},
+                                                     {'position': 2, 'name': 'grain'},
+                                                     {'position': 3, 'name': 'texture'}]})
+    assert template['template'] == {'table': 'substrate', 'key': ['region', 'code']}
+    assert [record['final']['verdict'] for record in template['legacy']] == ['confirmed', 'rename', 'excluded']
+    assert request('/key-templates', {'source': 'microscope', 'table': 'substrate',
+                                      'ordinal': [1, 1], 'legacy': []}, 400)['error'] == 'invalid_request'
+    if observe('template', {'template': template['template'], 'legacy': template['legacy']}):
         return
 
     body = {'source': 'microscope', 'roots': [{'table': 'SUBSTRATE', 'key': ['east', 'MICA']}],

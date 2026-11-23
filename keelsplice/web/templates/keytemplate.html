@@ -1,0 +1,27 @@
+<div class="content">
+  <header class="pagehead"><div><p class="breadcrumb">关系目录 / 主键模板</p><h1>列名对照表 → 主键模板</h1></div></header>
+  <form class="inline source-toolbar" method="get" action="/workbench/key-template">
+    <label for="source-choice">SQLite 数据源</label><select id="source-choice" name="source">$options</select><button>切换数据源</button>
+  </form>
+  <form method="post" action="/workbench/key-template">
+    <input type="hidden" name="source" value="$source">
+    <div class="form-grid">
+      <label>目标表<select name="table">$table_options</select></label>
+    </div>
+    <div class="editor-grid">
+      <section>
+        <label for="ordinal">编号位次名单（JSON）</label>
+        <textarea id="ordinal" name="ordinal" rows="6" required spellcheck="false">$ordinal</textarea>
+        <p class="muted">整数列表或 <code>{"entries":[{"position":1}]}</code>；起始位 0 或 1 均可。</p>
+      </section>
+      <section>
+        <label for="legacy">旧列名名单（JSON）</label>
+        <textarea id="legacy" name="legacy" rows="6" required spellcheck="false">$legacy</textarea>
+        <p class="muted">可只覆盖部分列：<code>[{"position":1,"name":"旧列名"}]</code>。</p>
+      </section>
+    </div>
+    <div class="actions"><button class="primary">按实际表定义解析</button></div>
+  </form>
+  $error
+  $result
+</div>

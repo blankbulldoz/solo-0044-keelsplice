@@ -44,6 +44,19 @@ def run(base, source, root):
     assert open_page(base, '/workbench/assets/workspace.css')[1].get_content_type() == 'text/css'
     assert '未注册' in html(base, '/workbench?source=missing', expected=404)[1]
 
+    _, template = html(base, '/workbench/key-template?source=microscope')
+    assert '旧列名名单' in template and 'substrate' in template
+    _, resolved = html(base, '/workbench/key-template', {
+        'source': 'microscope', 'table': 'substrate', 'ordinal': '[1,2]',
+        'legacy': '[{"position":1,"name":"region"},{"position":2,"name":"grain"},'
+                  '{"position":3,"name":"texture"}]'})
+    assert 'region → code' in resolved
+    assert 'rename' in resolved and 'excluded' in resolved and 'confirmed' in resolved
+    assert '位次读法' in resolved and '排除项' in resolved
+    assert '有效的 JSON' in html(base, '/workbench/key-template', {
+        'source': 'microscope', 'table': 'substrate', 'ordinal': 'bad', 'legacy': '[]'},
+        expected=400)[1]
+
     editor_url = '/workbench/recipes/new'
     _, editor = html(base, editor_url)
     digest = re.search(r'name="digest" value="([0-9a-f]{64})"', editor)[1]
@@ -86,7 +99,7 @@ def run(base, source, root):
     with closing(sqlite3.connect(handoff)) as conn:
         assert conn.execute("SELECT length_um FROM assay WHERE mark='S-01'").fetchone() == (3.25,)
         assert conn.execute('PRAGMA foreign_key_check').fetchall() == []
-    print('浏览器端到端检查通过：目录、配方、试算、捕获、证据、对比、停用、构建、认证、下载')
+    print('浏览器端到端检查通过：主键模板、目录、配方、试算、捕获、证据、对比、停用、构建、认证、下载')
 
 
 def main():

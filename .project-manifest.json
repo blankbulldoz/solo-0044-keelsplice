@@ -37,6 +37,11 @@
       "responsibility": "SQLite 值类型、主键及稳定摘要"
     },
     {
+      "id": "keytemplate",
+      "path": "keelsplice/keytemplate.py",
+      "responsibility": "把编号位次名单与旧列名名单按实际表定义解析为可登记的主键模板"
+    },
+    {
       "id": "bundle",
       "path": "keelsplice/bundle.py",
       "responsibility": "子库重建和内容认证"
@@ -64,6 +69,26 @@
         "service",
         "catalog",
         "storage"
+      ]
+    },
+    {
+      "id": "template",
+      "name": "解析列名对照表为主键模板",
+      "entry": "POST /key-templates",
+      "success": "按实际主键序号与复合外键目标列顺序确认唯一模板，逐条记录旧名的入选、重判与排除依据",
+      "failure": "位次重复、非连续、越过表宽度或旧名与已确认主键冲突时保留依据，不静默猜测",
+      "verification": "python3 -m examples.walkthrough template",
+      "steps": [
+        "接收请求 POST /key-templates",
+        "在同一源读事务中读取主键序号与复合外键目标列顺序",
+        "按两种位次读法对旧名锚点计票，确认模板后重判未命中的旧名"
+      ],
+      "module_ids": [
+        "api",
+        "service",
+        "keytemplate",
+        "catalog",
+        "codec"
       ]
     },
     {
@@ -247,6 +272,7 @@
       "verification": "python3 -m examples.browser_walkthrough",
       "steps": [
         "用目录的主键和外键填写配方并绑定模式摘要",
+        "在主键模板页把两家工具的列名对照表解析为可登记根模板",
         "在新读事务中封存闭包并保存证据",
         "验证成果证书和下载文件"
       ],

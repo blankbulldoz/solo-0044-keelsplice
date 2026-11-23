@@ -3,7 +3,7 @@
 import re
 import sqlite3
 
-from . import bundle, capture, catalog, recipe
+from . import bundle, capture, catalog, keytemplate, recipe
 from .codec import Fault
 
 NAME = re.compile(r'[a-z][a-z0-9_-]{0,63}\Z')
@@ -29,6 +29,14 @@ class Workbench:
 
     def version(self, name, number):
         return recipe.describe(self.repository.version(name, number))
+
+    def key_template(self, body):
+        recipe.fields(body, ('source', 'table', 'ordinal', 'legacy'))
+        with self.repository.source(body['source']) as conn:
+            disclosed = catalog.snapshot(conn)
+        report = keytemplate.resolve_lists(disclosed['schema'], body['table'], body['ordinal'], body['legacy'])
+        return report | {'schema_digest': disclosed['schema_digest'],
+                         'tables': sorted(disclosed['schema']['tables'])}
 
     def retire(self, name, number):
         return recipe.describe(self.repository.retire(name, number))
