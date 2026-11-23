@@ -112,12 +112,61 @@ def walkthrough(base, selected, source, root):
 
     diff = request('/compare', {'left': cap['id'], 'right': newer['id']})
     assert diff['changes']['assay'] == {'added': [], 'removed': [], 'modified': [['S-01']]}
+
+    def explain(left, right, table, key, status=200):
+        return request('/compare/detail', {'left': left, 'right': right, 'table': table, 'key': key}, status)
+
+    def update(sql):
+        with closing(sqlite3.connect(source)) as conn, conn:
+            conn.execute(sql)
+
+    detail = explain(cap['id'], newer['id'], 'assay', ['S-01'])
+    assert detail['kind'] == 'modified' and detail['verdict'] == 'values'
+    assert {col['name'] for col in detail['columns'] if col['changed']} == {'length_um', 'doubled'}
+    assert [ref['verdict'] for ref in detail['references']] == ['unchanged', 'unchanged']
+    update("UPDATE assay SET region='EAST', code='mica' WHERE mark='S-01'")
+    respelled = request('/captures', lookup, 201)
+    detail = explain(newer['id'], respelled['id'], 'assay', ['S-01'])
+    assert detail['kind'] == 'modified' and detail['verdict'] == 'respelled'
+    edge = next(ref for ref in detail['references'] if ref['parent'] == 'substrate')
+    assert edge['verdict'] == 'respelled' and edge['left']['child'] != edge['right']['child']
+    assert edge['left']['parent'] == edge['right']['parent'] == ['substrate', ['East', 'Mica']]
+    update("UPDATE assay SET cassette=13 WHERE mark='S-01'")
+    reparented = request('/captures', lookup, 201)
+    detail = explain(respelled['id'], reparented['id'], 'assay', ['S-01'])
+    assert detail['verdict'] == 'reparented'
+    edge = next(ref for ref in detail['references'] if ref['parent'] == 'cassette')
+    assert edge['left']['parent'] == ['cassette', [11]] and edge['right']['parent'] == ['cassette', [13]]
+    update('UPDATE cassette SET successor=13 WHERE serial=11')
+    twin = request('/captures', lookup, 201)
+    detail = explain(reparented['id'], twin['id'], 'cassette', [11])
+    assert detail['kind'] == 'modified' and detail['verdict'] == 'reparented'
+    refs = {ref['child_cols'][0]: ref for ref in detail['references']}
+    assert len(detail['references']) == 2 and refs['prior']['verdict'] == 'unchanged'
+    assert refs['successor']['verdict'] == 'reparented'
+    assert refs['successor']['left']['parent'] == ['cassette', [12]]
+    assert refs['successor']['right']['parent'] == ['cassette', [13]]
+    update("DELETE FROM assay WHERE mark='S-02'")
+    pruned = request('/captures', lookup, 201)
+    assert request('/compare', {'left': twin['id'], 'right': pruned['id']})['changes']['assay']['removed'] == [['S-02']]
+    detail = explain(twin['id'], pruned['id'], 'assay', ['S-02'])
+    assert detail['kind'] == 'removed' and detail['verdict'] == 'one-sided'
+    assert detail['present'] == {'left': True, 'right': False}
+    assert all(ref['right'] is None for ref in detail['references'])
+    edge = next(ref for ref in detail['references'] if ref['parent'] == 'substrate')
+    assert edge['left']['parent'] == ['substrate', ['East', 'Mica']]
+    detail = explain(pruned['id'], twin['id'], 'assay', ['S-02'])
+    assert detail['kind'] == 'added' and detail['present'] == {'left': False, 'right': True}
+    assert explain(cap['id'], newer['id'], 'assay', ['S-09'], 404)['error'] == 'row_not_captured'
+    assert explain(cap['id'], 'absent', 'assay', ['S-01'], 404)['error'] == 'unknown_capture'
+    assert explain(cap['id'], newer['id'], 'assay', [], 422)['error'] == 'invalid_key'
     with closing(sqlite3.connect(source)) as conn, conn:
         conn.execute('ALTER TABLE frame ADD COLUMN caption TEXT')
     assert request('/captures', lookup, 409)['error'] == 'schema_conflict'
     request('/recipes/swatch/versions', body, 201)
     changed = request('/captures', lookup | {'version': 3}, 201)
     assert request('/compare', {'left': cap['id'], 'right': changed['id']}, 409)['error'] == 'schema_conflict'
+    assert explain(cap['id'], changed['id'], 'assay', ['S-01'], 409)['error'] == 'schema_conflict'
     if observe('compare', diff['changes']):
         return
 

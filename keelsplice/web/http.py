@@ -90,7 +90,9 @@ def route(handler, path):
             else:
                 raise invalid_route()
         case 'GET', ['workbench', 'compare']:
-            status, body = comparison.show(bench)
+            status, body = comparison.show(bench, query)
+        case 'GET', ['workbench', 'compare', 'change']:
+            status, body = comparison.change(bench, query)
         case 'POST', ['workbench', 'compare']:
             status, body = comparison.show(bench, values)
         case _:

@@ -9,6 +9,7 @@ CREATE TABLE substrate (
 CREATE TABLE cassette (
     serial INTEGER PRIMARY KEY,
     prior INTEGER REFERENCES cassette,
+    successor INTEGER REFERENCES cassette,
     label TEXT NOT NULL
 );
 CREATE TABLE assay (
@@ -30,7 +31,8 @@ CREATE INDEX frame_mark_lookup ON frame(mark);
 BEGIN;
 PRAGMA defer_foreign_keys=ON;
 INSERT INTO substrate VALUES ('East','Mica',x'0000ff'), ('West','Basalt',x'fe');
-INSERT INTO cassette VALUES (11,12,'opal'), (12,11,'agate'), (13,NULL,'garnet');
+INSERT INTO cassette (serial, prior, successor, label) VALUES
+    (11,12,12,'opal'), (12,11,11,'agate'), (13,NULL,NULL,'garnet');
 INSERT INTO assay(mark,region,code,cassette,length_um) VALUES
     ('S-01','east','MICA',11,3.25), ('S-02','EAST','mica',12,5.5),
     ('S-03','West',NULL,13,2.5), ('S-04','west','basalt',13,9.0);

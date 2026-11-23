@@ -69,12 +69,46 @@ def run(base, source, root):
                             {'table': 'substrate', 'key': '["east","MICA"]'}, expected=404)[1]
     assert '需先认证' in html(base, first + '/database', expected=409)[1]
 
+    def open_change(page, key_json):
+        token = urlencode({'key': key_json})
+        href = re.search(r'href="(/workbench/compare/change\?[^"]*?' + re.escape(token) + r'[^"]*)"', page)
+        assert href, token
+        return html(base, href[1].replace('&amp;', '&'))
+
     with closing(sqlite3.connect(source)) as conn, conn:
         conn.execute("UPDATE assay SET length_um=7 WHERE mark='S-01'")
     second, _ = html(base, version + '/capture', {})
     args = {'left': first.rsplit('/', 1)[1], 'right': second.rsplit('/', 1)[1]}
     _, compare = html(base, '/workbench/compare', args)
     assert 'S-01' in compare and '修改' in compare
+    _, detail = open_change(compare, '["S-01"]')
+    assert '普通值变化' in detail and 'length_um' in detail
+    assert detail.index('基准捕获') < detail.index('对照捕获')
+    back = re.search(r'href="(/workbench/compare\?[^"]*#change-[0-9]+)"', detail)[1]
+    _, returned = html(base, back.replace('&amp;', '&').split('#')[0])
+    assert 'S-01' in returned and 'id="change-0"' in returned
+    with closing(sqlite3.connect(source)) as conn, conn:
+        conn.execute("UPDATE assay SET region='EAST', code='mica' WHERE mark='S-01'")
+    third, _ = html(base, version + '/capture', {})
+    args = {'left': second.rsplit('/', 1)[1], 'right': third.rsplit('/', 1)[1]}
+    _, compare = html(base, '/workbench/compare', args)
+    _, detail = open_change(compare, '["S-01"]')
+    assert '子键拼法变化' in detail and 'East' in detail and '核查父行' in detail
+    with closing(sqlite3.connect(source)) as conn, conn:
+        conn.execute('UPDATE cassette SET successor=13 WHERE serial=11')
+    fourth, _ = html(base, version + '/capture', {})
+    args = {'left': third.rsplit('/', 1)[1], 'right': fourth.rsplit('/', 1)[1]}
+    _, compare = html(base, '/workbench/compare', args)
+    _, detail = open_change(compare, '[11]')
+    assert '父对象已更换' in detail and 'prior' in detail and 'successor' in detail
+    with closing(sqlite3.connect(source)) as conn, conn:
+        conn.execute("DELETE FROM assay WHERE mark='S-02'")
+    fifth, _ = html(base, version + '/capture', {})
+    args = {'left': fourth.rsplit('/', 1)[1], 'right': fifth.rsplit('/', 1)[1]}
+    _, compare = html(base, '/workbench/compare', args)
+    assert '移除' in compare
+    _, detail = open_change(compare, '["S-02"]')
+    assert '仅存在于基准捕获' in detail and '不存在' in detail
     assert '已停用' in html(base, version + '/retire', {})[1]
     assert '已停止投用' in html(base, version + '/capture', {}, expected=409)[1]
     assert '已构建' in html(base, first + '/build', {})[1]
@@ -86,7 +120,7 @@ def run(base, source, root):
     with closing(sqlite3.connect(handoff)) as conn:
         assert conn.execute("SELECT length_um FROM assay WHERE mark='S-01'").fetchone() == (3.25,)
         assert conn.execute('PRAGMA foreign_key_check').fetchall() == []
-    print('浏览器端到端检查通过：目录、配方、试算、捕获、证据、对比、停用、构建、认证、下载')
+    print('浏览器端到端检查通过：目录、配方、试算、捕获、证据、对比、变化详情、停用、构建、认证、下载')
 
 
 def main():

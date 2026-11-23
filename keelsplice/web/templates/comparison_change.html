@@ -1,0 +1,12 @@
+<div class="content">
+  <header class="pagehead"><div><p class="breadcrumb"><a href="/workbench/compare">捕获对比</a> / 变化详情</p><h1>变化详情</h1></div>$badge</header>
+  <dl class="facts"><div><dt>表</dt><dd>$table</dd></div><div><dt>实存主键</dt><dd>$key</dd></div><div><dt>变化</dt><dd>$kind</dd></div>$captures
+    <div class="wide"><dt>判定</dt><dd>$headline</dd></div></dl>
+  <div class="actions">$traces<a class="button quiet" href="$back">关闭详情，回到差异列表</a></div>
+  <section><h2>列对照（基准在左，对照在右）</h2>
+    <div class="scroll"><table><thead><tr><th scope="col">列</th><th scope="col">基准捕获</th><th scope="col">对照捕获</th><th scope="col">状态</th></tr></thead><tbody>$columns</tbody></table></div>
+  </section>
+  <section><h2>关系事实（基准在左，对照在右）</h2>
+    <div class="scroll"><table><thead><tr><th scope="col">外键</th><th scope="col">基准子键</th><th scope="col">基准父行</th><th scope="col">对照子键</th><th scope="col">对照父行</th><th scope="col">判定</th></tr></thead><tbody>$references</tbody></table></div>
+  </section>
+</div>

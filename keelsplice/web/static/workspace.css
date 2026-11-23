@@ -46,6 +46,8 @@ th[scope="row"] code { white-space: nowrap; }
 thead { color: var(--secondary); background: #edf1f5; }
 tbody tr:last-child > * { border-bottom: 0; }
 .empty, .muted { color: var(--secondary); }
+tr.changed > * { background: var(--highlight); }
+tbody tr:target > * { background: var(--warning-bg); }
 .editor-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
 .data-list, .key-list { padding-left: 24px; overflow-wrap: anywhere; }
 .data-list li, .key-list li { margin-bottom: 6px; }

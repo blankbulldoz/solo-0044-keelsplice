@@ -129,3 +129,83 @@ def compare(left, right):
             'modified': [loads(token) for token in sorted(before.keys() & after.keys()) if before[token] != after[token]],
         }
     return changes
+
+
+def parents_witnessed(result, table):
+    found = {}
+    for arc in result['arcs']:
+        if arc['direction'] == 'parent' and arc['origin'][0] == table:
+            found[key(arc['origin'][1]), arc['edge'][1]] = arc['target']
+    return found
+
+
+def edge_verdict(reference):
+    left, right = reference['left'], reference['right']
+    if left is None or right is None:
+        return 'one-sided'
+    if left['child'] == right['child']:
+        return 'unchanged'
+    if left['parent'] is None and right['parent'] is None:
+        return 'unreferenced'
+    if left['parent'] == right['parent']:
+        return 'respelled'
+    return 'reparented'
+
+
+def explain(left, right, address):
+    if left['schema_digest'] != right['schema_digest']:
+        raise Fault('schema_conflict', 'Captures have different source schemas', 409)
+    table, values = address
+    schema = left['schema']
+    meta = schema['tables'][table]
+    token = key(values)
+    rows = {side: sealed['result']['rows'][table].get(token)
+            for side, sealed in (('left', left), ('right', right))}
+    if rows['left'] is None and rows['right'] is None:
+        raise Fault('row_not_captured', 'Use the actual typed key stored in the capture', 404)
+    present = {side: row is not None for side, row in rows.items()}
+    if not present['left']:
+        kind = 'added'
+    elif not present['right']:
+        kind = 'removed'
+    elif rows['left'] != rows['right']:
+        kind = 'modified'
+    else:
+        kind = 'unchanged'
+    columns = [
+        {'name': col['name'], 'pk': col['name'] in meta['pk'],
+         'left': rows['left'][i] if present['left'] else None,
+         'right': rows['right'][i] if present['right'] else None,
+         'changed': all(present.values()) and rows['left'][i] != rows['right'][i]}
+        for i, col in enumerate(meta['columns'])
+    ]
+    names = [col['name'] for col in meta['columns']]
+    arcs = {side: parents_witnessed(sealed['result'], table)
+            for side, sealed in (('left', left), ('right', right))}
+    references = []
+    for edge in schema['edges']:
+        if edge['child'] != table:
+            continue
+        positions = [names.index(column) for column in edge['child_cols']]
+        reference = {'edge': [table, edge['id']], 'parent': edge['parent'],
+                     'child_cols': edge['child_cols'], 'parent_cols': edge['parent_cols']}
+        for side in ('left', 'right'):
+            if not present[side]:
+                reference[side] = None
+                continue
+            child = [rows[side][i] for i in positions]
+            parent = None if None in child else arcs[side].get((token, edge['id']))
+            reference[side] = {'child': child, 'parent': parent}
+        reference['verdict'] = edge_verdict(reference)
+        references.append(reference)
+    verdicts = {reference['verdict'] for reference in references}
+    if kind != 'modified':
+        verdict = 'unchanged' if kind == 'unchanged' else 'one-sided'
+    elif 'reparented' in verdicts:
+        verdict = 'reparented'
+    elif 'respelled' in verdicts:
+        verdict = 'respelled'
+    else:
+        verdict = 'values'
+    return {'table': table, 'key': values, 'kind': kind, 'verdict': verdict, 'present': present,
+            'columns': columns, 'references': references}

@@ -76,6 +76,15 @@ class Workbench:
         left, right = (self.repository.load_capture(body[k])['sealed'] for k in ('left', 'right'))
         return {'left': body['left'], 'right': body['right'], 'changes': capture.compare(left, right)}
 
+    def compare_detail(self, body):
+        recipe.fields(body, ('left', 'right', 'table', 'key'))
+        if any(not isinstance(body[k], str) for k in ('left', 'right')):
+            raise Fault('invalid_capture', 'Supply two capture identifiers')
+        left, right = (self.repository.load_capture(body[k])['sealed'] for k in ('left', 'right'))
+        address = recipe.identity(left['schema'], dict(table=body['table'], key=body['key']))
+        detail = capture.explain(left, right, [address['table'], address['key']])
+        return {'left': body['left'], 'right': body['right']} | detail
+
     def build(self, capture_id):
         record = self.repository.load_capture(capture_id)
         if record['state'] == 'sealed':
