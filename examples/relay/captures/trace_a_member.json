@@ -1,0 +1,33 @@
+{
+  "causes": [],
+  "dependencies": [
+    {
+      "direction": "parent",
+      "edge": [
+        "member",
+        0
+      ],
+      "origin": [
+        "member",
+        [
+          "m-1"
+        ]
+      ],
+      "target": [
+        "team",
+        [
+          "team-a"
+        ]
+      ]
+    }
+  ],
+  "roots": [
+    0
+  ],
+  "row": [
+    "member",
+    [
+      "m-1"
+    ]
+  ]
+}

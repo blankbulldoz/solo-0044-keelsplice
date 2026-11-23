@@ -1,0 +1,20 @@
+{
+  "schema_digest": "48e73870739664430b1230ef34272e1a3f72ca3ab3b4bb54bc0d9ba08e53ea0a",
+  "edge": {
+    "child": "member",
+    "child_cols": [
+      "team_id"
+    ],
+    "id": 0,
+    "on_delete": "NO ACTION",
+    "on_update": "NO ACTION",
+    "parent": "team",
+    "parent_cols": [
+      "id"
+    ]
+  },
+  "tables": [
+    "member",
+    "team"
+  ]
+}

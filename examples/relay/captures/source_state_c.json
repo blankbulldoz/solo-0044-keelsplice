@@ -1,0 +1,19 @@
+{
+  "team": [
+    [
+      "team-a",
+      "Alpha 班组"
+    ],
+    [
+      "team-b",
+      "Bravo 班组"
+    ]
+  ],
+  "member": [
+    [
+      "m-1",
+      "team-a",
+      2.25
+    ]
+  ]
+}

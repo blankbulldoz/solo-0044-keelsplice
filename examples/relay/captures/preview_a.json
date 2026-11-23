@@ -1,0 +1,22 @@
+{
+  "name": "relay-sample",
+  "roots": [
+    [
+      "member",
+      [
+        "m-1"
+      ]
+    ]
+  ],
+  "schema_digest": "48e73870739664430b1230ef34272e1a3f72ca3ab3b4bb54bc0d9ba08e53ea0a",
+  "summary": {
+    "counts": {
+      "member": 1,
+      "team": 1
+    },
+    "root_occurrences": 1,
+    "rows": 2,
+    "witnesses": 1
+  },
+  "version": 1
+}

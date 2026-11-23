@@ -1,0 +1,4 @@
+{
+  "error": "schema_conflict",
+  "message": "Captures have different source schemas"
+}

@@ -1,0 +1,19 @@
+{
+  "active": true,
+  "name": "relay-sample",
+  "recipe": {
+    "follow_children": [],
+    "roots": [
+      {
+        "key": [
+          "m-1"
+        ],
+        "table": "member"
+      }
+    ],
+    "row_limit": 10,
+    "source": "relay"
+  },
+  "schema_digest": "48e73870739664430b1230ef34272e1a3f72ca3ab3b4bb54bc0d9ba08e53ea0a",
+  "version": 1
+}

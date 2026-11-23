@@ -1,0 +1,28 @@
+{
+  "changes": {
+    "member": {
+      "added": [],
+      "modified": [
+        [
+          "m-1"
+        ]
+      ],
+      "removed": []
+    },
+    "team": {
+      "added": [
+        [
+          "team-b"
+        ]
+      ],
+      "modified": [],
+      "removed": [
+        [
+          "team-a"
+        ]
+      ]
+    }
+  },
+  "left": "b3acf6bb070c46b6804cd020931953a4",
+  "right": "7031837a9df84589b5c879e564711003"
+}

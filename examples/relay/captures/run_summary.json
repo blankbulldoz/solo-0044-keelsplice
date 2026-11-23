@@ -1,0 +1,15 @@
+{
+  "outdir": "/workspace/examples/relay/captures",
+  "schema_digest": "48e73870739664430b1230ef34272e1a3f72ca3ab3b4bb54bc0d9ba08e53ea0a",
+  "capture_ids": {
+    "a": "b3acf6bb070c46b6804cd020931953a4",
+    "b": "7031837a9df84589b5c879e564711003",
+    "c": "35fd8deb4b84491b911e8b1026ad2ef7"
+  },
+  "preview_rows_unchanged": true,
+  "assertions": "all passed",
+  "notes": {
+    "discriminator": "team 表出现 added/removed 且 member 主键不变即关系转投；只有 member.modified、team 无增减即仅值有变。",
+    "identity_warning": "member 同时出现 added/removed 表示主键身份已变，不能表述为“m-1 转投”；主案例中 m-1 始终是 modified，才是同一对象的关系转投。"
+  }
+}

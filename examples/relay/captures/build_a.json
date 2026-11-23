@@ -1,0 +1,18 @@
+{
+  "certificate": {
+    "bytes": 20480,
+    "capture_digest": "9e68c4fa187592c66b74a51eaf448a8c6e8a6b87b108e7d42707685bf8ee089e",
+    "counts": {
+      "member": 1,
+      "team": 1
+    },
+    "schema_digest": "48e73870739664430b1230ef34272e1a3f72ca3ab3b4bb54bc0d9ba08e53ea0a",
+    "sha256": "1615eba9a44320277c3c6a8af8443f70e48f3ca986598a1c0bff88776c9a08d1"
+  },
+  "etag_matches_sha256": true,
+  "foreign_key_check": [],
+  "parent_join_row": [
+    "m-1",
+    "team-a"
+  ]
+}
