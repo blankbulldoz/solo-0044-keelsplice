@@ -18,7 +18,18 @@ CREATE TABLE IF NOT EXISTS captures (
     artifact BLOB, certificate TEXT,
     FOREIGN KEY(name, version) REFERENCES recipes(name, version)
 );
+CREATE TABLE IF NOT EXISTS browse_sessions (
+    id TEXT PRIMARY KEY, name TEXT NOT NULL,
+    opened TEXT NOT NULL, high_water INTEGER NOT NULL
+);
+CREATE TABLE IF NOT EXISTS browse_entries (
+    session TEXT NOT NULL REFERENCES browse_sessions(id),
+    version INTEGER NOT NULL, active INTEGER NOT NULL,
+    PRIMARY KEY (session, version)
+);
 '''
+
+HISTORY_PAGE = 20
 
 
 class Repository:
@@ -102,6 +113,42 @@ class Repository:
             if update.rowcount != 1:
                 raise Fault('unknown_recipe', 'Recipe version is unknown', 404)
         return self.version(name, number)
+
+    def open_browse(self, name):
+        with self.session(write=True) as conn:
+            rows = conn.execute(
+                'SELECT version, active FROM recipes WHERE name=? ORDER BY version', (name,)).fetchall()
+            if not rows:
+                raise Fault('unknown_recipe', 'Recipe version is unknown', 404)
+            session_id = uuid4().hex
+            conn.execute("INSERT INTO browse_sessions VALUES(?,?,datetime('now'),?)",
+                         (session_id, name, rows[-1]['version']))
+            conn.executemany('INSERT INTO browse_entries VALUES(?,?,?)',
+                             [(session_id, row['version'], row['active']) for row in rows])
+        return session_id
+
+    def browse(self, name, session_id, before=None, limit=HISTORY_PAGE):
+        with self.session() as conn:
+            session = conn.execute(
+                'SELECT * FROM browse_sessions WHERE id=? AND name=?', (session_id, name)).fetchone()
+            if session is None:
+                raise Fault('unknown_session', 'Browse session is unknown', 404)
+            rows = conn.execute("""
+                SELECT e.version, e.active AS recorded, r.active AS current, r.schema_digest, r.recipe
+                FROM browse_entries e JOIN recipes r ON r.name=? AND r.version=e.version
+                WHERE e.session=? AND (? IS NULL OR e.version < ?)
+                ORDER BY e.version DESC LIMIT ?
+            """, (name, session_id, before, before, limit + 1)).fetchall()
+            total = conn.execute(
+                'SELECT COUNT(*) FROM browse_entries WHERE session=?', (session_id,)).fetchone()[0]
+            current_high = conn.execute(
+                'SELECT COALESCE(MAX(version),0) FROM recipes WHERE name=?', (name,)).fetchone()[0]
+        entries = [dict(version=row['version'], recorded=bool(row['recorded']),
+                        current=bool(row['current']), schema_digest=row['schema_digest'],
+                        source=loads(row['recipe'])['source']) for row in rows[:limit]]
+        return dict(session=session_id, name=name, opened=session['opened'],
+                    high_water=session['high_water'], current_high=current_high, total=total,
+                    entries=entries, next_before=entries[-1]['version'] if len(rows) > limit else None)
 
     def add_capture(self, name, number, sealed):
         capture_id = uuid4().hex

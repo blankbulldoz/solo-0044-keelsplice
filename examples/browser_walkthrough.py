@@ -4,7 +4,7 @@ import argparse
 import hashlib
 import re
 import sqlite3
-from contextlib import closing
+from contextlib import closing, contextmanager
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from threading import Thread
@@ -15,6 +15,18 @@ from urllib.request import Request, urlopen
 from keelsplice.api import create_server
 
 from .walkthrough import seed
+
+
+@contextmanager
+def serve(repo, source):
+    with create_server(('127.0.0.1', 0), repo, {'microscope': source}) as server:
+        thread = Thread(target=server.serve_forever)
+        thread.start()
+        try:
+            yield f'http://127.0.0.1:{server.server_port}'
+        finally:
+            server.shutdown()
+            thread.join()
 
 
 def open_page(base, path, payload=None, expected=200, origin=None):
@@ -77,6 +89,40 @@ def run(base, source, root):
     assert 'S-01' in compare and '修改' in compare
     assert '已停用' in html(base, version + '/retire', {})[1]
     assert '已停止投用' in html(base, version + '/capture', {}, expected=409)[1]
+
+    for _ in range(24):
+        html(base, editor_url, form)
+    listing = html(base, '/workbench/recipes')[1]
+    assert '当前状态' in listing and '历史切面' in listing
+    first_page, page_one = html(base, '/workbench/recipes/browser-swatch/history', {})
+    session_id = first_page.rsplit('/', 1)[1]
+    assert '当时投用结论' in page_one and '当前资格' in page_one and '交接地址' in page_one
+    assert '版本 25</a>' in page_one and '版本 6</a>' in page_one and '版本 5</a>' not in page_one
+    next_url = re.search(r'href="(/workbench/recipes/browser-swatch/history/[0-9a-f]+\?before=\d+)"',
+                         page_one)[1]
+    assert next_url.endswith('?before=6')
+    html(base, editor_url, form)
+    html(base, '/workbench/recipes/browser-swatch/25/retire', {})
+    html(base, '/workbench/recipes/browser-swatch/3/retire', {})
+    _, reopened = html(base, first_page)
+    assert '版本 26</a>' not in reopened and '版本 25</a>' in reopened and '版本 6</a>' in reopened
+    assert '切面截至版本</dt><dd>25' in reopened and '当前最新版本</dt><dd>26' in reopened
+    assert '又有 1 个新版本' in reopened and reopened.count('资格已变化') == 1
+    row = re.search(r'<tr><th scope="row"><a href="[^"]+/25">.*?</tr>', reopened, re.S)[0]
+    assert '投用中' in row and '已停用' in row
+    _, page_two = html(base, next_url)
+    assert '版本 5</a>' in page_two and '版本 1</a>' in page_two
+    assert '版本 6</a>' not in page_two and '版本 26</a>' not in page_two
+    assert '?before=6' in page_two and page_two.count('资格已变化') == 1
+    row = re.search(r'<tr><th scope="row"><a href="[^"]+/3">.*?</tr>', page_two, re.S)[0]
+    assert '投用中' in row and '已停用' in row and '资格已变化' in row
+    row = re.search(r'<tr><th scope="row"><a href="[^"]+/1">.*?</tr>', page_two, re.S)[0]
+    assert '资格已变化' not in row and row.count('已停用') == 2
+    html(base, '/workbench/recipes/browser-swatch/history/' + 'f' * 32, expected=404)
+    html(base, first_page + '?before=abc', expected=400)
+    html(base, editor_url, form | {'name': 'other-swatch'})
+    html(base, f'/workbench/recipes/other-swatch/history/{session_id}', expected=404)
+
     assert '已构建' in html(base, first + '/build', {})[1]
     assert '已认证' in html(base, first + '/certify', {})[1]
     _, headers, database = open_page(base, first + '/database')
@@ -86,7 +132,38 @@ def run(base, source, root):
     with closing(sqlite3.connect(handoff)) as conn:
         assert conn.execute("SELECT length_um FROM assay WHERE mark='S-01'").fetchone() == (3.25,)
         assert conn.execute('PRAGMA foreign_key_check').fetchall() == []
-    print('浏览器端到端检查通过：目录、配方、试算、捕获、证据、对比、停用、构建、认证、下载')
+    print('浏览器端到端检查通过：目录、配方、试算、捕获、证据、对比、停用、历史切面、构建、认证、下载')
+
+
+LEGACY_DDL = '''
+CREATE TABLE recipes (
+    name TEXT NOT NULL, version INTEGER NOT NULL, active INTEGER NOT NULL,
+    schema_digest TEXT NOT NULL, recipe TEXT NOT NULL, PRIMARY KEY (name, version)
+);
+CREATE TABLE captures (
+    id TEXT PRIMARY KEY, name TEXT NOT NULL, version INTEGER NOT NULL,
+    sealed TEXT NOT NULL, state TEXT NOT NULL CHECK(state IN ('sealed','built','certified')),
+    artifact BLOB, certificate TEXT,
+    FOREIGN KEY(name, version) REFERENCES recipes(name, version)
+);
+'''
+
+
+def legacy_check(source):
+    with TemporaryDirectory(prefix='keelsplice-legacy-') as directory:
+        repo = Path(directory) / 'legacy.sqlite'
+        with closing(sqlite3.connect(repo)) as conn, conn:
+            conn.executescript(LEGACY_DDL)
+            conn.execute("INSERT INTO recipes VALUES('legacy',1,0,'legacy',?)",
+                         ('{"source":"microscope","roots":[],"follow_children":[],"row_limit":1000}',))
+        with serve(repo, source) as base:
+            listing = html(base, '/workbench/recipes')[1]
+            assert 'legacy' in listing and '当前状态' in listing
+            handoff, page = html(base, '/workbench/recipes/legacy/history', {})
+            assert '当时投用结论' in page and '当前资格' in page and '已停用' in page
+        with serve(repo, source) as base:
+            assert html(base, handoff)[1] == page
+    print('旧状态库检查通过：仅存 active 标志的旧数据自动迁移，交接地址重开切面内容一致')
 
 
 def main():
@@ -96,14 +173,9 @@ def main():
         root = Path(directory)
         source = root / 'source.sqlite'
         seed(source)
-        with create_server(('127.0.0.1', 0), root / 'state.sqlite', {'microscope': source}) as server:
-            thread = Thread(target=server.serve_forever)
-            thread.start()
-            try:
-                run(f'http://127.0.0.1:{server.server_port}', source, root)
-            finally:
-                server.shutdown()
-                thread.join()
+        with serve(root / 'state.sqlite', source) as base:
+            run(base, source, root)
+        legacy_check(source)
 
 
 if __name__ == '__main__':

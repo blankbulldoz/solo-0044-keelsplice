@@ -15,6 +15,7 @@ MESSAGES = {
     'invalid_edges': '最多可选 256 条反向关系。',
     'invalid_limit': '封存行上限须为 1 至 5,000 的整数。',
     'unknown_recipe': '配方版本不存在。',
+    'unknown_session': '找不到指定的历史切面，请核对交接地址。',
     'retired_recipe': '此配方版本已停止投用。',
     'schema_conflict': '模式摘要不一致，无法沿用当前配方或直接比较这两次捕获。',
     'unknown_capture': '找不到指定的捕获。',

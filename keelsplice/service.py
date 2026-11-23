@@ -33,6 +33,12 @@ class Workbench:
     def retire(self, name, number):
         return recipe.describe(self.repository.retire(name, number))
 
+    def open_history(self, name):
+        return self.repository.open_browse(name)
+
+    def history(self, name, session_id, before=None):
+        return self.repository.browse(name, session_id, before=before)
+
     def execute(self, body):
         recipe.fields(body, ('name', 'version'))
         name, number = body['name'], body['version']

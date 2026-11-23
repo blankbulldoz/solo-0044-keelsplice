@@ -1,0 +1,12 @@
+<div class="content">
+  <header class="pagehead"><div><p class="breadcrumb"><a href="/workbench/recipes">配方版本</a> / 同名版本历史</p><h1>$name <span class="minor">历史切面</span></h1></div></header>
+  <dl class="facts">
+    <div><dt>切面开启（UTC）</dt><dd>$opened</dd></div>
+    <div><dt>切面截至版本</dt><dd>$high_water</dd></div>
+    <div><dt>当前最新版本</dt><dd>$current_high</dd></div>
+    <div class="wide"><dt>本页交接地址（转给下一班可重开同一次浏览）</dt><dd><code>$handoff</code></dd></div>
+  </dl>
+  <p class="notice info">「当时投用结论」取自本切面开启时的快照，确有记录；「当前资格」只是状态库现存的 active 标志，仅能反映现在。切面开启后登记的新版本不会挤入本切面，停用也只改变当前资格。$newer_note</p>
+  <div class="scroll"><table><caption>$caption</caption><thead><tr><th scope="col">版本</th><th scope="col">数据源</th><th scope="col">当时投用结论（快照有据）</th><th scope="col">当前资格（仅现存标志）</th><th scope="col">模式摘要前缀</th></tr></thead><tbody>$rows</tbody></table></div>
+  <div class="actions">$pagination</div>
+</div>

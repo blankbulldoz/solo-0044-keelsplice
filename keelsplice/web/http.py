@@ -56,6 +56,12 @@ def route(handler, path):
             if isinstance(result, str):
                 return redirect(result)
             status, body = result
+        case 'GET', ['workbench', 'recipes', name, 'history']:
+            raise invalid_route()
+        case 'POST', ['workbench', 'recipes', name, 'history']:
+            return redirect(versions.open_history(bench, name))
+        case 'GET', ['workbench', 'recipes', name, 'history', session_id]:
+            status, body = versions.history(bench, name, session_id, query)
         case 'GET', ['workbench', 'recipes', name, number]:
             status, body = versions.detail(bench, name, version(number))
         case 'POST', ['workbench', 'recipes', name, number, action]:
