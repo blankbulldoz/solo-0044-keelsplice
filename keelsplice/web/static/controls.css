@@ -25,6 +25,8 @@ legend { font-weight: 650; }
 .edge-choice { overflow-wrap: anywhere; }
 .notice { margin: 14px 0; padding: 10px 12px; border-left: 3px solid currentColor; background: var(--error-bg); color: var(--error); }
 .notice.info { background: var(--warning-bg); color: var(--warning); }
+.decide-form { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.decide-form input[name="note"] { min-height: 28px; padding: 2px 8px; font-size: 13px; width: 12em; }
 .status { display: inline-block; font-size: 13px; padding: 3px 8px; border-radius: 4px; white-space: nowrap; }
 .status.ready { background: var(--brand-soft); color: var(--brand); }
 .status.pending { background: var(--warning-bg); color: var(--warning); }

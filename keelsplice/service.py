@@ -3,8 +3,8 @@
 import re
 import sqlite3
 
-from . import bundle, capture, catalog, recipe
-from .codec import Fault
+from . import bundle, capture, catalog, delivery, recipe
+from .codec import Fault, loads
 
 NAME = re.compile(r'[a-z][a-z0-9_-]{0,63}\Z')
 
@@ -106,3 +106,47 @@ class Workbench:
         if bundle.digest_bytes(data) != sha:
             raise Fault('artifact_integrity', 'Stored fixture bytes do not match the certificate', 409)
         return data, sha
+
+    def describe_batch(self, record):
+        entries = []
+        for row in record['entries']:
+            certificate = loads(row['certificate']) if row['certificate'] else None
+            sent = None
+            if row['outcome'] == 'delivered':
+                sent = {'sha256': row['sent_sha256'], 'bytes': row['sent_bytes']}
+            entries.append({
+                'id': row['id'], 'capture': row['capture_id'], 'name': row['name'], 'version': row['version'],
+                'recipient': row['recipient'], 'kind': row['kind'], 'decision': row['decision'],
+                'note': row['note'], 'capture_state': row['capture_state'],
+                'certificate': ({'sha256': certificate['sha256'], 'bytes': certificate['bytes']}
+                                if certificate else None),
+                'outcome': row['outcome'], 'outcome_reason': row['outcome_reason'], 'sent': sent})
+        return {'id': record['id'], 'label': record['label'], 'state': record['state'], 'entries': entries}
+
+    def create_batch(self, body):
+        recipe.fields(body, ('label',))
+        return self.describe_batch(self.repository.add_batch(delivery.label(body['label'])))
+
+    def batches(self):
+        return self.repository.recent_batches()
+
+    def batch_detail(self, batch_id):
+        return self.describe_batch(self.repository.load_batch(batch_id))
+
+    def add_delivery(self, batch_id, body):
+        recipe.fields(body, ('capture', 'recipient'))
+        if not isinstance(body['capture'], str):
+            raise Fault('unknown_capture', 'Capture does not exist', 404)
+        record = self.repository.add_delivery(batch_id, body['capture'], delivery.recipient(body['recipient']))
+        return self.describe_batch(record)
+
+    def decide_delivery(self, batch_id, delivery_id, body):
+        recipe.fields(body, ('action',), ('note',))
+        decision = delivery.decision(body['action'])
+        note = delivery.note(body.get('note', ''))
+        if decision == 'held' and not note:
+            raise Fault('hold_needs_reason', 'Holding a delivery needs the reason it is not sent')
+        return self.describe_batch(self.repository.decide_delivery(batch_id, delivery_id, decision, note))
+
+    def close_batch(self, batch_id):
+        return self.describe_batch(self.repository.close_batch(batch_id))

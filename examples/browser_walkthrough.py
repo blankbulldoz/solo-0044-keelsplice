@@ -86,7 +86,43 @@ def run(base, source, root):
     with closing(sqlite3.connect(handoff)) as conn:
         assert conn.execute("SELECT length_um FROM assay WHERE mark='S-01'").fetchone() == (3.25,)
         assert conn.execute('PRAGMA foreign_key_check').fetchall() == []
-    print('浏览器端到端检查通过：目录、配方、试算、捕获、证据、对比、停用、构建、认证、下载')
+
+    _, batches = html(base, '/workbench/batches')
+    assert '尚无交付批次' in batches
+    batch1, page1 = html(base, '/workbench/batches', {'label': '2026-W47 周交付'})
+    assert '交付中' in page1 and '尚无交付项' in page1
+    assert '先关闭当前批次' in html(base, '/workbench/batches', {'label': 'overlap'}, expected=409)[1]
+    cap1, cap2 = first.rsplit('/', 1)[1], second.rsplit('/', 1)[1]
+    _, page1 = html(base, batch1 + '/add', {'capture': cap1, 'recipient': '甲组'})
+    _, page1 = html(base, batch1 + '/add', {'capture': cap1, 'recipient': '乙组'})
+    _, page1 = html(base, batch1 + '/add', {'capture': cap2, 'recipient': '甲组'})
+    assert '甲组' in page1 and '乙组' in page1 and '首发' in page1 and '领用' in page1
+    assert '只能核销一笔' in html(base, batch1 + '/add', {'capture': cap1, 'recipient': '甲组'}, expected=409)[1]
+    assert '待判断' in html(base, batch1 + '/close', {}, expected=409)[1]
+    ids = re.findall(r'name="delivery" value="([0-9a-f]{32})"', page1)
+    assert len(ids) == 3
+    _, page1 = html(base, batch1 + '/decide', {'delivery': ids[0], 'action': 'settle', 'note': '回执 R-101'})
+    assert '已销账' in page1
+    assert '尚未认证' in html(base, batch1 + '/decide', {'delivery': ids[2], 'action': 'settle'}, expected=409)[1]
+    assert '未发原因' in html(base, batch1 + '/decide', {'delivery': ids[2], 'action': 'hold'}, expected=422)[1]
+    _, page1 = html(base, batch1 + '/decide', {'delivery': ids[1], 'action': 'continue'})
+    _, page1 = html(base, batch1 + '/decide', {'delivery': ids[2], 'action': 'hold', 'note': '子库未认证，下周再交'})
+    _, closed1 = html(base, batch1 + '/close', {})
+    sha = hashlib.sha256(database).hexdigest()
+    assert '已关闭' in closed1 and '已交付' in closed1 and '待补发' in closed1 and '暂缓' in closed1
+    assert sha in closed1 and '回执未到' in closed1 and '子库未认证，下周再交' in closed1
+    assert '只能回看' in html(base, batch1 + '/add', {'capture': cap1, 'recipient': '丙组'}, expected=409)[1]
+    batch2, page2 = html(base, '/workbench/batches', {'label': '2026-W48 周交付'})
+    body2 = re.search(r'<tbody>(.*?)</tbody>', page2, re.S)[1]
+    assert '乙组' in body2 and '补发' in body2 and '甲组' not in body2
+    ids2 = re.findall(r'name="delivery" value="([0-9a-f]{32})"', page2)
+    assert len(ids2) == 1
+    _, page2 = html(base, batch2 + '/decide', {'delivery': ids2[0], 'action': 'settle'})
+    _, closed2 = html(base, batch2 + '/close', {})
+    assert '已交付' in closed2 and sha in closed2
+    _, review = html(base, batch1)
+    assert '已关闭' in review and sha in review and '回执未到' in review
+    print('浏览器端到端检查通过：目录、配方、试算、捕获、证据、对比、停用、构建、认证、下载、交付批次')
 
 
 def main():

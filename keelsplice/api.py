@@ -78,6 +78,19 @@ class RequestHandler(BaseHTTPRequestHandler):
                 return 200, bench.compare(body)
             case 'GET', ['captures', capture_id, 'database']:
                 return 200, bench.download(capture_id)
+            case 'GET', ['batches']:
+                return 200, {'batches': bench.batches()}
+            case 'POST', ['batches']:
+                return 201, bench.create_batch(body)
+            case 'GET', ['batches', batch_id]:
+                return 200, bench.batch_detail(batch_id)
+            case 'POST', ['batches', batch_id, 'deliveries']:
+                return 201, bench.add_delivery(batch_id, body)
+            case 'POST', ['batches', batch_id, 'deliveries', delivery_id, 'decide']:
+                return 200, bench.decide_delivery(batch_id, delivery_id, body)
+            case 'POST', ['batches', batch_id, 'close']:
+                fields(body)
+                return 200, bench.close_batch(batch_id)
         raise Fault('unknown_route', 'Unknown endpoint', 404)
 
     def send_result(self, status, payload):

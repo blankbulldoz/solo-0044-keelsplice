@@ -1,0 +1,10 @@
+<div class="content">
+  <header class="pagehead"><h1>交付批次</h1></header>
+  $error
+  <form class="compare-form" method="post" action="/workbench/batches">
+    <label>新批次标签<input name="label" required maxlength="64" placeholder="例如 2026-W47 周交付"></label>
+    <button class="primary">开立交付批次</button>
+  </form>
+  <p class="muted">每周按组分批交接关系子库：同时至多一个交付中批次；开立新批时自动列入上一批的待补发项；同一捕获可发给不同组，同批同组同一捕获只核销一笔。</p>
+  <div class="scroll"><table><caption>最近 50 个交付批次</caption><thead><tr><th scope="col">批次标签</th><th scope="col">状态</th><th scope="col">交付项</th><th scope="col">已交付</th></tr></thead><tbody>$rows</tbody></table></div>
+</div>

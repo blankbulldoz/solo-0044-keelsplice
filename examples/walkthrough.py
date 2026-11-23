@@ -13,7 +13,8 @@ from urllib.request import Request, urlopen
 
 from keelsplice.api import create_server
 
-WORKFLOWS = ('catalog', 'recipe', 'retire', 'preview', 'capture', 'trace', 'build', 'certify', 'compare', 'download')
+WORKFLOWS = ('catalog', 'recipe', 'retire', 'preview', 'capture', 'trace', 'build', 'certify', 'compare', 'download',
+             'deliver')
 
 
 def seed(file):
@@ -132,6 +133,59 @@ def walkthrough(base, selected, source, root):
         assert conn.execute('SELECT texture FROM substrate').fetchone()[0] == b'\x00\x00\xff'
         assert conn.execute('SELECT count(*) FROM frame').fetchone()[0] == 0
     observe('download', {'sha256': etag, 'source_changes_isolated': True, 'length_and_generated': row})
+    if selected == 'download':
+        return
+
+    batch = request('/batches', {'label': '2026-W47 周交付'}, 201)
+    batch_id = batch['id']
+    assert batch['state'] == 'open' and batch['entries'] == []
+    assert request('/batches', {'label': 'overlap'}, 409)['error'] == 'batch_still_open'
+    deliveries = f'/batches/{batch_id}/deliveries'
+    request(deliveries, {'capture': cap['id'], 'recipient': '甲组'}, 201)
+    request(deliveries, {'capture': cap['id'], 'recipient': '乙组'}, 201)
+    added = request(deliveries, {'capture': newer['id'], 'recipient': '甲组'}, 201)
+    assert [entry['kind'] for entry in added['entries']] == ['initial'] * 3
+    assert request(deliveries, {'capture': cap['id'], 'recipient': '甲组'}, 409)['error'] == 'duplicate_delivery'
+    assert request(deliveries, {'capture': 'missing', 'recipient': '甲组'}, 404)['error'] == 'unknown_capture'
+    assert request(f'/batches/{batch_id}/close', {}, 409)['error'] == 'batch_entries_pending'
+    entries = {(entry['capture'], entry['recipient']): entry['id'] for entry in added['entries']}
+
+    def decide(key, body, status=200):
+        return request(f'{deliveries}/{entries[key]}/decide', body, status)
+
+    settled, late, held = (cap['id'], '甲组'), (cap['id'], '乙组'), (newer['id'], '甲组')
+    assert decide(held, {'action': 'settle'}, 409)['error'] == 'deliver_not_certified'
+    assert decide(held, {'action': 'hold'}, 422)['error'] == 'hold_needs_reason'
+    assert decide(settled, {'action': 'review'}, 422)['error'] == 'invalid_action'
+    decide(settled, {'action': 'settle', 'note': '回执 R-101'})
+    decide(late, {'action': 'continue'})
+    decide(held, {'action': 'hold', 'note': '子库未认证，下周再交'})
+    closed = request(f'/batches/{batch_id}/close', {})
+    assert closed['state'] == 'closed'
+    outcome = {(entry['capture'], entry['recipient']): entry for entry in closed['entries']}
+    assert outcome[settled]['outcome'] == 'delivered'
+    assert outcome[settled]['sent'] == {'sha256': certificate['sha256'], 'bytes': certificate['bytes']}
+    assert outcome[late]['outcome'] == 'reissue' and '回执' in outcome[late]['outcome_reason']
+    assert outcome[held]['outcome'] == 'held' and outcome[held]['outcome_reason'] == '子库未认证，下周再交'
+    assert request(deliveries, {'capture': cap['id'], 'recipient': '丙组'}, 409)['error'] == 'batch_closed'
+    assert request(f'/batches/{batch_id}/close', {}, 409)['error'] == 'batch_closed'
+    again, again_etag = request(endpoint + '/database')
+    assert again_etag == certificate['sha256'] and sha256(again).hexdigest() == certificate['sha256']
+
+    follow = request('/batches', {'label': '2026-W48 周交付'}, 201)
+    assert len(follow['entries']) == 1
+    carried = follow['entries'][0]
+    assert carried['capture'] == cap['id'] and carried['recipient'] == '乙组' and carried['kind'] == 'reissue'
+    follow_id = follow['id']
+    request(f'/batches/{follow_id}/deliveries/{carried["id"]}/decide', {'action': 'settle'})
+    done = request(f'/batches/{follow_id}/close', {})
+    assert done['entries'][0]['outcome'] == 'delivered' and done['entries'][0]['sent']['sha256'] == certificate['sha256']
+    review = request(f'/batches/{batch_id}')
+    assert review['state'] == 'closed' and review['entries'][0]['sent']['sha256'] == certificate['sha256']
+    listing = request('/batches')
+    assert [item['label'] for item in listing['batches']][:2] == ['2026-W48 周交付', '2026-W47 周交付']
+    observe('deliver', {'settled': outcome[settled]['sent'], 'reissue': outcome[late]['outcome_reason'],
+                        'carried': carried['kind'], 'independent_claim': again_etag})
 
 
 def main():
