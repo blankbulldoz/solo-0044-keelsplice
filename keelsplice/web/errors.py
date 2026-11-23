@@ -10,6 +10,7 @@ MESSAGES = {
     'unknown_identifier': '输入的表名或列名不在当前目录中。',
     'invalid_key': '请按目录中的列顺序填写完整主键，各分量均须有值。',
     'invalid_value': '主键值须使用有效的 SQLite 类型编码。',
+    'root_cell': '请修正标注出的主键格。',
     'invalid_roots': '根记录须为包含 1 至 256 项的 JSON 数组。',
     'invalid_edge': '选中的外键已不在当前目录中。',
     'invalid_edges': '最多可选 256 条反向关系。',
@@ -42,7 +43,7 @@ MESSAGES = {
 
 def message(exc):
     return MESSAGES.get(exc.code, str(exc) if exc.code in {
-        'browser_form', 'browser_origin', 'browser_schema', 'invalid_json', 'invalid_version'
+        'browser_form', 'browser_origin', 'browser_schema', 'invalid_json', 'invalid_version', 'root_cell'
     } else '工作台无法完成这次操作。')
 
 

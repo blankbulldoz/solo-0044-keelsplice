@@ -45,6 +45,11 @@
       "id": "web",
       "path": "keelsplice/web",
       "responsibility": "服务端 HTML、类型化表单、目录、配方、追踪、对比及子库交接页面"
+    },
+    {
+      "id": "roots",
+      "path": "keelsplice/web/roots.py",
+      "responsibility": "按真实主键顺序逐根编辑、类型化格与原始 JSON 的互相转换"
     }
   ],
   "workflows": [
@@ -242,11 +247,11 @@
       "id": "workbench",
       "name": "浏览器端封存与交接",
       "entry": "GET /workbench",
-      "success": "从目录填写配方，试算实存根并封存，浏览关系证据和差异，下载独立验证的 SQLite 子库",
+      "success": "从目录逐根填写类型化主键并可调整顺序，试算实存根并封存，浏览关系证据和差异，下载独立验证的 SQLite 子库",
       "failure": "模式漂移、错误主键、跨来源表单及未认证下载有明确页面且保留持久状态",
       "verification": "python3 -m examples.browser_walkthrough",
       "steps": [
-        "用目录的主键和外键填写配方并绑定模式摘要",
+        "用目录的主键顺序逐根填写类型化主键，切换表和调整顺序，并与原始 JSON 互相导入导出",
         "在新读事务中封存闭包并保存证据",
         "验证成果证书和下载文件"
       ],

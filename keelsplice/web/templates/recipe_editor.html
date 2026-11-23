@@ -1,6 +1,6 @@
 <div class="content">
   <header class="pagehead"><div><p class="breadcrumb"><a href="/workbench/recipes">配方版本</a> / 登记</p><h1>登记配方</h1></div></header>
-  $error
+  $notice
   <form class="inline source-toolbar" method="get" action="/workbench/recipes/new">
     <label for="source-choice">SQLite 数据源</label><select id="source-choice" name="source">$options</select><button>切换数据源</button>
   </form>
@@ -11,14 +11,33 @@
       <label>封存行上限<input type="number" name="row_limit" value="$limit" min="1" max="5000" required></label>
     </div>
     <div class="editor-grid">
-      <section>
-        <label for="roots">根记录（JSON）</label>
-        <textarea id="roots" name="roots" rows="8" required aria-describedby="root-format" spellcheck="false">$roots</textarea>
-        <p id="root-format" class="muted">每项为 <code>{ "table": "表名", "key": [主键值] }</code>，按右侧顺序填写复合主键。</p>
+      <section aria-labelledby="root-cards-title">
+        <h2 id="root-cards-title">根位置（按输入顺序）</h2>
+        <p class="muted">逐根填写，每格的类型和值会原样进入配方。顺序即试算时的根序号，可用「上移」「下移」重新排列。</p>
+        $cards
+        <div class="root-add">
+          <label>要添加的表<select name="add_table">$add_options</select></label>
+          <button class="quiet" name="action" value="add" formnovalidate>添加根</button>
+        </div>
+        <h2>当前草稿</h2>
+        <ol class="data-list root-summary">$summary</ol>
       </section>
-      <section><h2>主键列顺序</h2><ul class="key-list">$keys</ul></section>
+      <section aria-labelledby="root-json-title">
+        <h2 id="root-json-title">原始 JSON（同一配方）</h2>
+        <p class="muted">逐根格的内容会按同一份配方显示在这里。可以直接粘贴既有 <code>{ "table": "表名", "key": [主键值] }</code> 配方，再点「导入 JSON 为逐根格」继续逐根编辑；或点下方「按原始 JSON 保存」原样提交。</p>
+        <label for="roots">根记录（JSON）</label>
+        <input type="hidden" name="rendered" value="$rendered">
+        <textarea id="roots" name="roots" rows="8" aria-describedby="root-format" spellcheck="false">$roots</textarea>
+        <p id="root-format" class="muted">整数为有符号 64 位 JSON 数字；文本为空字符串时保留空串；字节用 <code>{"blob":"AAD/"}</code>；实数用 <code>{"real":"0x1.a000000000000p+1"}</code>。</p>
+        <div class="actions"><button class="quiet" name="action" value="import" formnovalidate>导入 JSON 为逐根格</button></div>
+        <h2>主键列顺序</h2>
+        <ul class="key-list">$keys</ul>
+      </section>
     </div>
     <fieldset><legend>允许反向纳入的外键</legend><div class="edge-grid">$edges</div></fieldset>
-    <div class="actions"><button class="primary">保存为新版本</button></div>
+    <div class="actions">
+      <button class="primary">保存逐根为新版本</button>
+      <button class="quiet" name="action" value="register_json" formnovalidate>按原始 JSON 保存</button>
+    </div>
   </form>
 </div>

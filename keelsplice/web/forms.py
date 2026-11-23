@@ -8,12 +8,13 @@ from ..codec import Fault
 
 MAX_BYTES = 256 * 1024
 VERSION = re.compile(r'[1-9][0-9]{0,18}\Z')
+MAX_FIELDS = 100_000
 
 
 def decode_form(body):
     try:
         return parse_qs(body.decode('ascii'), keep_blank_values=True,
-                        max_num_fields=1024, encoding='utf-8', errors='strict')
+                        max_num_fields=MAX_FIELDS, encoding='utf-8', errors='strict')
     except (ValueError, UnicodeError) as exc:
         raise Fault('browser_form', '表单编码无效。', 400) from exc
 
@@ -23,6 +24,12 @@ def field(values, name, default=''):
     if len(entries) != 1:
         raise Fault('browser_form', f'字段 {name} 只能提交一次。', 400)
     return entries[0]
+
+
+def posted(values, name, default=''):
+    """Read a field for redisplay only; duplicate entries keep the first one."""
+    entries = values.get(name)
+    return entries[0] if entries else default
 
 
 def version(value):
