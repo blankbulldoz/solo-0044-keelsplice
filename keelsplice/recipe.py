@@ -34,17 +34,28 @@ def validate(schema, body):
         raise Fault('invalid_edges', 'Specify a list of up to 256 child edges')
     selected = set()
     for value in edges:
-        fields(value, ('child', 'id'))
+        fields(value, ('child', 'id'), ('parent',))
         child = resolve(schema['tables'], value['child'])
         number = value['id']
-        if type(number) is not int or not any(e['child'] == child and e['id'] == number for e in schema['edges']):
+        if type(number) is not int:
             raise Fault('invalid_edge', f'Unknown key number in {child}')
-        selected.add((child, number))
+        matching = [edge for edge in schema['edges'] if edge['child'] == child and edge['id'] == number]
+        if not matching:
+            raise Fault('invalid_edge', f'Unknown key number in {child}')
+        edge = matching[0]
+        if 'parent' in value:
+            expected = resolve(schema['tables'], value['parent'])
+            if expected != edge['parent']:
+                raise Fault('edge_reassigned',
+                            f'Key {number} on {child} now targets {edge["parent"]}, not {expected}')
+        token = (child, number)
+        selected.add(token)
     limit = body.get('row_limit', DEFAULT_BUDGET)
     if type(limit) is not int or not 1 <= limit <= MAX_ROWS:
         raise Fault('invalid_limit', f'row_limit must be 1 to {MAX_ROWS}')
     return dict(source=body['source'], roots=[identity(schema, root) for root in roots],
-                follow_children=[dict(child=child, id=number) for child, number in sorted(selected)], row_limit=limit)
+                follow_children=[dict(child=child, id=number) for child, number in sorted(selected)],
+                row_limit=limit)
 
 
 def describe(version):

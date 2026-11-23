@@ -19,6 +19,10 @@
       "command": "python3 -m examples.walkthrough recipe"
     },
     {
+      "workflow_id": "recipe_triage",
+      "command": "python3 -m examples.triage_walkthrough"
+    },
+    {
       "workflow_id": "retire",
       "command": "python3 -m examples.walkthrough retire"
     },

@@ -30,6 +30,7 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 | 方法与路径 | 请求与结果 |
 | --- | --- |
 | `GET /sources/{alias}/catalog` | 读取表、列、关系、索引和模式摘要 |
+| `POST /recipe-check` | 只读核对整份草稿，逐项给出 `keep`/`correct`/`defer`，不保存配方 |
 | `POST /recipes/{name}/versions` | 登记 `source`、`roots`，以及可选的 `follow_children`、`row_limit` |
 | `GET /recipes/{name}/versions/{version}` | 读取版本及其投用状态 |
 | `POST /recipes/{name}/versions/{version}/retire` | 接收空对象并停用版本 |
@@ -42,11 +43,22 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 
 根记录中的键按目录的列顺序填写。整数为有符号 64 位 JSON 数字。字节用 `{"blob":"AAD/"}`，实数用 `{"real":"0x1.a000000000000p+1"}`，文本用 JSON 字符串。配方可以用不同拼写定位同一个 NOCASE 根，封存与追踪使用实存键。结果中的行去重，输入根出现项保留顺序。工作台近期列表显示最后登记的 50 个配方版本和最后封存的 50 次捕获，历史详情地址依然可访问。
 
+## 批量核对后再登记
+
+一次粘贴大批根时，先用 `POST /recipe-check`（或编辑页的「核对这批输入」按钮）在同一个读快照内逐项判定，服务不会写入任何状态：
+
+- `keep`：形状、类型和外键编号均被当前目录确认，且根行在该快照中存在；不同拼写命中同一行时返回实存键并标记 `respelled`。
+- `correct`：输入本身有误，可直接改写，例如复合主键少填分量、BLOB/real 编码不合法、根行不存在。
+- `defer`：依赖的表或外键编号不在当前目录（或提交的模式摘要已过期），暂时无法判定。
+
+`follow_children` 可带 `parent` 字段记录选边时看到的父表。源 DDL 重建后若同一外键编号改指其他父表，核对结果把该边列为 `defer`（`edge_reassigned`），正式登记也会拒绝整份配方。登记始终是全有或全无：只有全部条目通过当前真实模式校验才保存一个新版本，先前通过的片段不会被单独保存，也不会在这次失败后被误报为仍然有效。
+
 ## 复跑
 
 ```sh
 python3 -m compileall -q keelsplice examples
 python3 -m examples.walkthrough all
+python3 -m examples.triage_walkthrough
 python3 -m examples.browser_walkthrough
 ```
 

@@ -3,7 +3,7 @@
 import re
 import sqlite3
 
-from . import bundle, capture, catalog, recipe
+from . import bundle, capture, catalog, checks, recipe
 from .codec import Fault
 
 NAME = re.compile(r'[a-z][a-z0-9_-]{0,63}\Z')
@@ -16,6 +16,20 @@ class Workbench:
     def catalog(self, alias):
         with self.repository.source(alias) as conn:
             return catalog.snapshot(conn)
+
+    def check_recipe(self, body, *, expected_schema=None):
+        """Triage a whole draft against one read snapshot without saving it."""
+        recipe.fields(body, ('source', 'roots'), ('follow_children', 'row_limit', 'name'))
+        if 'name' in body and not NAME.fullmatch(body['name']):
+            raise Fault('invalid_name', 'Expected an ASCII recipe name')
+        with self.repository.source(body['source']) as conn:
+            disclosed = catalog.snapshot(conn)
+            if expected_schema is not None and expected_schema != disclosed['schema_digest']:
+                raise Fault('browser_schema', '目录已变化，请重新打开配方编辑页核对主键和外键。', 409)
+            report = checks.triage(conn, disclosed['schema'], body)
+        report['source'] = body['source']
+        report['schema_digest'] = disclosed['schema_digest']
+        return report
 
     def register(self, name, body, *, expected_schema=None):
         if not NAME.fullmatch(name):

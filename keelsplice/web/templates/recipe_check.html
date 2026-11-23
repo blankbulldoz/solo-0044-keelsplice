@@ -1,0 +1,17 @@
+<section class="triage" aria-live="polite">
+  <header class="pagehead"><div><h2>输入核对结果</h2>
+    <p role="alert" class="notice info $style">$headline</p></div>
+    <div class="triage-badges">$badges</div></header>
+  <h3>根记录</h3>
+  <div class="scroll"><table>
+    <thead><tr><th>输入序号</th><th>判定</th><th>输入</th><th>原因</th></tr></thead>
+    <tbody>$root_rows</tbody>
+  </table></div>
+  <h3>反向关系</h3>
+  <div class="scroll"><table>
+    <thead><tr><th>输入序号</th><th>判定</th><th>输入</th><th>原因</th></tr></thead>
+    <tbody>$edge_rows</tbody>
+  </table></div>
+  <h3>整体形状</h3>
+  $problems
+</section>

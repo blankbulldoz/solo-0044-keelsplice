@@ -52,7 +52,9 @@ def route(handler, path):
             source = field(query, 'source', next(iter(sorted(bench.repository.sources)), ''))
             status, body = selection.editor(bench, source)
         case 'POST', ['workbench', 'recipes', 'new']:
-            result = selection.register(bench, values)
+            action = field(values, 'action', 'register')
+            handler_fn = selection.check if action == 'check' else selection.register
+            result = handler_fn(bench, values)
             if isinstance(result, str):
                 return redirect(result)
             status, body = result

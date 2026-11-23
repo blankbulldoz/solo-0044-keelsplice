@@ -12,6 +12,7 @@ MESSAGES = {
     'invalid_value': '主键值须使用有效的 SQLite 类型编码。',
     'invalid_roots': '根记录须为包含 1 至 256 项的 JSON 数组。',
     'invalid_edge': '选中的外键已不在当前目录中。',
+    'edge_reassigned': '同编号外键在源 DDL 中已改指其他父表，请重新核对目录后再选择关系。',
     'invalid_edges': '最多可选 256 条反向关系。',
     'invalid_limit': '封存行上限须为 1 至 5,000 的整数。',
     'unknown_recipe': '配方版本不存在。',

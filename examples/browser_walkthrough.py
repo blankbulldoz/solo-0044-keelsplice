@@ -47,13 +47,26 @@ def run(base, source, root):
     editor_url = '/workbench/recipes/new'
     _, editor = html(base, editor_url)
     digest = re.search(r'name="digest" value="([0-9a-f]{64})"', editor)[1]
+    edge_token = re.search(r'name="edge" value="([^"]+)"', editor)[1]
+    assert edge_token == '0:assay:substrate', edge_token
     form = {'source': 'microscope', 'name': 'browser-swatch', 'digest': digest,
-            'row_limit': '20', 'edge': ['0:assay'],
+            'row_limit': '20', 'edge': [edge_token],
             'roots': '[{"table":"substrate","key":["east","MICA"]}]'}
     assert '目录已变化' in html(base, editor_url, form | {'digest': 'stale'}, expected=409)[1]
     assert '本机工作台' in html(base, editor_url, form, expected=403, origin='http://localhost:1')[1]
     _, error = html(base, editor_url, form | {'roots': 'bad'}, expected=400)
     assert '有效的 JSON' in error and 'browser-swatch' in error
+
+    # Batch triage keeps the good root, flags the truncated composite key and
+    # the malformed BLOB, and defers the unknown table — without saving anything.
+    batch_roots = ('[{"table":"substrate","key":["east","MICA"]},'
+                   '{"table":"substrate","key":["east"]},'
+                   '{"table":"substrate","key":["East",{"blob":"zzz"}]},'
+                   '{"table":"ghost_slide","key":[1]}]')
+    _, report = html(base, editor_url, form | {'roots': batch_roots, 'action': 'check'})
+    for label in ('可保留', '需纠正', '暂无法判', '输入核对结果', '未保存任何配方版本'):
+        assert label in report, label
+    assert 'ghost_slide' in report and 'invalid' not in report
     version, page = html(base, editor_url, form)
     assert version.endswith('/1') and '投用中' in page
     assert 'browser-swatch' in html(base, '/workbench/recipes')[1]
@@ -86,7 +99,23 @@ def run(base, source, root):
     with closing(sqlite3.connect(handoff)) as conn:
         assert conn.execute("SELECT length_um FROM assay WHERE mark='S-01'").fetchone() == (3.25,)
         assert conn.execute('PRAGMA foreign_key_check').fetchall() == []
-    print('浏览器端到端检查通过：目录、配方、试算、捕获、证据、对比、停用、构建、认证、下载')
+
+    # After the source DDL reassigns key 0, the old editor token still names
+    # substrate; the re-check defers and registration refuses the whole recipe.
+    from .triage_walkthrough import rebuild_source
+    rebuild_source(source)
+    _, reeditor = html(base, editor_url)
+    new_digest = re.search(r'name="digest" value="([0-9a-f]{64})"', reeditor)[1]
+    assert '0:assay:cassette' in reeditor
+    stale_form = {'source': 'microscope', 'name': 'browser-rebind', 'digest': new_digest,
+                  'row_limit': '20', 'edge': ['0:assay:substrate'],
+                  'roots': '[{"table":"cassette","key":[11]}]', 'action': 'check'}
+    _, rebind_report = html(base, editor_url, stale_form)
+    assert '暂无法判' in rebind_report and '改指其他父表' in rebind_report
+    _, refused = html(base, editor_url,
+                      {k: v for k, v in stale_form.items() if k != 'action'}, expected=422)
+    assert '同编号外键' in refused
+    print('浏览器端到端检查通过：目录、配方、批量核对、试算、捕获、证据、对比、停用、构建、认证、下载、改指拒绝')
 
 
 def main():

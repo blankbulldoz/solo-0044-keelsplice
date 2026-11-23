@@ -47,6 +47,11 @@ thead { color: var(--secondary); background: #edf1f5; }
 tbody tr:last-child > * { border-bottom: 0; }
 .empty, .muted { color: var(--secondary); }
 .editor-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+.triage { border: 1px solid var(--line); border-radius: 6px; padding: 16px 18px; margin: 18px 0; background: var(--paper); }
+.triage h2 { margin: 0 0 8px; }
+.triage h3 { margin: 16px 0 8px; }
+.triage-badges { display: flex; gap: 14px; align-items: center; white-space: nowrap; }
+.triage-badges strong { margin-left: 4px; }
 .data-list, .key-list { padding-left: 24px; overflow-wrap: anywhere; }
 .data-list li, .key-list li { margin-bottom: 6px; }
 .key-list span { color: var(--secondary); margin-left: 6px; }
