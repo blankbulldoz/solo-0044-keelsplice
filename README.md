@@ -19,7 +19,7 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 
 1. 在「关系目录」选源和表。主键顺序用于填写根，外键映射用于判断哪些子行需要反向纳入。
 2. 登记配方，填写一个或多个根及封存行上限。样例可填 `[{"table":"substrate","key":["east","MICA"]}]`，再选 `substrate → assay`。
-3. 试算查看逐表计数和实存根。点「封存当前样本」时服务重新读取源。配方绑定的模式有变化时，需要重新核对目录。
+3. 试算查看逐表计数和实存根。点「封存当前样本」时服务重新读取源。配方绑定的模式有变化时，需要重新核对目录。配方详情列出登记时用于反向纳入的每条边：子表、父表、列映射和外键编号。新版本在登记时一并保存这些映射；旧版本只存了子表和外键编号，页面仅在目录摘要仍与登记时一致时按同编号边补全，否则标注无法确认，不推测登记时的列。
 4. 在捕获详情按实存主键追踪。可从直接入选原因或必需父行继续查看相关记录。对比页面按实存带类型主键显示两个同模式捕获的新增、移除和修改。
 5. 构建后再认证。认证后可下载文件并用其 SHA-256 或独立 SQLite 连接核对。停用配方后，既有捕获仍可完成这些操作。
 
@@ -31,7 +31,7 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 | --- | --- |
 | `GET /sources/{alias}/catalog` | 读取表、列、关系、索引和模式摘要 |
 | `POST /recipes/{name}/versions` | 登记 `source`、`roots`，以及可选的 `follow_children`、`row_limit` |
-| `GET /recipes/{name}/versions/{version}` | 读取版本及其投用状态 |
+| `GET /recipes/{name}/versions/{version}` | 读取版本、投用状态及反向边登记的父表与列映射 |
 | `POST /recipes/{name}/versions/{version}/retire` | 接收空对象并停用版本 |
 | `POST /preview`、`POST /captures` | 接收 `{"name":"swatch","version":1}`，分别试算和封存 |
 | `GET /captures/{id}` | 读取捕获状态、实存根、计数和证书 |

@@ -30,6 +30,24 @@ class Workbench:
     def version(self, name, number):
         return recipe.describe(self.repository.version(name, number))
 
+    def version_detail(self, name, number):
+        """Read a version and explain its child edges from the best available basis."""
+        saved = self.version(name, number)
+        schema = unavailable = None
+        digest = None
+        try:
+            with self.repository.source(saved['recipe']['source']) as conn:
+                disclosed = catalog.snapshot(conn)
+        except Fault as exc:
+            unavailable = 'source_unregistered' if exc.code == 'unknown_source' else 'catalog_unavailable'
+        except sqlite3.Error:
+            unavailable = 'catalog_unavailable'
+        else:
+            schema, digest = disclosed['schema'], disclosed['schema_digest']
+        return saved | {'relations': recipe.relations(
+            saved['recipe'], schema=schema, digest=digest, binding=saved['schema_digest'],
+            unavailable=unavailable)}
+
     def retire(self, name, number):
         return recipe.describe(self.repository.retire(name, number))
 

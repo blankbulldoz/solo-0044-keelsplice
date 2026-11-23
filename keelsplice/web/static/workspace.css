@@ -62,3 +62,4 @@ tbody tr:last-child > * { border-bottom: 0; }
   .editor-grid { display: block; }
   th, td { padding: 8px; }
 }
+.basis-note { margin: 4px 0 0; font-size: 12px; }
