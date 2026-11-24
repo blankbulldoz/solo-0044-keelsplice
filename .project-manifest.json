@@ -45,6 +45,16 @@
       "id": "web",
       "path": "keelsplice/web",
       "responsibility": "服务端 HTML、类型化表单、目录、配方、追踪、对比及子库交接页面"
+    },
+    {
+      "id": "wal",
+      "path": "keelsplice/wal.py",
+      "responsibility": "SQLite WAL 头与帧校验、提交边界、读者镜像重建、写入方未提交尾部判定"
+    },
+    {
+      "id": "retention_verify",
+      "path": "keelsplice/retention_verify.py",
+      "responsibility": "不依赖 Keelsplice 的异地归档复跑，按字节与带类型值判定证据点"
     }
   ],
   "workflows": [
@@ -260,6 +270,28 @@
         "capture",
         "bundle",
         "codec"
+      ]
+    },
+    {
+      "id": "retention",
+      "name": "WAL 时间点取样归档",
+      "entry": "python3 -m examples.retention_archive <空目录>",
+      "success": "一个未提交写入与两个已提交更新各留独立捕获，主库字节共享、提交只在 WAL 中，归档自校验通过",
+      "failure": "写入方未提交值不得进入读者捕获；篡改 WAL、捕获或清单会被随附 verify.py 拒绝",
+      "verification": "python3 -m examples.retention_walkthrough",
+      "steps": [
+        "在后台写入方保持未提交事务时封存 P1，并保存写入方自己的快照",
+        "两次后台提交后分别封存 P2、P3，WAL 段只保留到最后提交帧",
+        "异地复制归档并运行 verify.py，确认可见值、生成列、父键与篡改拒绝"
+      ],
+      "module_ids": [
+        "wal",
+        "retention_verify",
+        "capture",
+        "service",
+        "storage",
+        "codec",
+        "catalog"
       ]
     }
   ],
