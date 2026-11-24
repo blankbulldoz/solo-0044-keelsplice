@@ -1,0 +1,9 @@
+# 登记配方 v2：根是显示同为 R1 / 7 的 INTEGER 行 ["R1",7]
+POST /workbench/recipes/new HTTP/1.1
+Host: 127.0.0.1:44167
+Origin: http://127.0.0.1:44167
+Content-Type: application/x-www-form-urlencoded
+
+source=twin&name=twin-page&digest=ac3693a04380ab4024ebff61188230ce16d1f0533acbcdc346629676a1f67bfa&row_limit=20&roots=%5B%7B%22table%22%3A%22vial%22%2C%22key%22%3A%5B%22R1%22%2C7%5D%7D%5D
+
+# 响应 200，最终地址 /workbench/recipes/twin-page/2

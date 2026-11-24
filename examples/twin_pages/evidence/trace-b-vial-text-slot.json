@@ -1,0 +1,18 @@
+{
+  "request": {
+    "body": {
+      "key": [
+        "R1",
+        "7"
+      ],
+      "table": "vial"
+    },
+    "method": "POST",
+    "path": "/captures/f2bd3eab6d44416f88a6b032859ca569/trace"
+  },
+  "response": {
+    "error": "row_not_captured",
+    "message": "Use the actual typed key stored in the capture"
+  },
+  "status": 404
+}

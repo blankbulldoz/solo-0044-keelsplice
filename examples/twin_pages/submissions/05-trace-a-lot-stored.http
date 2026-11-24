@@ -1,0 +1,9 @@
+# 用实存键 ["East","Mica"] 追踪捕获 A → 200，根序号 1 与 2
+POST /workbench/captures/bca74b2bc0cc4db69bea919c37d0484d/trace HTTP/1.1
+Host: 127.0.0.1:44167
+Origin: http://127.0.0.1:44167
+Content-Type: application/x-www-form-urlencoded
+
+table=lot&key=%5B%22East%22%2C%22Mica%22%5D
+
+# 响应 200，最终地址 /workbench/captures/bca74b2bc0cc4db69bea919c37d0484d/trace

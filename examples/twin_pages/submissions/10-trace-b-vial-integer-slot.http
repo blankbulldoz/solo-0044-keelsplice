@@ -1,0 +1,9 @@
+# 用整数键 ["R1",7] 追踪捕获 B → 200
+POST /workbench/captures/f2bd3eab6d44416f88a6b032859ca569/trace HTTP/1.1
+Host: 127.0.0.1:44167
+Origin: http://127.0.0.1:44167
+Content-Type: application/x-www-form-urlencoded
+
+table=vial&key=%5B%22R1%22%2C7%5D
+
+# 响应 200，最终地址 /workbench/captures/f2bd3eab6d44416f88a6b032859ca569/trace

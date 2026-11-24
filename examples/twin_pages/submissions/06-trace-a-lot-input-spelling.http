@@ -1,0 +1,9 @@
+# 用户照登记拼写 ["east","MICA"] 追踪捕获 A → 404（错误页①）
+POST /workbench/captures/bca74b2bc0cc4db69bea919c37d0484d/trace HTTP/1.1
+Host: 127.0.0.1:44167
+Origin: http://127.0.0.1:44167
+Content-Type: application/x-www-form-urlencoded
+
+table=lot&key=%5B%22east%22%2C%22MICA%22%5D
+
+# 响应 404，最终地址 /workbench/captures/bca74b2bc0cc4db69bea919c37d0484d/trace

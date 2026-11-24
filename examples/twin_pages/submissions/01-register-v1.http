@@ -1,0 +1,9 @@
+# 登记配方 v1：两个根 ["east","MICA"] 与 ["EAST","mica"] 是同一实存行的两种输入拼写
+POST /workbench/recipes/new HTTP/1.1
+Host: 127.0.0.1:44167
+Origin: http://127.0.0.1:44167
+Content-Type: application/x-www-form-urlencoded
+
+source=twin&name=twin-page&digest=ac3693a04380ab4024ebff61188230ce16d1f0533acbcdc346629676a1f67bfa&row_limit=20&edge=0%3Avial&roots=%5B%7B%22table%22%3A%22lot%22%2C%22key%22%3A%5B%22east%22%2C%22MICA%22%5D%7D%2C%7B%22table%22%3A%22lot%22%2C%22key%22%3A%5B%22EAST%22%2C%22mica%22%5D%7D%5D
+
+# 响应 200，最终地址 /workbench/recipes/twin-page/1

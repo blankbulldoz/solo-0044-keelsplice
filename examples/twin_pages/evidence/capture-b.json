@@ -1,0 +1,33 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/captures/f2bd3eab6d44416f88a6b032859ca569"
+  },
+  "response": {
+    "certificate": null,
+    "id": "f2bd3eab6d44416f88a6b032859ca569",
+    "name": "twin-page",
+    "roots": [
+      [
+        "vial",
+        [
+          "R1",
+          7
+        ]
+      ]
+    ],
+    "schema_digest": "ac3693a04380ab4024ebff61188230ce16d1f0533acbcdc346629676a1f67bfa",
+    "state": "sealed",
+    "summary": {
+      "counts": {
+        "lot": 0,
+        "vial": 1
+      },
+      "root_occurrences": 1,
+      "rows": 1,
+      "witnesses": 0
+    },
+    "version": 2
+  },
+  "status": 200
+}

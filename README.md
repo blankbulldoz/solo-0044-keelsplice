@@ -42,12 +42,17 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 
 根记录中的键按目录的列顺序填写。整数为有符号 64 位 JSON 数字。字节用 `{"blob":"AAD/"}`，实数用 `{"real":"0x1.a000000000000p+1"}`，文本用 JSON 字符串。配方可以用不同拼写定位同一个 NOCASE 根，封存与追踪使用实存键。结果中的行去重，输入根出现项保留顺序。工作台近期列表显示最后登记的 50 个配方版本和最后封存的 50 次捕获，历史详情地址依然可访问。
 
+## 支持诊断样例
+
+`examples/twin_pages.sql` 布置了同一显示数字的 TEXT 与 INTEGER、同一 NOCASE 实存记录的两种输入拼写，以及不含该行的另一次捕获。`python3 -m examples.twin_pages` 通过浏览器表单复现三张字节一致的 404 错误页并自检。`examples/twin_pages/` 留有实跑的浏览器提交、错误页与持久证据；`examples/twin_pages/DIAGNOSIS.md` 说明何时仅凭粘贴的文本必然无法判断来源，以及增加哪项现实观察能把可能隔开。
+
 ## 复跑
 
 ```sh
 python3 -m compileall -q keelsplice examples
 python3 -m examples.walkthrough all
 python3 -m examples.browser_walkthrough
+python3 -m examples.twin_pages
 ```
 
-两份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。独立自动化测试套件延后。
+两份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。诊断样例同样使用临时库，并核对仓库内已录的错误页。独立自动化测试套件延后。

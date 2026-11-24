@@ -1,0 +1,27 @@
+{
+  "lot": [
+    {
+      "code_literal": "'Mica'",
+      "region_literal": "'East'"
+    }
+  ],
+  "observation": "对源库执行 quote()/typeof()，把显示出的 7 与存储类分开",
+  "queries": [
+    "SELECT rack, quote(slot), typeof(slot), fill FROM vial ORDER BY typeof(slot)",
+    "SELECT quote(region), quote(code) FROM lot"
+  ],
+  "vial": [
+    {
+      "fill": "oil",
+      "rack": "R1",
+      "slot_literal": "7",
+      "slot_type": "integer"
+    },
+    {
+      "fill": "brine",
+      "rack": "R1",
+      "slot_literal": "'7'",
+      "slot_type": "text"
+    }
+  ]
+}

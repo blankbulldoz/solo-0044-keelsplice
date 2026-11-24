@@ -1,0 +1,40 @@
+{
+  "request": {
+    "method": "GET",
+    "path": "/captures/bca74b2bc0cc4db69bea919c37d0484d"
+  },
+  "response": {
+    "certificate": null,
+    "id": "bca74b2bc0cc4db69bea919c37d0484d",
+    "name": "twin-page",
+    "roots": [
+      [
+        "lot",
+        [
+          "East",
+          "Mica"
+        ]
+      ],
+      [
+        "lot",
+        [
+          "East",
+          "Mica"
+        ]
+      ]
+    ],
+    "schema_digest": "ac3693a04380ab4024ebff61188230ce16d1f0533acbcdc346629676a1f67bfa",
+    "state": "sealed",
+    "summary": {
+      "counts": {
+        "lot": 1,
+        "vial": 1
+      },
+      "root_occurrences": 2,
+      "rows": 2,
+      "witnesses": 2
+    },
+    "version": 1
+  },
+  "status": 200
+}

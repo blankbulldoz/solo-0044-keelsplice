@@ -1,0 +1,28 @@
+{
+  "request": {
+    "body": {
+      "key": [
+        "R1",
+        7
+      ],
+      "table": "vial"
+    },
+    "method": "POST",
+    "path": "/captures/f2bd3eab6d44416f88a6b032859ca569/trace"
+  },
+  "response": {
+    "causes": [],
+    "dependencies": [],
+    "roots": [
+      0
+    ],
+    "row": [
+      "vial",
+      [
+        "R1",
+        7
+      ]
+    ]
+  },
+  "status": 200
+}

@@ -1,0 +1,229 @@
+{
+  "capture": "bca74b2bc0cc4db69bea919c37d0484d",
+  "observation": "状态库 captures 表中持久保存的封存记录（sealed 列原样内容）",
+  "sealed": {
+    "recipe": {
+      "follow_children": [
+        {
+          "child": "vial",
+          "id": 0
+        }
+      ],
+      "roots": [
+        {
+          "key": [
+            "east",
+            "MICA"
+          ],
+          "table": "lot"
+        },
+        {
+          "key": [
+            "EAST",
+            "mica"
+          ],
+          "table": "lot"
+        }
+      ],
+      "row_limit": 20,
+      "source": "twin"
+    },
+    "result": {
+      "arcs": [
+        {
+          "direction": "child",
+          "edge": [
+            "vial",
+            0
+          ],
+          "origin": [
+            "lot",
+            [
+              "East",
+              "Mica"
+            ]
+          ],
+          "target": [
+            "vial",
+            [
+              "R1",
+              "7"
+            ]
+          ]
+        },
+        {
+          "direction": "parent",
+          "edge": [
+            "vial",
+            0
+          ],
+          "origin": [
+            "vial",
+            [
+              "R1",
+              "7"
+            ]
+          ],
+          "target": [
+            "lot",
+            [
+              "East",
+              "Mica"
+            ]
+          ]
+        }
+      ],
+      "roots": [
+        [
+          "lot",
+          [
+            "East",
+            "Mica"
+          ]
+        ],
+        [
+          "lot",
+          [
+            "East",
+            "Mica"
+          ]
+        ]
+      ],
+      "rows": {
+        "lot": {
+          "[\"East\",\"Mica\"]": [
+            "East",
+            "Mica",
+            "kept"
+          ]
+        },
+        "vial": {
+          "[\"R1\",\"7\"]": [
+            "R1",
+            "7",
+            "brine",
+            "East",
+            "Mica"
+          ]
+        }
+      }
+    },
+    "schema": {
+      "edges": [
+        {
+          "child": "vial",
+          "child_cols": [
+            "region",
+            "code"
+          ],
+          "id": 0,
+          "on_delete": "NO ACTION",
+          "on_update": "NO ACTION",
+          "parent": "lot",
+          "parent_cols": [
+            "region",
+            "code"
+          ]
+        }
+      ],
+      "indexes": [],
+      "tables": {
+        "lot": {
+          "columns": [
+            {
+              "cid": 0,
+              "dflt_value": null,
+              "hidden": 0,
+              "name": "region",
+              "notnull": 1,
+              "pk": 1,
+              "type": "TEXT"
+            },
+            {
+              "cid": 1,
+              "dflt_value": null,
+              "hidden": 0,
+              "name": "code",
+              "notnull": 1,
+              "pk": 2,
+              "type": "TEXT"
+            },
+            {
+              "cid": 2,
+              "dflt_value": null,
+              "hidden": 0,
+              "name": "note",
+              "notnull": 1,
+              "pk": 0,
+              "type": "TEXT"
+            }
+          ],
+          "ddl": "CREATE TABLE lot (\n    region TEXT COLLATE NOCASE NOT NULL,\n    code TEXT COLLATE NOCASE NOT NULL,\n    note TEXT NOT NULL,\n    PRIMARY KEY (region, code)\n) WITHOUT ROWID",
+          "pk": [
+            "region",
+            "code"
+          ],
+          "strict": false,
+          "without_rowid": true
+        },
+        "vial": {
+          "columns": [
+            {
+              "cid": 0,
+              "dflt_value": null,
+              "hidden": 0,
+              "name": "rack",
+              "notnull": 1,
+              "pk": 1,
+              "type": "TEXT"
+            },
+            {
+              "cid": 1,
+              "dflt_value": null,
+              "hidden": 0,
+              "name": "slot",
+              "notnull": 1,
+              "pk": 2,
+              "type": ""
+            },
+            {
+              "cid": 2,
+              "dflt_value": null,
+              "hidden": 0,
+              "name": "fill",
+              "notnull": 1,
+              "pk": 0,
+              "type": "TEXT"
+            },
+            {
+              "cid": 3,
+              "dflt_value": null,
+              "hidden": 0,
+              "name": "region",
+              "notnull": 0,
+              "pk": 0,
+              "type": "TEXT"
+            },
+            {
+              "cid": 4,
+              "dflt_value": null,
+              "hidden": 0,
+              "name": "code",
+              "notnull": 0,
+              "pk": 0,
+              "type": "TEXT"
+            }
+          ],
+          "ddl": "CREATE TABLE vial (\n    rack TEXT COLLATE NOCASE NOT NULL,\n    slot NOT NULL,\n    fill TEXT NOT NULL,\n    region TEXT,\n    code TEXT,\n    PRIMARY KEY (rack, slot),\n    FOREIGN KEY (region, code) REFERENCES lot\n)",
+          "pk": [
+            "rack",
+            "slot"
+          ],
+          "strict": false,
+          "without_rowid": false
+        }
+      }
+    },
+    "schema_digest": "ac3693a04380ab4024ebff61188230ce16d1f0533acbcdc346629676a1f67bfa"
+  }
+}

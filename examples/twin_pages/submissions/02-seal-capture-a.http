@@ -1,0 +1,9 @@
+# 封存捕获 A：收入 lot('East','Mica') 与 TEXT 行 vial('R1','7')
+POST /workbench/recipes/twin-page/1/capture HTTP/1.1
+Host: 127.0.0.1:44167
+Origin: http://127.0.0.1:44167
+Content-Type: application/x-www-form-urlencoded
+
+
+
+# 响应 200，最终地址 /workbench/captures/bca74b2bc0cc4db69bea919c37d0484d

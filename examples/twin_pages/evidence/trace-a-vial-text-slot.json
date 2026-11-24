@@ -1,0 +1,70 @@
+{
+  "request": {
+    "body": {
+      "key": [
+        "R1",
+        "7"
+      ],
+      "table": "vial"
+    },
+    "method": "POST",
+    "path": "/captures/bca74b2bc0cc4db69bea919c37d0484d/trace"
+  },
+  "response": {
+    "causes": [
+      {
+        "direction": "child",
+        "edge": [
+          "vial",
+          0
+        ],
+        "origin": [
+          "lot",
+          [
+            "East",
+            "Mica"
+          ]
+        ],
+        "target": [
+          "vial",
+          [
+            "R1",
+            "7"
+          ]
+        ]
+      }
+    ],
+    "dependencies": [
+      {
+        "direction": "parent",
+        "edge": [
+          "vial",
+          0
+        ],
+        "origin": [
+          "vial",
+          [
+            "R1",
+            "7"
+          ]
+        ],
+        "target": [
+          "lot",
+          [
+            "East",
+            "Mica"
+          ]
+        ]
+      }
+    ],
+    "roots": [],
+    "row": [
+      "vial",
+      [
+        "R1",
+        "7"
+      ]
+    ]
+  },
+  "status": 200
+}

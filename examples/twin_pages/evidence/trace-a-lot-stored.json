@@ -1,0 +1,51 @@
+{
+  "request": {
+    "body": {
+      "key": [
+        "East",
+        "Mica"
+      ],
+      "table": "lot"
+    },
+    "method": "POST",
+    "path": "/captures/bca74b2bc0cc4db69bea919c37d0484d/trace"
+  },
+  "response": {
+    "causes": [
+      {
+        "direction": "parent",
+        "edge": [
+          "vial",
+          0
+        ],
+        "origin": [
+          "vial",
+          [
+            "R1",
+            "7"
+          ]
+        ],
+        "target": [
+          "lot",
+          [
+            "East",
+            "Mica"
+          ]
+        ]
+      }
+    ],
+    "dependencies": [],
+    "roots": [
+      0,
+      1
+    ],
+    "row": [
+      "lot",
+      [
+        "East",
+        "Mica"
+      ]
+    ]
+  },
+  "status": 200
+}
