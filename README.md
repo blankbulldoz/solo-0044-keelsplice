@@ -48,6 +48,7 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 python3 -m compileall -q keelsplice examples
 python3 -m examples.walkthrough all
 python3 -m examples.browser_walkthrough
+python3 -m examples.cross_entry_verification
 ```
 
-两份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。独立自动化测试套件延后。
+两份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。跨入口验证从工作台登记含 NOCASE 复合键、重复根和大整数键的配方，在试算与封存之间安排一次合法源更新，并独立核对根出现项、实际 SQLite 类型与两次读取的先后关系；页面文字相同而封存或下载内容错误时同样失败。独立自动化测试套件延后。
