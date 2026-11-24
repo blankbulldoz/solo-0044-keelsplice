@@ -48,6 +48,7 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 python3 -m compileall -q keelsplice examples
 python3 -m examples.walkthrough all
 python3 -m examples.browser_walkthrough
+python3 -m examples.history_context_drill
 ```
 
-两份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。独立自动化测试套件延后。
+两份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。历史上下文演练注入一次结构漂移和一次数据变化，复核两种历史上下文保存位置的恢复证据，结论见 `docs/decisions/2026-11-24-history-context-placement.md`。独立自动化测试套件延后。
