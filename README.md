@@ -15,6 +15,36 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 
 浏览器打开 <http://127.0.0.1:8794/workbench>。同一进程可用多个 `--source 别名=文件` 注册不同源库。工作台仅用于受信任的本机操作人员，服务监听回环地址。源文件必须与状态库分开，状态库所在目录须可写。
 
+## 前置 HTTPS 代理
+
+桌面上需要 HTTPS 地址时，让本机 TLS 前置代理终止 TLS，后端仍只监听回环端口。一键启动（首次会生成根证书和服务器证书）：
+
+```sh
+python3 -m examples.run_proxy \
+  --repository keelsplice-local/state.sqlite \
+  --source microscope=keelsplice-local/microscope.sqlite \
+  --public-origin https://localhost:8443 --port 8443
+```
+
+浏览器须先登记复合根 `keelsplice-local/tls/keelsplice-ca.pem`（系统或浏览器信任库，仅本机）。然后在 <https://localhost:8443/workbench> 走完试算、封存、构建、认证和下载。原 JSON 客户端继续用 `http://127.0.0.1:8794`，接口不变。
+
+也可以分两个进程复跑：
+
+```sh
+export KEELSPLICE_PROXY_TOKEN=$(python3 -c 'import secrets;print(secrets.token_hex(24))')
+python3 -m keelsplice --repository keelsplice-local/state.sqlite \
+  --source microscope=keelsplice-local/microscope.sqlite --port 8794 \
+  --public-origin https://localhost:8443
+python3 -m examples.tls_proxy --port 8443 --backend http://127.0.0.1:8794 \
+  --public-origin https://localhost:8443 \
+  --certificate keelsplice-local/tls/keelsplice-server.pem \
+  --key keelsplice-local/tls/keelsplice-server.key
+```
+
+后端只接受两种传输：直接回环请求，或带有共享令牌且 `X-Forwarded-Proto` 为 `https`、`X-Forwarded-Host` 命中已登记公开来源的代理请求。其他带转发头的请求整页拒绝，不会按回环身份处理。页面顶栏标明当前请求的传输入口（「本机回环」/「HTTPS · 前置代理」），用于区分表单身份与代理位置。表单仍要求 `Origin` 与当前入口一致。
+
+令牌仅在本机进程间共享，请通过环境变量传入；`examples/run_proxy.py` 会在缺省时生成临时令牌，重启该脚本需要沿用同一令牌时自行导出同一变量。
+
 ## 从配方到交付
 
 1. 在「关系目录」选源和表。主键顺序用于填写根，外键映射用于判断哪些子行需要反向纳入。
@@ -48,6 +78,7 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 python3 -m compileall -q keelsplice examples
 python3 -m examples.walkthrough all
 python3 -m examples.browser_walkthrough
+python3 -m examples.https_drill
 ```
 
-两份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。独立自动化测试套件延后。
+三份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。`https_drill` 额外使用临时自签根与两个临时端口复跑代理链路：HTTPS 页面表单身份、代理位置（含伪造转发头被拒）、停用代理再恢复后状态库中的既有捕获仍可读取，以及下载字节与 certificate 摘要一致。独立自动化测试套件延后。

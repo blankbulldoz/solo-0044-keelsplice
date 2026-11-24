@@ -10,6 +10,7 @@ from .codec import Fault, dumps
 from .recipe import fields
 from .service import Workbench
 from .storage import Repository
+from .web import access
 from .web import http as web
 
 MAX_REQUEST_BYTES = 256 * 1024
@@ -17,8 +18,9 @@ VERSION = re.compile('[1-9][0-9]{0,18}')
 
 
 class FixtureHTTPServer(ThreadingHTTPServer):
-    def __init__(self, address, workbench):
+    def __init__(self, address, workbench, policy):
         self.workbench = workbench
+        self.policy = policy
         super().__init__(address, RequestHandler)
 
 
@@ -116,5 +118,6 @@ class RequestHandler(BaseHTTPRequestHandler):
     do_POST = handle_request
 
 
-def create_server(address, repo, sources):
-    return FixtureHTTPServer(address, Workbench(Repository(repo, sources)))
+def create_server(address, repo, sources, *, public_origins=(), proxy_token=''):
+    return FixtureHTTPServer(address, Workbench(Repository(repo, sources)),
+                             access.make_policy(public_origins, proxy_token))

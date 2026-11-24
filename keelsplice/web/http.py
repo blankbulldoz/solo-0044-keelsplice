@@ -4,20 +4,17 @@ import re
 import sqlite3
 from urllib.parse import urlsplit
 
-from . import assets, captures, comparison, directory, evidence, preview, selection, versions
+from . import access, assets, captures, comparison, directory, evidence, preview, selection, versions
 from .errors import invalid_route, message
 from .forms import MAX_BYTES, decode_form, field, version
-from .render import page, segment, text
+from .render import TRANSPORT, page, segment, text
 from ..codec import Fault
 
 LOOPBACK_HOST = re.compile(r'(?:127\.0\.0\.1|localhost)(?::[0-9]{1,5})?\Z')
 
 
 def form(handler):
-    host = handler.headers.get('Host', '')
-    origin = handler.headers.get('Origin')
-    if not LOOPBACK_HOST.fullmatch(host) or origin != 'http://' + host:
-        raise Fault('browser_origin', '请从本机工作台提交此表单。', 403)
+    access.require_form(handler.headers, handler.server.policy)
     length = handler.headers.get('Content-Length', '')
     if not re.fullmatch('[0-9]{1,8}', length):
         raise Fault('browser_form', '表单长度无效。', 400)
@@ -99,8 +96,13 @@ def route(handler, path):
 
 
 def handle(handler):
+    kind = access.classify(handler.headers, handler.server.policy)
+    token = TRANSPORT.set(kind)
     try:
-        status, body, kind, headers = route(handler, urlsplit(handler.path))
+        if kind == 'untrusted':
+            raise Fault('browser_origin',
+                        '请求声称经过代理转发，但没有来自已登记代理的有效凭据。', 403)
+        status, body, content_type, headers = route(handler, urlsplit(handler.path))
     except (Fault, sqlite3.Error, ValueError, UnicodeError) as exc:
         if isinstance(exc, sqlite3.Error):
             busy = getattr(exc, 'sqlite_errorcode', 0) & 255 in (sqlite3.SQLITE_BUSY, sqlite3.SQLITE_LOCKED)
@@ -109,10 +111,12 @@ def handle(handler):
             exc = Fault('browser_form', '请求格式无效。', 400)
         status = exc.status
         body = page('操作未完成', '', 'error', error=text(message(exc)), status=status)
-        kind, headers = 'text/html; charset=utf-8', {}
+        content_type, headers = 'text/html; charset=utf-8', {}
+    finally:
+        TRANSPORT.reset(token)
     try:
         handler.send_response(status)
-        handler.send_header('Content-Type', kind)
+        handler.send_header('Content-Type', content_type)
         handler.send_header('Content-Length', str(len(body)))
         handler.send_header('Cache-Control', 'no-store')
         handler.send_header('X-Content-Type-Options', 'nosniff')

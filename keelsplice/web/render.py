@@ -1,5 +1,6 @@
 """Render trusted templates with explicit text and URL escaping."""
 
+from contextvars import ContextVar
 from functools import lru_cache
 from html import escape
 from pathlib import Path
@@ -7,6 +8,9 @@ from string import Template
 from urllib.parse import quote, urlencode
 
 from ..codec import dumps
+
+TRANSPORT = ContextVar('keelsplice_transport', default='loopback')
+TRANSPORT_LABELS = {'loopback': '本机回环', 'https-proxy': 'HTTPS · 前置代理'}
 
 DIRECTORY = Path(__file__).parent
 NAVIGATION = (
@@ -60,5 +64,8 @@ def page(title, section, content, **fields):
         '<a href="{}"{}>{}</a>'.format(path, ' aria-current="page"' if key == section else '', label)
         for key, label, path in NAVIGATION
     )
+    transport = TRANSPORT.get()
     return template('layout', title=text(title), navigation=navigation,
+                    transport=text(TRANSPORT_LABELS.get(transport, transport)),
+                    transport_kind=text(transport),
                     main=template(content, **fields)).encode('utf-8')
