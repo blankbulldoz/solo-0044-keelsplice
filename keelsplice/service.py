@@ -70,11 +70,13 @@ class Workbench:
         return capture.trace(self.repository.load_capture(capture_id)['sealed'], body)
 
     def compare(self, body):
-        recipe.fields(body, ('left', 'right'))
+        recipe.fields(body, ('left', 'right'), ('table', 'start', 'after', 'limit'))
         if any(not isinstance(body[k], str) for k in ('left', 'right')):
             raise Fault('invalid_capture', 'Supply two capture identifiers')
         left, right = (self.repository.load_capture(body[k])['sealed'] for k in ('left', 'right'))
-        return {'left': body['left'], 'right': body['right'], 'changes': capture.compare(left, right)}
+        return {'left': body['left'], 'right': body['right']} | capture.compare(
+            left, right, table=body.get('table'), start=body.get('start'),
+            after=body.get('after'), limit=body.get('limit', capture.DEFAULT_PAGE))
 
     def build(self, capture_id):
         record = self.repository.load_capture(capture_id)

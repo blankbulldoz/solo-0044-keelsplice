@@ -3,8 +3,12 @@
   <form class="compare-form" method="post" action="/workbench/compare">
     <label>基准捕获<select name="left" required>$left</select></label>
     <label>对照捕获<select name="right" required>$right</select></label>
+    <label>只看表（可选）<input name="table" value="$table" placeholder="留空核全部表"></label>
+    <label>从实存主键开始（JSON，可选）<input name="start" value="$start" placeholder='{"table":"substrate","key":["West","Basalt"]}'></label>
+    <label>每页差异<input name="limit" value="$limit" inputmode="numeric"></label>
     <button class="primary">运行对比</button>
   </form>
+  <p class="empty">差异按封存表定义的主键亲和性、排序规则与方向排列；每次续看都从上一页最后核对的主键之后继续。</p>
   $error
   $result
 </div>

@@ -2,6 +2,7 @@
 
 import argparse
 import hashlib
+import html as htmllib
 import re
 import sqlite3
 from contextlib import closing
@@ -71,10 +72,36 @@ def run(base, source, root):
 
     with closing(sqlite3.connect(source)) as conn, conn:
         conn.execute("UPDATE assay SET length_um=7 WHERE mark='S-01'")
+        conn.execute("DELETE FROM assay WHERE mark='S-02'")
+        conn.execute("INSERT INTO cassette VALUES (2, NULL, 'two')")
+        conn.execute("INSERT INTO assay (mark, region, code, cassette, length_um) "
+                     "VALUES ('S-05', 'east', 'mica', 2, 1.5)")
+        conn.execute("UPDATE substrate SET texture=x'ff00' WHERE region='East' AND code='Mica'")
     second, _ = html(base, version + '/capture', {})
     args = {'left': first.rsplit('/', 1)[1], 'right': second.rsplit('/', 1)[1]}
-    _, compare = html(base, '/workbench/compare', args)
-    assert 'S-01' in compare and '修改' in compare
+    _, compare = html(base, '/workbench/compare', args | {'limit': '20'})
+    assert 'S-01' in compare and 'S-05' in compare and '修改' in compare and '新增' in compare and '移除' in compare
+    assert 'NOCASE' in compare and '主键顺序' in compare
+    _, paged = html(base, '/workbench/compare', args | {'limit': '2'})
+    body = paged.split('行差异', 1)[1]
+    assert body.count('<th scope="row">') == 2 and 'S-01' in body and 'S-02' in body
+    resume = htmllib.unescape(re.search(r'name="after" value="([^"]+)"', paged)[1])
+    _, resumed = html(base, '/workbench/compare', args | {'limit': '20', 'after': resume})
+    body = resumed.split('行差异', 1)[1]
+    assert '已核到这个键区间的末尾' in resumed and 'S-05' in body and '[2]' in body
+    assert 'S-01' not in body.split('</table>', 1)[0]
+    _, from_key = html(base, '/workbench/compare',
+                       args | {'limit': '20', 'start': '{"table":"cassette","key":[2]}'})
+    body = from_key.split('行差异', 1)[1]
+    assert '[2]' in body and 'East' in body and 'S-01' not in body
+    assert '续看键' in html(base, '/workbench/compare', args | {'after': 'not json'}, expected=400)[1]
+    assert '续看键' in html(base, '/workbench/compare',
+                           args | {'after': '{"table":"cassette","key":[999]}'}, expected=422)[1]
+    assert '没有可核对的差异' in html(
+        base, '/workbench/compare', args | {'table': 'frame'}, expected=409)[1]
+    _, evidence = html(base, first + '/trace', {'table': 'substrate', 'key': '["East","Mica"]'})
+    assert '直接入选原因' in evidence and 'S-01' in evidence
+    assert '需先认证' in html(base, first + '/database', expected=409)[1]
     assert '已停用' in html(base, version + '/retire', {})[1]
     assert '已停止投用' in html(base, version + '/capture', {}, expected=409)[1]
     assert '已构建' in html(base, first + '/build', {})[1]

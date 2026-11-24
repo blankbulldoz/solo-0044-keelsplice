@@ -113,12 +113,50 @@ def walkthrough(base, selected, source, root):
     diff = request('/compare', {'left': cap['id'], 'right': newer['id']})
     assert diff['changes']['assay'] == {'added': [], 'removed': [], 'modified': [['S-01']]}
     with closing(sqlite3.connect(source)) as conn, conn:
+        conn.executescript("""
+            INSERT INTO cassette VALUES (2, NULL, 'two');
+            INSERT INTO cassette VALUES (10, NULL, 'ten');
+            UPDATE assay SET length_um=6.5, cassette=2 WHERE mark='S-01';
+            DELETE FROM assay WHERE mark='S-02';
+            INSERT INTO assay (mark, region, code, cassette, length_um) VALUES ('S-05','East','mica',10,1.0);
+            UPDATE substrate SET texture=x'00' WHERE region='East' AND code='Mica';
+        """)
+    later = request('/captures', lookup, 201)
+    sweep = request('/compare', {'left': cap['id'], 'right': later['id']})
+    assert [(item['table'], item['change'], item['key']) for item in sweep['page']['items']] == [
+        ('assay', 'modified', ['S-01']), ('assay', 'removed', ['S-02']), ('assay', 'added', ['S-05']),
+        ('cassette', 'added', [2]), ('cassette', 'added', [10]),
+        ('cassette', 'removed', [11]), ('cassette', 'removed', [12]),
+        ('substrate', 'modified', ['East', 'Mica'])]
+    first = request('/compare', {'left': cap['id'], 'right': later['id'],
+                                 'start': {'table': 'cassette', 'key': [11]}, 'limit': 2})
+    assert [item['key'] for item in first['page']['items']] == [[11], [12]]
+    resumed = request('/compare', {'left': cap['id'], 'right': later['id'], 'limit': 3,
+                                   'after': {'table': 'assay', 'key': ['S-02']}})
+    assert [(item['table'], item['key']) for item in resumed['page']['items']] == [
+        ('assay', ['S-05']), ('cassette', [2]), ('cassette', [10])]
+    again = request('/compare', {'left': cap['id'], 'right': later['id'], 'limit': 3,
+                                 'table': 'cassette', 'after': {'table': 'cassette', 'key': [10]}})
+    assert [item['key'] for item in again['page']['items']] == [[11], [12]]
+    numeric = request('/compare', {'left': cap['id'], 'right': later['id'], 'table': 'cassette'})
+    assert [item['key'] for item in numeric['page']['items']] == [[2], [10], [11], [12]]
+    assert request(endpoint + '/trace', {'table': 'assay', 'key': ['S-02']})['roots'] == []
+    assert request('/captures/' + later['id'] + '/trace', {'table': 'assay', 'key': ['S-05']})['roots'] == []
+    assert request('/captures/' + later['id'] + '/trace', {'table': 'assay', 'key': ['S-02']},
+                   status=404)['error'] == 'row_not_captured'
+    assert request(endpoint + '/trace', {'table': 'assay', 'key': ['S-05']},
+                   status=404)['error'] == 'row_not_captured'
+    with closing(sqlite3.connect(source)) as conn, conn:
+        conn.execute("UPDATE cassette SET label='moved on' WHERE serial=10")
+        conn.execute("INSERT INTO cassette VALUES (99, NULL, 'later')")
+    assert request('/compare', {'left': cap['id'], 'right': later['id']}) == sweep
+    with closing(sqlite3.connect(source)) as conn, conn:
         conn.execute('ALTER TABLE frame ADD COLUMN caption TEXT')
     assert request('/captures', lookup, 409)['error'] == 'schema_conflict'
     request('/recipes/swatch/versions', body, 201)
     changed = request('/captures', lookup | {'version': 3}, 201)
     assert request('/compare', {'left': cap['id'], 'right': changed['id']}, 409)['error'] == 'schema_conflict'
-    if observe('compare', diff['changes']):
+    if observe('compare', sweep['changes']):
         return
 
     data, etag = request(endpoint + '/database')

@@ -17,6 +17,24 @@ def resolve(names, value):
     raise Fault('unknown_identifier', f'Unknown table or column: {value!r}')
 
 
+def pk_order(conn, name, pk):
+    """Read the effective SQLite ordering of a primary key from its PK index."""
+    position = {column: index for index, column in enumerate(pk)}
+    default = [dict(column=column, collation='BINARY', descending=False) for column in pk]
+    index = next((row for row in conn.execute(f'PRAGMA main.index_list({quote(name)})')
+                  if row['origin'] == 'pk'), None)
+    if index is None:
+        return default
+    found = {}
+    for part in conn.execute(f'PRAGMA main.index_xinfo({quote(index["name"])})'):
+        if part['key'] and part['name'] in position:
+            found[part['name']] = part
+    if len(found) != len(pk):
+        return default
+    return [dict(column=part['name'], collation=part['coll'] or 'BINARY', descending=bool(part['desc']))
+            for part in sorted(found.values(), key=lambda item: item['seqno'])]
+
+
 def inspect(conn):
     tables = {}
     listings = conn.execute('PRAGMA main.table_list').fetchall()
@@ -31,7 +49,8 @@ def inspect(conn):
         if not pk:
             raise Fault('unsupported_schema', f'Table {name} needs a declared primary key')
         ddl = conn.execute('SELECT sql FROM main.sqlite_schema WHERE type=? AND name=?', ('table', name)).fetchone()[0]
-        tables[name] = dict(ddl=ddl, columns=columns, pk=pk, without_rowid=bool(entry['wr']), strict=bool(entry['strict']))
+        tables[name] = dict(ddl=ddl, columns=columns, pk=pk, key_order=pk_order(conn, name, pk),
+                            without_rowid=bool(entry['wr']), strict=bool(entry['strict']))
     if not tables:
         raise Fault('unsupported_schema', 'No ordinary tables found')
     edges = []
@@ -55,6 +74,14 @@ def inspect(conn):
     return {'tables': tables, 'edges': edges, 'indexes': indexes}
 
 
+def schema_digest(schema):
+    """Hash the declared schema, leaving out the derived primary-key ordering."""
+    declared = {'tables': {name: {key: value for key, value in table.items() if key != 'key_order'}
+                           for name, table in schema['tables'].items()},
+                'edges': schema['edges'], 'indexes': schema['indexes']}
+    return fingerprint(declared)
+
+
 def snapshot(conn):
     schema = inspect(conn)
-    return {'schema': schema, 'schema_digest': fingerprint(schema)}
+    return {'schema': schema, 'schema_digest': schema_digest(schema)}

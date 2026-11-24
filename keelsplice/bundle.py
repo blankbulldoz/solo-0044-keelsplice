@@ -5,7 +5,7 @@ from contextlib import closing
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from .catalog import inspect
+from .catalog import inspect, schema_digest
 from .codec import Fault, decode, digest, fingerprint, key, quote, row_values
 
 
@@ -55,7 +55,7 @@ def certify(data, sealed):
             if [row[0] for row in conn.execute('PRAGMA main.integrity_check')] != ['ok']:
                 raise Fault('artifact_integrity', 'SQLite integrity check failed')
             schema = inspect(conn)
-            if fingerprint(schema) != sealed['schema_digest']:
+            if schema_digest(schema) != sealed['schema_digest']:
                 raise Fault('artifact_schema', 'Database schema differs from the sealed schema')
             check_references(conn)
             counts = {}
