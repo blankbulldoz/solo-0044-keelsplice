@@ -1,0 +1,21 @@
+{
+  "capture_id": "bed3a7cef859417795e4c3a31e6d9175",
+  "recipe": {
+    "name": "swatch",
+    "version": 2
+  },
+  "source_alias": "microscope_v2",
+  "fixture_file": "group_b_v2.sqlite",
+  "certificate": {
+    "bytes": 32768,
+    "capture_digest": "dbe01820667e321c95631f4ac524b48bfdb7e4bbbd76f25ace3ab1c6b31089d3",
+    "counts": {
+      "assay": 3,
+      "cassette": 3,
+      "frame": 3,
+      "substrate": 4
+    },
+    "schema_digest": "65c11874a5bf4e5b3036fbc9bf5ad330e5650a15fc15a2b5d357336120482306",
+    "sha256": "72bc3511872fa1643935b09084900459e66dec52f82419df5eedcdb321635dcb"
+  }
+}

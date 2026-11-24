@@ -1,0 +1,292 @@
+{
+  "fixture": "group_a_v1.sqlite",
+  "sha256": "8c845e3a76fa81bfb5fcfbf0c879679d1373bb09e00a1bc945cc9cc097d926ca",
+  "results": {
+    "Q-INTEG": {
+      "columns": [
+        "integrity_check"
+      ],
+      "rows": [
+        [
+          "ok"
+        ]
+      ]
+    },
+    "Q-FKCHECK": {
+      "columns": [
+        "table",
+        "rowid",
+        "parent",
+        "fkid"
+      ],
+      "rows": []
+    },
+    "Q-DDL": {
+      "columns": [
+        "name",
+        "sql"
+      ],
+      "rows": [
+        [
+          "assay",
+          "CREATE TABLE assay (\n    mark TEXT PRIMARY KEY NOT NULL,\n    region TEXT,\n    code TEXT,\n    cassette INTEGER NOT NULL REFERENCES cassette,\n    length_um REAL NOT NULL,\n    doubled REAL GENERATED ALWAYS AS (length_um * 2) STORED,\n    FOREIGN KEY (region, code) REFERENCES substrate\n)"
+        ],
+        [
+          "cassette",
+          "CREATE TABLE cassette (\n    serial INTEGER PRIMARY KEY,\n    prior INTEGER REFERENCES cassette,\n    label TEXT NOT NULL\n)"
+        ],
+        [
+          "frame",
+          "CREATE TABLE frame (\n    frame_id INTEGER PRIMARY KEY,\n    mark TEXT REFERENCES assay,\n    note TEXT NOT NULL\n)"
+        ],
+        [
+          "substrate",
+          "CREATE TABLE substrate (\n    region TEXT COLLATE NOCASE NOT NULL,\n    code TEXT COLLATE NOCASE NOT NULL,\n    texture BLOB NOT NULL,\n    PRIMARY KEY (region, code)\n) WITHOUT ROWID"
+        ]
+      ]
+    },
+    "Q-FRAME-COLS": {
+      "columns": [
+        "cid",
+        "name",
+        "type",
+        "notnull",
+        "dflt_value",
+        "pk"
+      ],
+      "rows": [
+        [
+          0,
+          "frame_id",
+          "INTEGER",
+          0,
+          null,
+          1
+        ],
+        [
+          1,
+          "mark",
+          "TEXT",
+          0,
+          null,
+          0
+        ],
+        [
+          2,
+          "note",
+          "TEXT",
+          1,
+          null,
+          0
+        ]
+      ]
+    },
+    "Q-ROWCOUNTS": {
+      "columns": [
+        "tab",
+        "n"
+      ],
+      "rows": [
+        [
+          "substrate",
+          2
+        ],
+        [
+          "assay",
+          3
+        ],
+        [
+          "cassette",
+          3
+        ],
+        [
+          "frame",
+          3
+        ]
+      ]
+    },
+    "Q-LEN-AGG": {
+      "columns": [
+        "n",
+        "total_um",
+        "avg_um",
+        "min_um",
+        "max_um"
+      ],
+      "rows": [
+        [
+          3,
+          17.75,
+          5.916666666666667,
+          3.25,
+          9.0
+        ]
+      ]
+    },
+    "Q-CASSETTE": {
+      "columns": [
+        "serial",
+        "label",
+        "assays"
+      ],
+      "rows": [
+        [
+          11,
+          "opal",
+          1
+        ],
+        [
+          12,
+          "agate",
+          1
+        ],
+        [
+          13,
+          "garnet",
+          1
+        ]
+      ]
+    },
+    "Q-FRAME-PER-ASSAY": {
+      "columns": [
+        "mark",
+        "frames"
+      ],
+      "rows": [
+        [
+          "S-01",
+          1
+        ],
+        [
+          "S-02",
+          2
+        ],
+        [
+          "S-04",
+          0
+        ]
+      ]
+    },
+    "Q-PER-SUBSTRATE": {
+      "columns": [
+        "region",
+        "code",
+        "assays"
+      ],
+      "rows": [
+        [
+          "East",
+          "Mica",
+          2
+        ],
+        [
+          "West",
+          "Basalt",
+          1
+        ]
+      ]
+    },
+    "Q-SUBSTRATE-ROWS": {
+      "columns": [
+        "region",
+        "code",
+        "texture_hex"
+      ],
+      "rows": [
+        [
+          "East",
+          "Mica",
+          "0000FF"
+        ],
+        [
+          "West",
+          "Basalt",
+          "FE"
+        ]
+      ]
+    },
+    "Q-ASSAY-ROWS": {
+      "columns": [
+        "mark",
+        "region",
+        "code",
+        "cassette",
+        "length_um",
+        "doubled"
+      ],
+      "rows": [
+        [
+          "S-01",
+          "east",
+          "MICA",
+          11,
+          3.25,
+          6.5
+        ],
+        [
+          "S-02",
+          "EAST",
+          "mica",
+          12,
+          5.5,
+          11.0
+        ],
+        [
+          "S-04",
+          "west",
+          "basalt",
+          13,
+          9.0,
+          18.0
+        ]
+      ]
+    },
+    "Q-FRAME-ROWS": {
+      "columns": [
+        "frame_id",
+        "mark",
+        "note"
+      ],
+      "rows": [
+        [
+          101,
+          "S-01",
+          "front"
+        ],
+        [
+          102,
+          "S-02",
+          "detail"
+        ],
+        [
+          103,
+          "S-02",
+          "side"
+        ]
+      ]
+    },
+    "Q-PROBE-NOCASE": {
+      "columns": [
+        "n"
+      ],
+      "rows": [
+        [
+          1
+        ]
+      ]
+    },
+    "Q-PROBE-FOLD": {
+      "columns": [
+        "n"
+      ],
+      "rows": [
+        [
+          2
+        ]
+      ]
+    },
+    "Q-CAPTION-NONNULL": {
+      "error": "no such column: caption"
+    }
+  }
+}

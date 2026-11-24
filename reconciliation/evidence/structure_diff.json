@@ -1,0 +1,27 @@
+{
+  "frame": {
+    "change": "仅新增列 caption TEXT；旧列与行内容不变",
+    "v1_columns": [
+      "frame_id",
+      "mark",
+      "note"
+    ],
+    "v2_columns": [
+      "frame_id",
+      "mark",
+      "note",
+      "caption"
+    ],
+    "v1_ddl": "CREATE TABLE frame (\n    frame_id INTEGER PRIMARY KEY,\n    mark TEXT REFERENCES assay,\n    note TEXT NOT NULL\n)",
+    "v2_ddl": "CREATE TABLE frame (\n    frame_id INTEGER PRIMARY KEY,\n    mark TEXT REFERENCES assay,\n    note TEXT NOT NULL,\n    caption TEXT\n)"
+  },
+  "substrate": {
+    "change": "复合主键 (region, code) 排序规则 COLLATE NOCASE → COLLATE BINARY",
+    "v1_ddl": "CREATE TABLE substrate (\n    region TEXT COLLATE NOCASE NOT NULL,\n    code TEXT COLLATE NOCASE NOT NULL,\n    texture BLOB NOT NULL,\n    PRIMARY KEY (region, code)\n) WITHOUT ROWID",
+    "v2_ddl": "CREATE TABLE substrate (\n    region TEXT COLLATE BINARY NOT NULL,\n    code TEXT COLLATE BINARY NOT NULL,\n    texture BLOB NOT NULL,\n    PRIMARY KEY (region, code)\n) WITHOUT ROWID"
+  },
+  "unchanged_tables": [
+    "assay",
+    "cassette"
+  ]
+}

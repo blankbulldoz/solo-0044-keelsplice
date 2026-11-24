@@ -1,0 +1,11 @@
+{
+  "request": {
+    "left": "ae82d0f489ad45498089c25680e6455c",
+    "right": "bed3a7cef859417795e4c3a31e6d9175"
+  },
+  "status": 409,
+  "body": {
+    "error": "schema_conflict",
+    "message": "Captures have different source schemas"
+  }
+}
