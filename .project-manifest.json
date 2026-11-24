@@ -45,6 +45,11 @@
       "id": "web",
       "path": "keelsplice/web",
       "responsibility": "服务端 HTML、类型化表单、目录、配方、追踪、对比及子库交接页面"
+    },
+    {
+      "id": "identity",
+      "path": "keelsplice/web/identity.py",
+      "responsibility": "页面上人读文本、精确 SQLite 主键、有向可逆边引用与根位置的身份表示"
     }
   ],
   "workflows": [
@@ -252,6 +257,7 @@
       ],
       "module_ids": [
         "web",
+        "identity",
         "api",
         "service",
         "storage",
@@ -260,6 +266,26 @@
         "capture",
         "bundle",
         "codec"
+      ]
+    },
+    {
+      "id": "identity",
+      "name": "区分身份表示",
+      "entry": "GET /workbench",
+      "success": "目录、配方与证据页以带标签的片段区分人读文本、精确键与有向可逆边引用，长值缩写并披露原长度",
+      "failure": "人读缩写不能回传为地址，别名拼法与带引号原样名不被静默改写",
+      "verification": "python3 -m examples.quoted_walkthrough",
+      "steps": [
+        "用带引号表名、复合 BLOB 键与同名双外键的样例重建同一配方",
+        "比较重构前后原路由、表单回传、根位置与 JSON 证据一致",
+        "确认追踪只接受精确键，边引用可按同一编号反向读取"
+      ],
+      "module_ids": [
+        "identity",
+        "web",
+        "capture",
+        "codec",
+        "catalog"
       ]
     }
   ],

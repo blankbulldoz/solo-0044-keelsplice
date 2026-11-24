@@ -2,6 +2,7 @@
 
 import argparse
 import hashlib
+import html as htmllib
 import re
 import sqlite3
 from contextlib import closing
@@ -36,11 +37,21 @@ def html(base, path, payload=None, expected=200, origin=None):
     return path, body.decode('utf-8')
 
 
+def visible(markup):
+    """Page text with identity badges and markup removed, whitespace collapsed."""
+    plain = htmllib.unescape(re.sub(r'<span class="badge[^"]*">[^<]*</span>', '', markup))
+    collapsed = re.sub(r'\s+', ' ', re.sub(r'<[^>]+>', ' ', plain)).strip()
+    # Inline separators carry no visible space of their own in a browser.
+    return re.sub(r'\s*、\s*', '、', collapsed)
+
+
 def run(base, source, root):
     path, directory = html(base, '/')
     assert path == '/workbench' and '外键关系' in directory
     _, table = html(base, '/workbench?source=microscope&table=substrate')
-    assert 'region → code' in table and 'cassette' in table
+    assert 'region → code' in visible(table) and 'cassette' in visible(table)
+    # The composite parent key is one ordered list of exact identifiers.
+    assert 'region、code → region、code' in visible(table)
     assert open_page(base, '/workbench/assets/workspace.css')[1].get_content_type() == 'text/css'
     assert '未注册' in html(base, '/workbench?source=missing', expected=404)[1]
 

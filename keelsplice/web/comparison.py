@@ -1,8 +1,9 @@
 """Present sealed key differences without converting their SQLite types."""
 
-from .forms import field
+from . import identity
 from .errors import message
-from .render import code, options, page, template, text, typed
+from .forms import field
+from .render import options, page, template, text
 from ..codec import Fault
 
 LABELS = {'added': '新增', 'removed': '移除', 'modified': '修改'}
@@ -14,11 +15,12 @@ def changes(result):
     rows = []
     for table, differences in result['changes'].items():
         for kind, keys in differences.items():
-            rows.extend(f'<tr><th scope="row">{code(table)}</th><td>{LABELS[kind]}</td><td>{typed(key)}</td></tr>'
+            rows.extend(f'<tr><th scope="row">{identity.identifier(table)}</th>'
+                        f'<td>{LABELS[kind]}</td><td>{identity.pair(key)}</td></tr>'
                         for key in keys)
     if not rows:
         rows.append('<tr><td colspan="3" class="empty">这两个捕获的行内容一致。</td></tr>')
-    return template('comparison_result', rows=''.join(rows))
+    return template('comparison_result', rows=''.join(rows), legend=identity.legend())
 
 
 def show(bench, values=None):

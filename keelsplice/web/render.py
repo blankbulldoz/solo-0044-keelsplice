@@ -6,8 +6,6 @@ from pathlib import Path
 from string import Template
 from urllib.parse import quote, urlencode
 
-from ..codec import dumps
-
 DIRECTORY = Path(__file__).parent
 NAVIGATION = (
     ('catalog', '关系目录', '/workbench'),
@@ -42,10 +40,6 @@ def segment(value):
 
 def code(value):
     return f'<code>{text(value)}</code>'
-
-
-def typed(value):
-    return code(dumps(value))
 
 
 def options(values, active):

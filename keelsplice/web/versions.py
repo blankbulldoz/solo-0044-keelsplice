@@ -1,13 +1,15 @@
 """Render saved recipe versions and their allowed next operations."""
 
-from .render import code, page, segment, text, typed
+from . import identity
+from .render import code, page, segment, text
 
 
 def index(bench):
     records = bench.repository.recent_recipes()
     rows = ''.join(
         f'<tr><th scope="row"><a href="/workbench/recipes/{segment(row["name"])}/{row["version"]}">'
-        f'{text(row["name"])}</a></th><td>{row["version"]}</td><td>{code(row["source"])}</td>'
+        f'{text(row["name"])}</a></th><td>{row["version"]}</td>'
+        f'<td>{code(row["source"])}</td>'
         f'<td>{status(row["active"])}</td><td>{code(row["schema_digest"][:12])}</td></tr>'
         for row in records
     )
@@ -20,7 +22,13 @@ def status(active):
 
 
 def root_list(roots):
-    return ''.join(f'<li>{code(root["table"])} {typed(root["key"])}</li>' for root in roots)
+    return ''.join(f'<li>{identity.identifier(root["table"])} {identity.pair(root["key"])}</li>'
+                   for root in roots)
+
+
+def edge_list(edges):
+    return ''.join(f'<li>{identity.edge(edge["child"], edge["id"], "child")}</li>'
+                   for edge in edges)
 
 
 def detail(bench, name, number):
@@ -34,10 +42,9 @@ def detail(bench, name, number):
             f'<form method="post" action="{href}/capture"><button class="primary">封存当前样本</button></form>'
             f'<form method="post" action="{href}/retire"><button class="quiet">停止投用</button></form>'
         )
-    edges = ''.join(f'<li>{code(edge["child"])} · 外键 {edge["id"]}</li>'
-                    for edge in recipe['follow_children'])
-    return 200, page('配方详情', 'recipe', 'recipe',
+    return 200, page('配方详情', 'recipe', 'recipe', legend=identity.legend(),
                      name=text(name), number=number, source=code(recipe['source']),
                      status=status(saved['active']), digest=text(saved['schema_digest']),
-                     roots=root_list(recipe['roots']), edges=edges or '<li class="empty">未选择反向关系。</li>',
+                     roots=root_list(recipe['roots']),
+                     edges=edge_list(recipe['follow_children']) or '<li class="empty">未选择反向关系。</li>',
                      limit=recipe['row_limit'], actions=actions)

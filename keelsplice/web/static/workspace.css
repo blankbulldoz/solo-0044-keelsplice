@@ -62,3 +62,15 @@ tbody tr:last-child > * { border-bottom: 0; }
   .editor-grid { display: block; }
   th, td { padding: 8px; }
 }
+.identity { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: 3px 6px; }
+.badge { display: inline-block; font-size: 11px; line-height: 1; padding: 2px 5px; border-radius: 3px; border: 1px solid transparent; white-space: nowrap; }
+.badge-text { background: #eef1f4; color: #45535f; border-color: #d5dde3; }
+.badge-key { background: var(--brand-soft); color: var(--brand); border-color: #bfe0d1; font-family: var(--mono); }
+.badge-edge { background: var(--highlight); color: #244e81; border-color: #cddcf5; }
+.identity .exact { font-family: var(--mono); }
+.identity .gloss { font-family: var(--mono); color: var(--secondary); }
+.identity .gloss[data-truncated="yes"] { font-style: italic; }
+.gloss-note { font-size: 12px; color: var(--secondary); }
+.identity-edge .edge-reverse { color: var(--secondary); font-size: 12px; }
+.legend { margin: 8px 0 14px; color: var(--secondary); font-size: 13px; line-height: 2; }
+.legend .badge { margin-right: 2px; }

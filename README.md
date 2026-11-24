@@ -42,12 +42,23 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 
 根记录中的键按目录的列顺序填写。整数为有符号 64 位 JSON 数字。字节用 `{"blob":"AAD/"}`，实数用 `{"real":"0x1.a000000000000p+1"}`，文本用 JSON 字符串。配方可以用不同拼写定位同一个 NOCASE 根，封存与追踪使用实存键。结果中的行去重，输入根出现项保留顺序。工作台近期列表显示最后登记的 50 个配方版本和最后封存的 50 次捕获，历史详情地址依然可访问。
 
+## 身份表示
+
+目录、配方详情、试算、捕获详情、证据和对比页把身份表示拆成三种带标签的片段，互不替代：
+
+- **人读文本**：供辨认的缩写。长文本截断后注明原字符数，二进制注明字节数与 base64 前缀；带 `data-kind="text"` 与 `data-truncated`，不能当作地址回传。
+- **精确键**：`data-kind="key"`，内容与 JSON 接口接受的类型化元组逐字节相同，也是追踪表单隐藏字段携带的值。仅有它能定位行。
+- **边引用**：`data-kind="edge"`，由 `data-child` 与 `data-number` 定位 SQLite 外键，`data-direction` 标明指向，`data-reverse-direction` 说明同一编号反向读取的方向。
+
+表名和列名以 `data-kind="identifier"` 按目录原样显示，包括内嵌引号。根序号在 `data-root-positions` 中以零基记录，页面文字从 1 起。人读缩写被提交为追踪键时按无效值拒绝，别名拼法也不会被悄悄改写。
+
 ## 复跑
 
 ```sh
 python3 -m compileall -q keelsplice examples
 python3 -m examples.walkthrough all
 python3 -m examples.browser_walkthrough
+python3 -m examples.quoted_walkthrough
 ```
 
-两份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。独立自动化测试套件延后。
+前两份演练使用 `examples/microscope.sql` 与临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。`quoted_walkthrough` 改用 `examples/quoted.sql`：表名和索引名内嵌双引号、主键为 NOCASE 文本加精确 BLOB、同一子表有两条指向同一父列的外键，并含超长文本与二进制值。它核对原路由、表单回传、根位置与 JSON 证据在身份表示重构前后一致，且页面能区分人读文本、精确键与可逆边引用。三份演练都使用临时库和临时端口。独立自动化测试套件延后。

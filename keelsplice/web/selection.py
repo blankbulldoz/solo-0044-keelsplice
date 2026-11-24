@@ -1,9 +1,10 @@
 """HTML recipe forms bind the visible relationship choices to a schema digest."""
 
+from . import identity
 from .directory import source_options
 from .errors import message
 from .forms import field, typed_json
-from .render import code, location, page, segment, text
+from .render import location, page, segment, text
 from ..codec import Fault
 
 
@@ -12,19 +13,24 @@ def editor(bench, alias, values=None, error='', status=200):
     catalog = bench.catalog(alias)
     schema = catalog['schema']
     picked = set(values.get('edge', []))
-    edges = []
+    choices = []
     for edge in schema['edges']:
         token = f'{edge["id"]}:{edge["child"]}'
         checked = ' checked' if token in picked else ''
-        content = f'{edge["parent"]} → {edge["child"]} ({", ".join(edge["child_cols"])})'
-        edges.append(f'<label class="edge-choice"><input type="checkbox" name="edge" value="{text(token)}"'
-                     f'{checked}> {code(content)}</label>')
-    pk_items = ''.join(f'<li>{code(name)} <span>{code(", ".join(table["pk"]))}</span></li>'
-                       for name, table in schema['tables'].items())
+        choices.append(
+            f'<label class="edge-choice"><input type="checkbox" name="edge"'
+            f' value="{text(token)}"{checked}> '
+            f'{identity.edge(edge["child"], edge["id"], "child")}'
+            f'<span class="muted"> 指向 {identity.identifier(edge["parent"])} '
+            f'({identity.identifiers(edge["child_cols"])})</span></label>')
+    pk_items = ''.join(
+        f'<li>{identity.identifier(name)} <span>{identity.identifiers(table["pk"])}</span></li>'
+        for name, table in schema['tables'].items())
     return status, page('登记配方', 'recipe', 'recipe_editor',
                         options=source_options(bench, alias), source=text(alias),
                         digest=text(catalog['schema_digest']), keys=pk_items,
-                        edges=''.join(edges) or '<p class="empty">此源库没有可选关系。</p>',
+                        legend=identity.legend(),
+                        edges=''.join(choices) or '<p class="empty">此源库没有可选关系。</p>',
                         name=text(field(values, 'name')), roots=text(field(values, 'roots')),
                         limit=text(field(values, 'row_limit', '1000')),
                         error=f'<p role="alert" class="notice">{text(error)}</p>' if error else '')

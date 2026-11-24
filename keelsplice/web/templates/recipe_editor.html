@@ -14,7 +14,8 @@
       <section>
         <label for="roots">根记录（JSON）</label>
         <textarea id="roots" name="roots" rows="8" required aria-describedby="root-format" spellcheck="false">$roots</textarea>
-        <p id="root-format" class="muted">每项为 <code>{ "table": "表名", "key": [主键值] }</code>，按右侧顺序填写复合主键。</p>
+        <p id="root-format" class="muted">每项为 <code>{ "table": "表名", "key": [主键值] }</code>，按右侧顺序填写复合主键；表名须与目录中带引号的原样拼写一致。</p>
+        $legend
       </section>
       <section><h2>主键列顺序</h2><ul class="key-list">$keys</ul></section>
     </div>
