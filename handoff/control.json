@@ -1,0 +1,2917 @@
+{
+ "baseline_stable_after_drift": true,
+ "captures": {
+  "baseline": {
+   "artifact": {
+    "bytes": 32768,
+    "file": "baseline.sqlite",
+    "sha256": "a55b2cffc863cc6745184cad1a91e4e9b62617c49d3641f54537be404cc393a0"
+   },
+   "capture_id": "12138014b207414c873b8fc3aa6cb1b8",
+   "certificate": {
+    "bytes": 32768,
+    "capture_digest": "dbf294a0a92d116c10324d81bd85a234800428466787661006a3a24d3031c873",
+    "counts": {
+     "assay": 2,
+     "cassette": 2,
+     "frame": 0,
+     "substrate": 1
+    },
+    "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+    "sha256": "a55b2cffc863cc6745184cad1a91e4e9b62617c49d3641f54537be404cc393a0"
+   },
+   "facts": {
+    "assay": [
+     {
+      "cassette": 11,
+      "code": "MICA",
+      "doubled": 6.5,
+      "length_um": 3.25,
+      "mark": "S-01",
+      "region": "east"
+     },
+     {
+      "cassette": 12,
+      "code": "mica",
+      "doubled": 11.0,
+      "length_um": 5.5,
+      "mark": "S-02",
+      "region": "EAST"
+     }
+    ],
+    "assay_columns": [
+     {
+      "hidden": 0,
+      "name": "mark"
+     },
+     {
+      "hidden": 0,
+      "name": "region"
+     },
+     {
+      "hidden": 0,
+      "name": "code"
+     },
+     {
+      "hidden": 0,
+      "name": "cassette"
+     },
+     {
+      "hidden": 0,
+      "name": "length_um"
+     },
+     {
+      "hidden": 3,
+      "name": "doubled"
+     }
+    ],
+    "cassette": [
+     {
+      "label": "opal",
+      "prior": 12,
+      "serial": 11
+     },
+     {
+      "label": "agate",
+      "prior": 11,
+      "serial": 12
+     }
+    ],
+    "foreign_key_check": [],
+    "generated": [
+     "doubled"
+    ],
+    "integrity_check": [
+     "ok"
+    ],
+    "joined_assay_rows": 2,
+    "substrate": [
+     {
+      "code": "Mica",
+      "region": "East",
+      "texture_hex": "0000FF"
+     }
+    ],
+    "tables": [
+     {
+      "name": "substrate",
+      "without_rowid": true
+     },
+     {
+      "name": "frame",
+      "without_rowid": false
+     },
+     {
+      "name": "cassette",
+      "without_rowid": false
+     },
+     {
+      "name": "assay",
+      "without_rowid": false
+     }
+    ]
+   },
+   "label": "baseline",
+   "mutations": [],
+   "note": "原始显微镜样例；两班共用的对照。",
+   "roots": [
+    [
+     "substrate",
+     [
+      "East",
+      "Mica"
+     ]
+    ]
+   ],
+   "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+   "summary": {
+    "counts": {
+     "assay": 2,
+     "cassette": 2,
+     "frame": 0,
+     "substrate": 1
+    },
+    "root_occurrences": 1,
+    "rows": 5,
+    "witnesses": 8
+   }
+  },
+  "both": {
+   "artifact": {
+    "bytes": 32768,
+    "file": "both.sqlite",
+    "sha256": "e3cc6890a2a667bf592ac23eb43546d85badb343ff47ab52ba959b63dabee0c3"
+   },
+   "capture_id": "c0d5571713fb49bd88663311fe7814d2",
+   "certificate": {
+    "bytes": 32768,
+    "capture_digest": "50c7a5130d6f17137cf555bbba57e9943cc2cd119740563a1819bc46a720bc1b",
+    "counts": {
+     "assay": 2,
+     "cassette": 2,
+     "frame": 0,
+     "substrate": 1
+    },
+    "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+    "sha256": "e3cc6890a2a667bf592ac23eb43546d85badb343ff47ab52ba959b63dabee0c3"
+   },
+   "facts": {
+    "assay": [
+     {
+      "cassette": 11,
+      "code": "MICA",
+      "doubled": 9.5,
+      "length_um": 4.75,
+      "mark": "S-01",
+      "region": "east"
+     },
+     {
+      "cassette": 12,
+      "code": "mica",
+      "doubled": 11.0,
+      "length_um": 5.5,
+      "mark": "S-02",
+      "region": "EAST"
+     }
+    ],
+    "assay_columns": [
+     {
+      "hidden": 0,
+      "name": "mark"
+     },
+     {
+      "hidden": 0,
+      "name": "region"
+     },
+     {
+      "hidden": 0,
+      "name": "code"
+     },
+     {
+      "hidden": 0,
+      "name": "cassette"
+     },
+     {
+      "hidden": 0,
+      "name": "length_um"
+     },
+     {
+      "hidden": 3,
+      "name": "doubled"
+     }
+    ],
+    "cassette": [
+     {
+      "label": "opal",
+      "prior": 12,
+      "serial": 11
+     },
+     {
+      "label": "agate",
+      "prior": 11,
+      "serial": 12
+     }
+    ],
+    "foreign_key_check": [],
+    "generated": [
+     "doubled"
+    ],
+    "integrity_check": [
+     "ok"
+    ],
+    "joined_assay_rows": 2,
+    "substrate": [
+     {
+      "code": "Mica",
+      "region": "East",
+      "texture_hex": "1020"
+     }
+    ],
+    "tables": [
+     {
+      "name": "substrate",
+      "without_rowid": true
+     },
+     {
+      "name": "frame",
+      "without_rowid": false
+     },
+     {
+      "name": "cassette",
+      "without_rowid": false
+     },
+     {
+      "name": "assay",
+      "without_rowid": false
+     }
+    ]
+   },
+   "label": "both",
+   "mutations": [
+    "UPDATE assay SET length_um=4.75 WHERE mark='S-01'",
+    "UPDATE substrate SET texture=x'1020' WHERE region='East' AND code='Mica'"
+   ],
+   "note": "两种变化同时发生；相对 baseline 的比较同时列出 assay 与 substrate 的行修改。",
+   "roots": [
+    [
+     "substrate",
+     [
+      "East",
+      "Mica"
+     ]
+    ]
+   ],
+   "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+   "summary": {
+    "counts": {
+     "assay": 2,
+     "cassette": 2,
+     "frame": 0,
+     "substrate": 1
+    },
+    "root_occurrences": 1,
+    "rows": 5,
+    "witnesses": 8
+   }
+  },
+  "case-key": {
+   "artifact": {
+    "bytes": 32768,
+    "file": "case-key.sqlite",
+    "sha256": "17d5665e13140a4579ba4c77703aefa1ed837d204bc3cd24d0ffb69cd01121ea"
+   },
+   "capture_id": "f37cd395b8f8446d95153601c2b9666f",
+   "certificate": {
+    "bytes": 32768,
+    "capture_digest": "4cd5b077f3c33ad31a3435d0a6e110d740a2408f82c9fb7a0ea8d3358b901396",
+    "counts": {
+     "assay": 2,
+     "cassette": 2,
+     "frame": 0,
+     "substrate": 1
+    },
+    "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+    "sha256": "17d5665e13140a4579ba4c77703aefa1ed837d204bc3cd24d0ffb69cd01121ea"
+   },
+   "facts": {
+    "assay": [
+     {
+      "cassette": 11,
+      "code": "MICA",
+      "doubled": 6.5,
+      "length_um": 3.25,
+      "mark": "S-01",
+      "region": "east"
+     },
+     {
+      "cassette": 12,
+      "code": "mica",
+      "doubled": 11.0,
+      "length_um": 5.5,
+      "mark": "S-02",
+      "region": "EAST"
+     }
+    ],
+    "assay_columns": [
+     {
+      "hidden": 0,
+      "name": "mark"
+     },
+     {
+      "hidden": 0,
+      "name": "region"
+     },
+     {
+      "hidden": 0,
+      "name": "code"
+     },
+     {
+      "hidden": 0,
+      "name": "cassette"
+     },
+     {
+      "hidden": 0,
+      "name": "length_um"
+     },
+     {
+      "hidden": 3,
+      "name": "doubled"
+     }
+    ],
+    "cassette": [
+     {
+      "label": "opal",
+      "prior": 12,
+      "serial": 11
+     },
+     {
+      "label": "agate",
+      "prior": 11,
+      "serial": 12
+     }
+    ],
+    "foreign_key_check": [],
+    "generated": [
+     "doubled"
+    ],
+    "integrity_check": [
+     "ok"
+    ],
+    "joined_assay_rows": 2,
+    "substrate": [
+     {
+      "code": "MICA",
+      "region": "EAST",
+      "texture_hex": "0000FF"
+     }
+    ],
+    "tables": [
+     {
+      "name": "substrate",
+      "without_rowid": true
+     },
+     {
+      "name": "frame",
+      "without_rowid": false
+     },
+     {
+      "name": "cassette",
+      "without_rowid": false
+     },
+     {
+      "name": "assay",
+      "without_rowid": false
+     }
+    ]
+   },
+   "label": "case-key",
+   "mutations": [
+    "UPDATE substrate SET region='EAST', code='MICA' WHERE region='East' AND code='Mica'"
+   ],
+   "note": "父键仅改大小写；NOCASE 下仍连接同一对象，但带类型主键的拼写改变。",
+   "roots": [
+    [
+     "substrate",
+     [
+      "EAST",
+      "MICA"
+     ]
+    ]
+   ],
+   "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+   "summary": {
+    "counts": {
+     "assay": 2,
+     "cassette": 2,
+     "frame": 0,
+     "substrate": 1
+    },
+    "root_occurrences": 1,
+    "rows": 5,
+    "witnesses": 8
+   }
+  },
+  "frame-only": {
+   "artifact": {
+    "bytes": 32768,
+    "file": "frame-only.sqlite",
+    "sha256": "a55b2cffc863cc6745184cad1a91e4e9b62617c49d3641f54537be404cc393a0"
+   },
+   "capture_id": "d7f39f0e99824aa3a83276199de72493",
+   "certificate": {
+    "bytes": 32768,
+    "capture_digest": "dbf294a0a92d116c10324d81bd85a234800428466787661006a3a24d3031c873",
+    "counts": {
+     "assay": 2,
+     "cassette": 2,
+     "frame": 0,
+     "substrate": 1
+    },
+    "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+    "sha256": "a55b2cffc863cc6745184cad1a91e4e9b62617c49d3641f54537be404cc393a0"
+   },
+   "facts": {
+    "assay": [
+     {
+      "cassette": 11,
+      "code": "MICA",
+      "doubled": 6.5,
+      "length_um": 3.25,
+      "mark": "S-01",
+      "region": "east"
+     },
+     {
+      "cassette": 12,
+      "code": "mica",
+      "doubled": 11.0,
+      "length_um": 5.5,
+      "mark": "S-02",
+      "region": "EAST"
+     }
+    ],
+    "assay_columns": [
+     {
+      "hidden": 0,
+      "name": "mark"
+     },
+     {
+      "hidden": 0,
+      "name": "region"
+     },
+     {
+      "hidden": 0,
+      "name": "code"
+     },
+     {
+      "hidden": 0,
+      "name": "cassette"
+     },
+     {
+      "hidden": 0,
+      "name": "length_um"
+     },
+     {
+      "hidden": 3,
+      "name": "doubled"
+     }
+    ],
+    "cassette": [
+     {
+      "label": "opal",
+      "prior": 12,
+      "serial": 11
+     },
+     {
+      "label": "agate",
+      "prior": 11,
+      "serial": 12
+     }
+    ],
+    "foreign_key_check": [],
+    "generated": [
+     "doubled"
+    ],
+    "integrity_check": [
+     "ok"
+    ],
+    "joined_assay_rows": 2,
+    "substrate": [
+     {
+      "code": "Mica",
+      "region": "East",
+      "texture_hex": "0000FF"
+     }
+    ],
+    "tables": [
+     {
+      "name": "substrate",
+      "without_rowid": true
+     },
+     {
+      "name": "frame",
+      "without_rowid": false
+     },
+     {
+      "name": "cassette",
+      "without_rowid": false
+     },
+     {
+      "name": "assay",
+      "without_rowid": false
+     }
+    ]
+   },
+   "label": "frame-only",
+   "mutations": [
+    "UPDATE frame SET note='changed' WHERE frame_id=104"
+   ],
+   "note": "只改闭包外的 frame 行；产物与 baseline 逐字节相同。",
+   "roots": [
+    [
+     "substrate",
+     [
+      "East",
+      "Mica"
+     ]
+    ]
+   ],
+   "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+   "summary": {
+    "counts": {
+     "assay": 2,
+     "cassette": 2,
+     "frame": 0,
+     "substrate": 1
+    },
+    "root_occurrences": 1,
+    "rows": 5,
+    "witnesses": 8
+   }
+  },
+  "numeric-only": {
+   "artifact": {
+    "bytes": 32768,
+    "file": "numeric-only.sqlite",
+    "sha256": "e5a7f7e7bac17e4157a69d4bae041023016bcef278250a44cbf91d9ed3783d12"
+   },
+   "capture_id": "1aaefdf4772b4f66831994eca89b0b93",
+   "certificate": {
+    "bytes": 32768,
+    "capture_digest": "c90f92e1e80f92982b6d7079a14ff5e1877a4249d4ab38f36f26abf6725512e7",
+    "counts": {
+     "assay": 2,
+     "cassette": 2,
+     "frame": 0,
+     "substrate": 1
+    },
+    "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+    "sha256": "e5a7f7e7bac17e4157a69d4bae041023016bcef278250a44cbf91d9ed3783d12"
+   },
+   "facts": {
+    "assay": [
+     {
+      "cassette": 11,
+      "code": "MICA",
+      "doubled": 9.5,
+      "length_um": 4.75,
+      "mark": "S-01",
+      "region": "east"
+     },
+     {
+      "cassette": 12,
+      "code": "mica",
+      "doubled": 11.0,
+      "length_um": 5.5,
+      "mark": "S-02",
+      "region": "EAST"
+     }
+    ],
+    "assay_columns": [
+     {
+      "hidden": 0,
+      "name": "mark"
+     },
+     {
+      "hidden": 0,
+      "name": "region"
+     },
+     {
+      "hidden": 0,
+      "name": "code"
+     },
+     {
+      "hidden": 0,
+      "name": "cassette"
+     },
+     {
+      "hidden": 0,
+      "name": "length_um"
+     },
+     {
+      "hidden": 3,
+      "name": "doubled"
+     }
+    ],
+    "cassette": [
+     {
+      "label": "opal",
+      "prior": 12,
+      "serial": 11
+     },
+     {
+      "label": "agate",
+      "prior": 11,
+      "serial": 12
+     }
+    ],
+    "foreign_key_check": [],
+    "generated": [
+     "doubled"
+    ],
+    "integrity_check": [
+     "ok"
+    ],
+    "joined_assay_rows": 2,
+    "substrate": [
+     {
+      "code": "Mica",
+      "region": "East",
+      "texture_hex": "0000FF"
+     }
+    ],
+    "tables": [
+     {
+      "name": "substrate",
+      "without_rowid": true
+     },
+     {
+      "name": "frame",
+      "without_rowid": false
+     },
+     {
+      "name": "cassette",
+      "without_rowid": false
+     },
+     {
+      "name": "assay",
+      "without_rowid": false
+     }
+    ]
+   },
+   "label": "numeric-only",
+   "mutations": [
+    "UPDATE assay SET length_um=4.75 WHERE mark='S-01'"
+   ],
+   "note": "只改测量基值及其 STORED 生成值；substrate 行逐字节不变，外键列不变。",
+   "roots": [
+    [
+     "substrate",
+     [
+      "East",
+      "Mica"
+     ]
+    ]
+   ],
+   "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+   "summary": {
+    "counts": {
+     "assay": 2,
+     "cassette": 2,
+     "frame": 0,
+     "substrate": 1
+    },
+    "root_occurrences": 1,
+    "rows": 5,
+    "witnesses": 8
+   }
+  },
+  "parent-only": {
+   "artifact": {
+    "bytes": 32768,
+    "file": "parent-only.sqlite",
+    "sha256": "8452878b888469f040005f9380d032ff0790769158ad2e8a7406f27519926068"
+   },
+   "capture_id": "3f818551cd324caf90d3241a36467d40",
+   "certificate": {
+    "bytes": 32768,
+    "capture_digest": "94106a559a7a8bd6af42d648776861b652a38eab1b62603ade390d23d0bbbe81",
+    "counts": {
+     "assay": 2,
+     "cassette": 2,
+     "frame": 0,
+     "substrate": 1
+    },
+    "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+    "sha256": "8452878b888469f040005f9380d032ff0790769158ad2e8a7406f27519926068"
+   },
+   "facts": {
+    "assay": [
+     {
+      "cassette": 11,
+      "code": "MICA",
+      "doubled": 6.5,
+      "length_um": 3.25,
+      "mark": "S-01",
+      "region": "east"
+     },
+     {
+      "cassette": 12,
+      "code": "mica",
+      "doubled": 11.0,
+      "length_um": 5.5,
+      "mark": "S-02",
+      "region": "EAST"
+     }
+    ],
+    "assay_columns": [
+     {
+      "hidden": 0,
+      "name": "mark"
+     },
+     {
+      "hidden": 0,
+      "name": "region"
+     },
+     {
+      "hidden": 0,
+      "name": "code"
+     },
+     {
+      "hidden": 0,
+      "name": "cassette"
+     },
+     {
+      "hidden": 0,
+      "name": "length_um"
+     },
+     {
+      "hidden": 3,
+      "name": "doubled"
+     }
+    ],
+    "cassette": [
+     {
+      "label": "opal",
+      "prior": 12,
+      "serial": 11
+     },
+     {
+      "label": "agate",
+      "prior": 11,
+      "serial": 12
+     }
+    ],
+    "foreign_key_check": [],
+    "generated": [
+     "doubled"
+    ],
+    "integrity_check": [
+     "ok"
+    ],
+    "joined_assay_rows": 2,
+    "substrate": [
+     {
+      "code": "Mica",
+      "region": "East",
+      "texture_hex": "1020"
+     }
+    ],
+    "tables": [
+     {
+      "name": "substrate",
+      "without_rowid": true
+     },
+     {
+      "name": "frame",
+      "without_rowid": false
+     },
+     {
+      "name": "cassette",
+      "without_rowid": false
+     },
+     {
+      "name": "assay",
+      "without_rowid": false
+     }
+    ]
+   },
+   "label": "parent-only",
+   "mutations": [
+    "UPDATE substrate SET texture=x'1020' WHERE region='East' AND code='Mica'"
+   ],
+   "note": "只改父对象 substrate 的值；assay 每行逐字节不变，长度与生成值不变。",
+   "roots": [
+    [
+     "substrate",
+     [
+      "East",
+      "Mica"
+     ]
+    ]
+   ],
+   "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+   "summary": {
+    "counts": {
+     "assay": 2,
+     "cassette": 2,
+     "frame": 0,
+     "substrate": 1
+    },
+    "root_occurrences": 1,
+    "rows": 5,
+    "witnesses": 8
+   }
+  }
+ },
+ "dispatch": {
+  "numeric": {
+   "captures": [
+    "baseline",
+    "numeric-only"
+   ],
+   "pair": "baseline->numeric-only",
+   "why": "baseline→numeric-only 只改 assay.length_um 与生成列 doubled；substrate、cassette 以及 assay 的外键列逐字节不变。"
+  },
+  "relational": {
+   "captures": [
+    "baseline",
+    "parent-only"
+   ],
+   "pair": "baseline->parent-only",
+   "why": "baseline→parent-only 只改父对象 substrate.texture；assay 每行（含 length_um 与 doubled）逐字节不变。"
+  }
+ },
+ "excluded": {
+  "both": {
+   "artifact": "both.sqlite",
+   "conflicting_pairs": [
+    "baseline->both",
+    "numeric-only->parent-only"
+   ],
+   "reason": "两种变化同时发生。baseline→both 的比较同时列出 assay S-01 与 substrate 的修改；assay 的修改与数值班那一对完全相同，只看 S-01 的行修改无法判断父对象是否也变了。",
+   "same_assay_row_modification_as_numeric_pair": true
+  },
+  "case-key": {
+   "artifact": "case-key.sqlite",
+   "conflicting_pairs": [
+    "baseline->case-key",
+    "numeric-only->case-key",
+    "parent-only->case-key"
+   ],
+   "reason": "父键只改大小写。NOCASE 下仍连接同一父行，但带类型主键由 [\"East\",\"Mica\"] 变为 [\"EAST\",\"MICA\"]；比较报告新增/移除而非父对象修改，无法作为稳定的父对象变化证据。"
+  },
+  "frame-only": {
+   "artifact": "frame-only.sqlite",
+   "conflicting_pairs": [
+    "baseline->frame-only"
+   ],
+   "reason": "改动在闭包之外，产物与 baseline 逐字节相同；不能证明任一条件。"
+  }
+ },
+ "follow_children": [
+  {
+   "child": "assay",
+   "parent": "substrate"
+  }
+ ],
+ "generated_at": "2026-11-24T04:04:17Z",
+ "note": "capture_id 与 generated_at 每次运行不同；其余字段用于复跑对照。",
+ "pairs": {
+  "baseline->both": {
+   "assay": {
+    "added": [],
+    "modified": [
+     {
+      "columns": [
+       "doubled",
+       "length_um"
+      ],
+      "key": [
+       "S-01"
+      ]
+     }
+    ],
+    "removed": []
+   },
+   "both_changes": true,
+   "cassette": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "compare_api": {
+    "assay": {
+     "added": [],
+     "modified": [
+      [
+       "S-01"
+      ]
+     ],
+     "removed": []
+    },
+    "cassette": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "frame": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "substrate": {
+     "added": [],
+     "modified": [
+      [
+       "East",
+       "Mica"
+      ]
+     ],
+     "removed": []
+    }
+   },
+   "measurement_changed": true,
+   "numeric_crew_admissible": false,
+   "parent_identity_changed": false,
+   "parent_values_changed": true,
+   "relation_changed": false,
+   "relational_crew_admissible": false,
+   "substrate": {
+    "added": [],
+    "modified": [
+     {
+      "columns": [
+       "texture_hex"
+      ],
+      "key": [
+       "East",
+       "Mica"
+      ]
+     }
+    ],
+    "removed": []
+   }
+  },
+  "baseline->case-key": {
+   "assay": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "both_changes": false,
+   "cassette": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "compare_api": {
+    "assay": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "cassette": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "frame": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "substrate": {
+     "added": [
+      [
+       "EAST",
+       "MICA"
+      ]
+     ],
+     "modified": [],
+     "removed": [
+      [
+       "East",
+       "Mica"
+      ]
+     ]
+    }
+   },
+   "measurement_changed": false,
+   "numeric_crew_admissible": false,
+   "parent_identity_changed": true,
+   "parent_values_changed": false,
+   "relation_changed": false,
+   "relational_crew_admissible": false,
+   "substrate": {
+    "added": [
+     [
+      "EAST",
+      "MICA"
+     ]
+    ],
+    "modified": [],
+    "removed": [
+     [
+      "East",
+      "Mica"
+     ]
+    ]
+   }
+  },
+  "baseline->frame-only": {
+   "assay": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "both_changes": false,
+   "cassette": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "compare_api": {
+    "assay": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "cassette": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "frame": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "substrate": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    }
+   },
+   "measurement_changed": false,
+   "numeric_crew_admissible": false,
+   "parent_identity_changed": false,
+   "parent_values_changed": false,
+   "relation_changed": false,
+   "relational_crew_admissible": false,
+   "substrate": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   }
+  },
+  "baseline->numeric-only": {
+   "assay": {
+    "added": [],
+    "modified": [
+     {
+      "columns": [
+       "doubled",
+       "length_um"
+      ],
+      "key": [
+       "S-01"
+      ]
+     }
+    ],
+    "removed": []
+   },
+   "both_changes": false,
+   "cassette": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "compare_api": {
+    "assay": {
+     "added": [],
+     "modified": [
+      [
+       "S-01"
+      ]
+     ],
+     "removed": []
+    },
+    "cassette": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "frame": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "substrate": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    }
+   },
+   "measurement_changed": true,
+   "numeric_crew_admissible": true,
+   "parent_identity_changed": false,
+   "parent_values_changed": false,
+   "relation_changed": false,
+   "relational_crew_admissible": false,
+   "substrate": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   }
+  },
+  "baseline->parent-only": {
+   "assay": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "both_changes": false,
+   "cassette": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "compare_api": {
+    "assay": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "cassette": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "frame": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "substrate": {
+     "added": [],
+     "modified": [
+      [
+       "East",
+       "Mica"
+      ]
+     ],
+     "removed": []
+    }
+   },
+   "measurement_changed": false,
+   "numeric_crew_admissible": false,
+   "parent_identity_changed": false,
+   "parent_values_changed": true,
+   "relation_changed": false,
+   "relational_crew_admissible": true,
+   "substrate": {
+    "added": [],
+    "modified": [
+     {
+      "columns": [
+       "texture_hex"
+      ],
+      "key": [
+       "East",
+       "Mica"
+      ]
+     }
+    ],
+    "removed": []
+   }
+  },
+  "both->baseline": {
+   "assay": {
+    "added": [],
+    "modified": [
+     {
+      "columns": [
+       "doubled",
+       "length_um"
+      ],
+      "key": [
+       "S-01"
+      ]
+     }
+    ],
+    "removed": []
+   },
+   "both_changes": true,
+   "cassette": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "compare_api": {
+    "assay": {
+     "added": [],
+     "modified": [
+      [
+       "S-01"
+      ]
+     ],
+     "removed": []
+    },
+    "cassette": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "frame": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "substrate": {
+     "added": [],
+     "modified": [
+      [
+       "East",
+       "Mica"
+      ]
+     ],
+     "removed": []
+    }
+   },
+   "measurement_changed": true,
+   "numeric_crew_admissible": false,
+   "parent_identity_changed": false,
+   "parent_values_changed": true,
+   "relation_changed": false,
+   "relational_crew_admissible": false,
+   "substrate": {
+    "added": [],
+    "modified": [
+     {
+      "columns": [
+       "texture_hex"
+      ],
+      "key": [
+       "East",
+       "Mica"
+      ]
+     }
+    ],
+    "removed": []
+   }
+  },
+  "both->case-key": {
+   "assay": {
+    "added": [],
+    "modified": [
+     {
+      "columns": [
+       "doubled",
+       "length_um"
+      ],
+      "key": [
+       "S-01"
+      ]
+     }
+    ],
+    "removed": []
+   },
+   "both_changes": true,
+   "cassette": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "compare_api": {
+    "assay": {
+     "added": [],
+     "modified": [
+      [
+       "S-01"
+      ]
+     ],
+     "removed": []
+    },
+    "cassette": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "frame": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "substrate": {
+     "added": [
+      [
+       "EAST",
+       "MICA"
+      ]
+     ],
+     "modified": [],
+     "removed": [
+      [
+       "East",
+       "Mica"
+      ]
+     ]
+    }
+   },
+   "measurement_changed": true,
+   "numeric_crew_admissible": false,
+   "parent_identity_changed": true,
+   "parent_values_changed": false,
+   "relation_changed": false,
+   "relational_crew_admissible": false,
+   "substrate": {
+    "added": [
+     [
+      "EAST",
+      "MICA"
+     ]
+    ],
+    "modified": [],
+    "removed": [
+     [
+      "East",
+      "Mica"
+     ]
+    ]
+   }
+  },
+  "both->frame-only": {
+   "assay": {
+    "added": [],
+    "modified": [
+     {
+      "columns": [
+       "doubled",
+       "length_um"
+      ],
+      "key": [
+       "S-01"
+      ]
+     }
+    ],
+    "removed": []
+   },
+   "both_changes": true,
+   "cassette": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "compare_api": {
+    "assay": {
+     "added": [],
+     "modified": [
+      [
+       "S-01"
+      ]
+     ],
+     "removed": []
+    },
+    "cassette": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "frame": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "substrate": {
+     "added": [],
+     "modified": [
+      [
+       "East",
+       "Mica"
+      ]
+     ],
+     "removed": []
+    }
+   },
+   "measurement_changed": true,
+   "numeric_crew_admissible": false,
+   "parent_identity_changed": false,
+   "parent_values_changed": true,
+   "relation_changed": false,
+   "relational_crew_admissible": false,
+   "substrate": {
+    "added": [],
+    "modified": [
+     {
+      "columns": [
+       "texture_hex"
+      ],
+      "key": [
+       "East",
+       "Mica"
+      ]
+     }
+    ],
+    "removed": []
+   }
+  },
+  "both->numeric-only": {
+   "assay": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "both_changes": false,
+   "cassette": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "compare_api": {
+    "assay": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "cassette": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "frame": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "substrate": {
+     "added": [],
+     "modified": [
+      [
+       "East",
+       "Mica"
+      ]
+     ],
+     "removed": []
+    }
+   },
+   "measurement_changed": false,
+   "numeric_crew_admissible": false,
+   "parent_identity_changed": false,
+   "parent_values_changed": true,
+   "relation_changed": false,
+   "relational_crew_admissible": true,
+   "substrate": {
+    "added": [],
+    "modified": [
+     {
+      "columns": [
+       "texture_hex"
+      ],
+      "key": [
+       "East",
+       "Mica"
+      ]
+     }
+    ],
+    "removed": []
+   }
+  },
+  "both->parent-only": {
+   "assay": {
+    "added": [],
+    "modified": [
+     {
+      "columns": [
+       "doubled",
+       "length_um"
+      ],
+      "key": [
+       "S-01"
+      ]
+     }
+    ],
+    "removed": []
+   },
+   "both_changes": false,
+   "cassette": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "compare_api": {
+    "assay": {
+     "added": [],
+     "modified": [
+      [
+       "S-01"
+      ]
+     ],
+     "removed": []
+    },
+    "cassette": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "frame": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "substrate": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    }
+   },
+   "measurement_changed": true,
+   "numeric_crew_admissible": true,
+   "parent_identity_changed": false,
+   "parent_values_changed": false,
+   "relation_changed": false,
+   "relational_crew_admissible": false,
+   "substrate": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   }
+  },
+  "case-key->baseline": {
+   "assay": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "both_changes": false,
+   "cassette": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "compare_api": {
+    "assay": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "cassette": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "frame": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "substrate": {
+     "added": [
+      [
+       "East",
+       "Mica"
+      ]
+     ],
+     "modified": [],
+     "removed": [
+      [
+       "EAST",
+       "MICA"
+      ]
+     ]
+    }
+   },
+   "measurement_changed": false,
+   "numeric_crew_admissible": false,
+   "parent_identity_changed": true,
+   "parent_values_changed": false,
+   "relation_changed": false,
+   "relational_crew_admissible": false,
+   "substrate": {
+    "added": [
+     [
+      "East",
+      "Mica"
+     ]
+    ],
+    "modified": [],
+    "removed": [
+     [
+      "EAST",
+      "MICA"
+     ]
+    ]
+   }
+  },
+  "case-key->both": {
+   "assay": {
+    "added": [],
+    "modified": [
+     {
+      "columns": [
+       "doubled",
+       "length_um"
+      ],
+      "key": [
+       "S-01"
+      ]
+     }
+    ],
+    "removed": []
+   },
+   "both_changes": true,
+   "cassette": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "compare_api": {
+    "assay": {
+     "added": [],
+     "modified": [
+      [
+       "S-01"
+      ]
+     ],
+     "removed": []
+    },
+    "cassette": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "frame": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "substrate": {
+     "added": [
+      [
+       "East",
+       "Mica"
+      ]
+     ],
+     "modified": [],
+     "removed": [
+      [
+       "EAST",
+       "MICA"
+      ]
+     ]
+    }
+   },
+   "measurement_changed": true,
+   "numeric_crew_admissible": false,
+   "parent_identity_changed": true,
+   "parent_values_changed": false,
+   "relation_changed": false,
+   "relational_crew_admissible": false,
+   "substrate": {
+    "added": [
+     [
+      "East",
+      "Mica"
+     ]
+    ],
+    "modified": [],
+    "removed": [
+     [
+      "EAST",
+      "MICA"
+     ]
+    ]
+   }
+  },
+  "case-key->frame-only": {
+   "assay": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "both_changes": false,
+   "cassette": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "compare_api": {
+    "assay": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "cassette": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "frame": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "substrate": {
+     "added": [
+      [
+       "East",
+       "Mica"
+      ]
+     ],
+     "modified": [],
+     "removed": [
+      [
+       "EAST",
+       "MICA"
+      ]
+     ]
+    }
+   },
+   "measurement_changed": false,
+   "numeric_crew_admissible": false,
+   "parent_identity_changed": true,
+   "parent_values_changed": false,
+   "relation_changed": false,
+   "relational_crew_admissible": false,
+   "substrate": {
+    "added": [
+     [
+      "East",
+      "Mica"
+     ]
+    ],
+    "modified": [],
+    "removed": [
+     [
+      "EAST",
+      "MICA"
+     ]
+    ]
+   }
+  },
+  "case-key->numeric-only": {
+   "assay": {
+    "added": [],
+    "modified": [
+     {
+      "columns": [
+       "doubled",
+       "length_um"
+      ],
+      "key": [
+       "S-01"
+      ]
+     }
+    ],
+    "removed": []
+   },
+   "both_changes": true,
+   "cassette": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "compare_api": {
+    "assay": {
+     "added": [],
+     "modified": [
+      [
+       "S-01"
+      ]
+     ],
+     "removed": []
+    },
+    "cassette": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "frame": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "substrate": {
+     "added": [
+      [
+       "East",
+       "Mica"
+      ]
+     ],
+     "modified": [],
+     "removed": [
+      [
+       "EAST",
+       "MICA"
+      ]
+     ]
+    }
+   },
+   "measurement_changed": true,
+   "numeric_crew_admissible": false,
+   "parent_identity_changed": true,
+   "parent_values_changed": false,
+   "relation_changed": false,
+   "relational_crew_admissible": false,
+   "substrate": {
+    "added": [
+     [
+      "East",
+      "Mica"
+     ]
+    ],
+    "modified": [],
+    "removed": [
+     [
+      "EAST",
+      "MICA"
+     ]
+    ]
+   }
+  },
+  "case-key->parent-only": {
+   "assay": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "both_changes": false,
+   "cassette": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "compare_api": {
+    "assay": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "cassette": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "frame": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "substrate": {
+     "added": [
+      [
+       "East",
+       "Mica"
+      ]
+     ],
+     "modified": [],
+     "removed": [
+      [
+       "EAST",
+       "MICA"
+      ]
+     ]
+    }
+   },
+   "measurement_changed": false,
+   "numeric_crew_admissible": false,
+   "parent_identity_changed": true,
+   "parent_values_changed": false,
+   "relation_changed": false,
+   "relational_crew_admissible": false,
+   "substrate": {
+    "added": [
+     [
+      "East",
+      "Mica"
+     ]
+    ],
+    "modified": [],
+    "removed": [
+     [
+      "EAST",
+      "MICA"
+     ]
+    ]
+   }
+  },
+  "frame-only->baseline": {
+   "assay": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "both_changes": false,
+   "cassette": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "compare_api": {
+    "assay": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "cassette": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "frame": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "substrate": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    }
+   },
+   "measurement_changed": false,
+   "numeric_crew_admissible": false,
+   "parent_identity_changed": false,
+   "parent_values_changed": false,
+   "relation_changed": false,
+   "relational_crew_admissible": false,
+   "substrate": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   }
+  },
+  "frame-only->both": {
+   "assay": {
+    "added": [],
+    "modified": [
+     {
+      "columns": [
+       "doubled",
+       "length_um"
+      ],
+      "key": [
+       "S-01"
+      ]
+     }
+    ],
+    "removed": []
+   },
+   "both_changes": true,
+   "cassette": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "compare_api": {
+    "assay": {
+     "added": [],
+     "modified": [
+      [
+       "S-01"
+      ]
+     ],
+     "removed": []
+    },
+    "cassette": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "frame": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "substrate": {
+     "added": [],
+     "modified": [
+      [
+       "East",
+       "Mica"
+      ]
+     ],
+     "removed": []
+    }
+   },
+   "measurement_changed": true,
+   "numeric_crew_admissible": false,
+   "parent_identity_changed": false,
+   "parent_values_changed": true,
+   "relation_changed": false,
+   "relational_crew_admissible": false,
+   "substrate": {
+    "added": [],
+    "modified": [
+     {
+      "columns": [
+       "texture_hex"
+      ],
+      "key": [
+       "East",
+       "Mica"
+      ]
+     }
+    ],
+    "removed": []
+   }
+  },
+  "frame-only->case-key": {
+   "assay": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "both_changes": false,
+   "cassette": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "compare_api": {
+    "assay": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "cassette": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "frame": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "substrate": {
+     "added": [
+      [
+       "EAST",
+       "MICA"
+      ]
+     ],
+     "modified": [],
+     "removed": [
+      [
+       "East",
+       "Mica"
+      ]
+     ]
+    }
+   },
+   "measurement_changed": false,
+   "numeric_crew_admissible": false,
+   "parent_identity_changed": true,
+   "parent_values_changed": false,
+   "relation_changed": false,
+   "relational_crew_admissible": false,
+   "substrate": {
+    "added": [
+     [
+      "EAST",
+      "MICA"
+     ]
+    ],
+    "modified": [],
+    "removed": [
+     [
+      "East",
+      "Mica"
+     ]
+    ]
+   }
+  },
+  "frame-only->numeric-only": {
+   "assay": {
+    "added": [],
+    "modified": [
+     {
+      "columns": [
+       "doubled",
+       "length_um"
+      ],
+      "key": [
+       "S-01"
+      ]
+     }
+    ],
+    "removed": []
+   },
+   "both_changes": false,
+   "cassette": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "compare_api": {
+    "assay": {
+     "added": [],
+     "modified": [
+      [
+       "S-01"
+      ]
+     ],
+     "removed": []
+    },
+    "cassette": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "frame": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "substrate": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    }
+   },
+   "measurement_changed": true,
+   "numeric_crew_admissible": true,
+   "parent_identity_changed": false,
+   "parent_values_changed": false,
+   "relation_changed": false,
+   "relational_crew_admissible": false,
+   "substrate": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   }
+  },
+  "frame-only->parent-only": {
+   "assay": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "both_changes": false,
+   "cassette": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "compare_api": {
+    "assay": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "cassette": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "frame": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "substrate": {
+     "added": [],
+     "modified": [
+      [
+       "East",
+       "Mica"
+      ]
+     ],
+     "removed": []
+    }
+   },
+   "measurement_changed": false,
+   "numeric_crew_admissible": false,
+   "parent_identity_changed": false,
+   "parent_values_changed": true,
+   "relation_changed": false,
+   "relational_crew_admissible": true,
+   "substrate": {
+    "added": [],
+    "modified": [
+     {
+      "columns": [
+       "texture_hex"
+      ],
+      "key": [
+       "East",
+       "Mica"
+      ]
+     }
+    ],
+    "removed": []
+   }
+  },
+  "numeric-only->baseline": {
+   "assay": {
+    "added": [],
+    "modified": [
+     {
+      "columns": [
+       "doubled",
+       "length_um"
+      ],
+      "key": [
+       "S-01"
+      ]
+     }
+    ],
+    "removed": []
+   },
+   "both_changes": false,
+   "cassette": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "compare_api": {
+    "assay": {
+     "added": [],
+     "modified": [
+      [
+       "S-01"
+      ]
+     ],
+     "removed": []
+    },
+    "cassette": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "frame": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "substrate": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    }
+   },
+   "measurement_changed": true,
+   "numeric_crew_admissible": true,
+   "parent_identity_changed": false,
+   "parent_values_changed": false,
+   "relation_changed": false,
+   "relational_crew_admissible": false,
+   "substrate": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   }
+  },
+  "numeric-only->both": {
+   "assay": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "both_changes": false,
+   "cassette": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "compare_api": {
+    "assay": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "cassette": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "frame": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "substrate": {
+     "added": [],
+     "modified": [
+      [
+       "East",
+       "Mica"
+      ]
+     ],
+     "removed": []
+    }
+   },
+   "measurement_changed": false,
+   "numeric_crew_admissible": false,
+   "parent_identity_changed": false,
+   "parent_values_changed": true,
+   "relation_changed": false,
+   "relational_crew_admissible": true,
+   "substrate": {
+    "added": [],
+    "modified": [
+     {
+      "columns": [
+       "texture_hex"
+      ],
+      "key": [
+       "East",
+       "Mica"
+      ]
+     }
+    ],
+    "removed": []
+   }
+  },
+  "numeric-only->case-key": {
+   "assay": {
+    "added": [],
+    "modified": [
+     {
+      "columns": [
+       "doubled",
+       "length_um"
+      ],
+      "key": [
+       "S-01"
+      ]
+     }
+    ],
+    "removed": []
+   },
+   "both_changes": true,
+   "cassette": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "compare_api": {
+    "assay": {
+     "added": [],
+     "modified": [
+      [
+       "S-01"
+      ]
+     ],
+     "removed": []
+    },
+    "cassette": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "frame": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "substrate": {
+     "added": [
+      [
+       "EAST",
+       "MICA"
+      ]
+     ],
+     "modified": [],
+     "removed": [
+      [
+       "East",
+       "Mica"
+      ]
+     ]
+    }
+   },
+   "measurement_changed": true,
+   "numeric_crew_admissible": false,
+   "parent_identity_changed": true,
+   "parent_values_changed": false,
+   "relation_changed": false,
+   "relational_crew_admissible": false,
+   "substrate": {
+    "added": [
+     [
+      "EAST",
+      "MICA"
+     ]
+    ],
+    "modified": [],
+    "removed": [
+     [
+      "East",
+      "Mica"
+     ]
+    ]
+   }
+  },
+  "numeric-only->frame-only": {
+   "assay": {
+    "added": [],
+    "modified": [
+     {
+      "columns": [
+       "doubled",
+       "length_um"
+      ],
+      "key": [
+       "S-01"
+      ]
+     }
+    ],
+    "removed": []
+   },
+   "both_changes": false,
+   "cassette": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "compare_api": {
+    "assay": {
+     "added": [],
+     "modified": [
+      [
+       "S-01"
+      ]
+     ],
+     "removed": []
+    },
+    "cassette": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "frame": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "substrate": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    }
+   },
+   "measurement_changed": true,
+   "numeric_crew_admissible": true,
+   "parent_identity_changed": false,
+   "parent_values_changed": false,
+   "relation_changed": false,
+   "relational_crew_admissible": false,
+   "substrate": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   }
+  },
+  "numeric-only->parent-only": {
+   "assay": {
+    "added": [],
+    "modified": [
+     {
+      "columns": [
+       "doubled",
+       "length_um"
+      ],
+      "key": [
+       "S-01"
+      ]
+     }
+    ],
+    "removed": []
+   },
+   "both_changes": true,
+   "cassette": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "compare_api": {
+    "assay": {
+     "added": [],
+     "modified": [
+      [
+       "S-01"
+      ]
+     ],
+     "removed": []
+    },
+    "cassette": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "frame": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "substrate": {
+     "added": [],
+     "modified": [
+      [
+       "East",
+       "Mica"
+      ]
+     ],
+     "removed": []
+    }
+   },
+   "measurement_changed": true,
+   "numeric_crew_admissible": false,
+   "parent_identity_changed": false,
+   "parent_values_changed": true,
+   "relation_changed": false,
+   "relational_crew_admissible": false,
+   "substrate": {
+    "added": [],
+    "modified": [
+     {
+      "columns": [
+       "texture_hex"
+      ],
+      "key": [
+       "East",
+       "Mica"
+      ]
+     }
+    ],
+    "removed": []
+   }
+  },
+  "parent-only->baseline": {
+   "assay": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "both_changes": false,
+   "cassette": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "compare_api": {
+    "assay": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "cassette": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "frame": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "substrate": {
+     "added": [],
+     "modified": [
+      [
+       "East",
+       "Mica"
+      ]
+     ],
+     "removed": []
+    }
+   },
+   "measurement_changed": false,
+   "numeric_crew_admissible": false,
+   "parent_identity_changed": false,
+   "parent_values_changed": true,
+   "relation_changed": false,
+   "relational_crew_admissible": true,
+   "substrate": {
+    "added": [],
+    "modified": [
+     {
+      "columns": [
+       "texture_hex"
+      ],
+      "key": [
+       "East",
+       "Mica"
+      ]
+     }
+    ],
+    "removed": []
+   }
+  },
+  "parent-only->both": {
+   "assay": {
+    "added": [],
+    "modified": [
+     {
+      "columns": [
+       "doubled",
+       "length_um"
+      ],
+      "key": [
+       "S-01"
+      ]
+     }
+    ],
+    "removed": []
+   },
+   "both_changes": false,
+   "cassette": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "compare_api": {
+    "assay": {
+     "added": [],
+     "modified": [
+      [
+       "S-01"
+      ]
+     ],
+     "removed": []
+    },
+    "cassette": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "frame": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "substrate": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    }
+   },
+   "measurement_changed": true,
+   "numeric_crew_admissible": true,
+   "parent_identity_changed": false,
+   "parent_values_changed": false,
+   "relation_changed": false,
+   "relational_crew_admissible": false,
+   "substrate": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   }
+  },
+  "parent-only->case-key": {
+   "assay": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "both_changes": false,
+   "cassette": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "compare_api": {
+    "assay": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "cassette": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "frame": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "substrate": {
+     "added": [
+      [
+       "EAST",
+       "MICA"
+      ]
+     ],
+     "modified": [],
+     "removed": [
+      [
+       "East",
+       "Mica"
+      ]
+     ]
+    }
+   },
+   "measurement_changed": false,
+   "numeric_crew_admissible": false,
+   "parent_identity_changed": true,
+   "parent_values_changed": false,
+   "relation_changed": false,
+   "relational_crew_admissible": false,
+   "substrate": {
+    "added": [
+     [
+      "EAST",
+      "MICA"
+     ]
+    ],
+    "modified": [],
+    "removed": [
+     [
+      "East",
+      "Mica"
+     ]
+    ]
+   }
+  },
+  "parent-only->frame-only": {
+   "assay": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "both_changes": false,
+   "cassette": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "compare_api": {
+    "assay": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "cassette": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "frame": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "substrate": {
+     "added": [],
+     "modified": [
+      [
+       "East",
+       "Mica"
+      ]
+     ],
+     "removed": []
+    }
+   },
+   "measurement_changed": false,
+   "numeric_crew_admissible": false,
+   "parent_identity_changed": false,
+   "parent_values_changed": true,
+   "relation_changed": false,
+   "relational_crew_admissible": true,
+   "substrate": {
+    "added": [],
+    "modified": [
+     {
+      "columns": [
+       "texture_hex"
+      ],
+      "key": [
+       "East",
+       "Mica"
+      ]
+     }
+    ],
+    "removed": []
+   }
+  },
+  "parent-only->numeric-only": {
+   "assay": {
+    "added": [],
+    "modified": [
+     {
+      "columns": [
+       "doubled",
+       "length_um"
+      ],
+      "key": [
+       "S-01"
+      ]
+     }
+    ],
+    "removed": []
+   },
+   "both_changes": true,
+   "cassette": {
+    "added": [],
+    "modified": [],
+    "removed": []
+   },
+   "compare_api": {
+    "assay": {
+     "added": [],
+     "modified": [
+      [
+       "S-01"
+      ]
+     ],
+     "removed": []
+    },
+    "cassette": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "frame": {
+     "added": [],
+     "modified": [],
+     "removed": []
+    },
+    "substrate": {
+     "added": [],
+     "modified": [
+      [
+       "East",
+       "Mica"
+      ]
+     ],
+     "removed": []
+    }
+   },
+   "measurement_changed": true,
+   "numeric_crew_admissible": false,
+   "parent_identity_changed": false,
+   "parent_values_changed": true,
+   "relation_changed": false,
+   "relational_crew_admissible": false,
+   "substrate": {
+    "added": [],
+    "modified": [
+     {
+      "columns": [
+       "texture_hex"
+      ],
+      "key": [
+       "East",
+       "Mica"
+      ]
+     }
+    ],
+    "removed": []
+   }
+  }
+ },
+ "rejected": {
+  "parent-key-rewrite": {
+   "error": "missing_root",
+   "mutation": "UPDATE substrate SET region='North', code='Slate' WHERE region='East' AND code='Mica'",
+   "status": 422
+  },
+  "schema-drift": {
+   "compare": {
+    "error": "schema_conflict",
+    "status": 409
+   },
+   "error": "schema_conflict",
+   "mutation": "ALTER TABLE frame ADD COLUMN caption TEXT",
+   "new_capture_digest": "80d3e92efa0923d410584e06c541fcdd944f2185885d3cb77184f3a47019f87d",
+   "new_schema_digest": "659c81663ead6c68a2002dc4c35bbc4d3b6367bc61bc622dafe7fd3b4c463ce0",
+   "new_version": 2,
+   "not_delivered": "新模式的捕获不写入 artifacts：模式摘要不同，不能与已认证材料直接比较。",
+   "status": 409
+  }
+ },
+ "root": {
+  "key": [
+   "east",
+   "MICA"
+  ],
+  "table": "substrate"
+ },
+ "row_limit": 20,
+ "runtime": {
+  "python": "3.11.2",
+  "sqlite": "3.40.1"
+ },
+ "sample": "examples/microscope.sql",
+ "schema_version": 1,
+ "sealed_download": {
+  "capture_id": "b96b89fc154e4688bc8d9cc901fd97ad",
+  "error": "fixture_not_certified",
+  "state": "sealed",
+  "status": 409,
+  "summary": {
+   "counts": {
+    "assay": 2,
+    "cassette": 2,
+    "frame": 0,
+    "substrate": 1
+   },
+   "root_occurrences": 1,
+   "rows": 5,
+   "witnesses": 8
+  }
+ },
+ "seed": "examples.walkthrough.seed"
+}

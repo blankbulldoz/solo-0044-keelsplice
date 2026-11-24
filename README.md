@@ -51,3 +51,14 @@ python3 -m examples.browser_walkthrough
 ```
 
 两份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。独立自动化测试套件延后。
+
+## 班组交接批次
+
+`handoff/` 保存从显微镜样例构造的真实捕获批次，供数值班（只变生成值、父关系不变）和关系班（父对象变、测量值不变）分别验收，并列明不能作为认证交付的项：
+
+```sh
+python3 -m handoff.batch prepare   # 重建 handoff/artifacts 和 handoff/control.json
+python3 -m handoff.batch verify    # 复核已交付字节，并整批重跑对照
+```
+
+对照依据与分派理由见 `handoff/README.md` 与 `handoff/control.json`。
