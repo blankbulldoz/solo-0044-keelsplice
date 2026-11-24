@@ -51,3 +51,14 @@ python3 -m examples.browser_walkthrough
 ```
 
 两份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。独立自动化测试套件延后。
+
+## 容量处置对照（值班）
+
+试算/封存可能先撞行上限（`row_budget`）、见证上限（`edge_budget`）或源读工作量上限（`scan_budget`）。`docs/capacity-runbook.md` 说明如何用实际观测判断该收紧反向关系、减小输入还是安排源侧检查，以及只知道首个上限时能下多强的结论。配套可复跑的两份小样：
+
+```sh
+python3 -m examples.capacity_seed capacity-labs      # 生成见证密集型与读工作量型两个源库
+python3 -m examples.capacity_replay capacity-labs    # 起真实服务跑有区分力的对照，输出 JSON 报告
+```
+
+见证密集型小样在同规模下先撞 `edge_budget`，读工作量型小样因带 `+` 的反向查找全表扫描而先撞 `scan_budget`；同一库改 `row_limit` 又可压出 `row_budget`。报告的 `matched=false` 会以非零退出提示容量行为漂移。
