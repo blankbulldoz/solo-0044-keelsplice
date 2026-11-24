@@ -48,6 +48,25 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 python3 -m compileall -q keelsplice examples
 python3 -m examples.walkthrough all
 python3 -m examples.browser_walkthrough
+python3 -m examples.handoff_drill --out /tmp/keelsplice-drill
 ```
 
-两份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。独立自动化测试套件延后。
+前两份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。独立自动化测试套件延后。
+
+## 双接收方交接演练
+
+`examples/handoff_drill.py` 从一个经真实服务认证的子库生成两套可重放材料，分别给只能读标准库 CSV 的接收方和能直接查 SQLite 的接收方：
+
+- `material-a-csv/`：每列一个带类型标记的 JSON 单元格，附 `roster.json` 说明复合边、父键排序规则和生成列；不含任何 SQLite 文件。
+- `material-b-sqlite/`：认证子库字节、证书，以及当场生成的对照库 `control.sqlite`。
+
+认证路径会拒绝复合边指向不存在父行的捕获（`invalid_reference`），也不允许 `foreign_key_check` 不通过的子库，因此认证子库只能体现“子键含 NULL 故无需父行”这一半。另一半来自对照库：它沿用同一模式，加入真正缺父的行、合法空串、排序规则陷阱和一份手抄列。`ledger.json` 按结论列出两个接收方的答案、所需表示（类型标记、排序规则元数据、DDL 声明、原始字节）以及交换后丢掉的依据，并要求双方一致，否则中止。
+
+```sh
+python3 examples/receivers/receiver_csv.py /tmp/keelsplice-drill/material-a-csv --dataset control
+python3 examples/receivers/receiver_sqlite.py /tmp/keelsplice-drill/material-b-sqlite --export-material /tmp/keelsplice-drill/material-a-csv
+```
+
+接收方 CSV 脚本不导入 `sqlite3`；对照库上以退出码 2 表示“按设计发现了问题”。
+
+结论依赖的表示各不相同：NULL 判定需要逐单元格的类型标记，缺父判定需要一份含真实悬空行的对照件，排序规则判定需要父键列的 `COLLATE` 声明，生成列判定则同时需要 DDL 中的 `GENERATED` 声明和精确的 REAL 位，字节一致性只有原始文件能回答。普通 CSV 导出会把 NULL 与空串写成同一个空字段、丢掉存储类别和 REAL 精度，因此这些依据在只读 CSV 的一方只能靠 `roster.json` 补回，无法从数据本身恢复。

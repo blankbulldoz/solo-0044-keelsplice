@@ -53,6 +53,10 @@
     {
       "workflow_id": "workbench",
       "command": "python3 -m examples.browser_walkthrough"
+    },
+    {
+      "workflow_id": "drill",
+      "command": "python3 -m examples.handoff_drill --out /tmp/keelsplice-drill-check"
     }
   ]
 }
