@@ -48,6 +48,7 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 python3 -m compileall -q keelsplice examples
 python3 -m examples.walkthrough all
 python3 -m examples.browser_walkthrough
+python3 -m examples.navigation_walkthrough
 ```
 
-两份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。独立自动化测试套件延后。
+演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。`examples/navigation_walkthrough` 针对「查看此行」用 `examples/loop.sql` 构造反例：两条方向与证据不同的边到达同一实存行，其中一支穿环并提交长类型化键；每一步的出发页边标识、提交键与到达证据页都独立锚定，使只比较页面终点的验证失效，并确认错误键回传不影响认证字节。独立自动化测试套件延后。
