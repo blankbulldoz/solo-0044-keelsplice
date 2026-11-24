@@ -4,3 +4,8 @@ __pycache__/
 *.sqlite-wal
 *.sqlite-shm
 .DS_Store
+
+# 升级运行时与生成的升级工作目录（可由 upgrade/ 工件重新构建，不入库）
+.python-build/
+.python-runtimes/
+upgrade-workdir/

@@ -4,7 +4,7 @@
 
 ## 本地启动
 
-需要 Python 3.11+ 和 SQLite 3.37+。Python 后端使用标准库，HTML 由服务端渲染。
+需要 Python 3.11+（已在 3.11 与 3.14 验证）和 SQLite 3.37+。Python 后端使用标准库，HTML 由服务端渲染。
 
 ```sh
 mkdir keelsplice-local
@@ -41,6 +41,10 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 | `GET /captures/{id}/database` | 返回已认证 SQLite 字节，`ETag` 为带引号的 SHA-256 |
 
 根记录中的键按目录的列顺序填写。整数为有符号 64 位 JSON 数字。字节用 `{"blob":"AAD/"}`，实数用 `{"real":"0x1.a000000000000p+1"}`，文本用 JSON 字符串。配方可以用不同拼写定位同一个 NOCASE 根，封存与追踪使用实存键。结果中的行去重，输入根出现项保留顺序。工作台近期列表显示最后登记的 50 个配方版本和最后封存的 50 次捕获，历史详情地址依然可访问。
+
+## 升级到 Python 3.14
+
+`upgrade/` 目录交付从 Python 3.11 部署升级到 3.14 的完整工件：在真实 3.11 实例上生成旧仓库（保留旧配方、停用版本、封存与证书），再切到 3.14 并在副本上做新捕获，附带可执行回退路径。探针会区分 CPython 绑定层变化与 SQLite 引擎能力变化，并对 HTTP 表单字节、独立 SQLite 复读和源读事务逐项取证。操作步骤与证据说明见 [`upgrade/README.md`](upgrade/README.md)。
 
 ## 复跑
 
