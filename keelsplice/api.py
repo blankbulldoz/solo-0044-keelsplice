@@ -6,6 +6,7 @@ import sqlite3
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlsplit
 
+from . import bundle
 from .codec import Fault, dumps
 from .recipe import fields
 from .service import Workbench
@@ -69,24 +70,31 @@ class RequestHandler(BaseHTTPRequestHandler):
             case 'POST', ['captures', capture_id, 'trace']:
                 return 200, bench.trace(capture_id, body)
             case 'POST', ['captures', capture_id, 'build']:
-                fields(body)
-                return 200, bench.build(capture_id)
+                fields(body, (), ('layout',))
+                return 200, bench.build(capture_id, body.get('layout', 'default'))
             case 'POST', ['captures', capture_id, 'certify']:
-                fields(body)
-                return 200, bench.certify(capture_id)
+                fields(body, (), ('layout',))
+                return 200, bench.certify(capture_id, body.get('layout', 'default'))
             case 'POST', ['compare']:
                 return 200, bench.compare(body)
             case 'GET', ['captures', capture_id, 'database']:
-                return 200, bench.download(capture_id)
+                return 200, bench.download(capture_id) + ('default',)
+            case 'GET', ['captures', capture_id, 'layouts', layout, 'database']:
+                if layout not in bundle.LAYOUTS:
+                    raise Fault('unknown_layout', 'Unknown delivery layout', 404)
+                return 200, bench.download(capture_id, layout) + (layout,)
         raise Fault('unknown_route', 'Unknown endpoint', 404)
 
     def send_result(self, status, payload):
         self.send_response(status)
         if isinstance(payload, tuple):
-            data, sha = payload
+            data, sha, layout = payload
+            suffix = '' if layout == 'default' else f'-{layout}'
             self.send_header('Content-Type', 'application/vnd.sqlite3')
-            self.send_header('Content-Disposition', 'attachment; filename="keelsplice-fixture.sqlite"')
+            self.send_header('Content-Disposition',
+                             f'attachment; filename="keelsplice-fixture{suffix}.sqlite"')
             self.send_header('ETag', f'"{sha}"')
+            self.send_header('X-Keelsplice-Layout', layout)
         else:
             data = dumps(payload).encode('ascii')
             self.send_header('Content-Type', 'application/json')

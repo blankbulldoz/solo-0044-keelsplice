@@ -81,11 +81,19 @@ def route(handler, path):
                 'Content-Disposition': f'attachment; filename="keelsplice-{capture_id}.sqlite"',
                 'ETag': f'"{sha}"',
             }
+        case 'GET', ['workbench', 'captures', capture_id, 'layouts', layout, 'database']:
+            data, sha = bench.download(capture_id, layout)
+            return 200, data, 'application/vnd.sqlite3', {
+                'Content-Disposition': f'attachment; filename="keelsplice-{capture_id}-{layout}.sqlite"',
+                'ETag': f'"{sha}"',
+                'X-Keelsplice-Layout': layout,
+            }
         case 'POST', ['workbench', 'captures', capture_id, action]:
             if action == 'trace':
                 status, body = evidence.show(bench, capture_id, values)
             elif action in ('build', 'certify'):
-                (bench.build if action == 'build' else bench.certify)(capture_id)
+                layout = field(values, 'layout', 'default')
+                (bench.build if action == 'build' else bench.certify)(capture_id, layout)
                 return redirect(f'/workbench/captures/{segment(capture_id)}')
             else:
                 raise invalid_route()

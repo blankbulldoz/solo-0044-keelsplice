@@ -86,7 +86,26 @@ def run(base, source, root):
     with closing(sqlite3.connect(handoff)) as conn:
         assert conn.execute("SELECT length_um FROM assay WHERE mark='S-01'").fetchone() == (3.25,)
         assert conn.execute('PRAGMA foreign_key_check').fetchall() == []
-    print('浏览器端到端检查通过：目录、配方、试算、捕获、证据、对比、停用、构建、认证、下载')
+
+    _, detail = html(base, first)
+    assert '交付布局' in detail and 'wide' in detail
+    _, built = html(base, first + '/build', {'layout': 'wide'})
+    assert '待认证' in built and '已认证' in built
+    _, certified = html(base, first + '/certify', {'layout': 'wide'})
+    assert '8192' in certified
+    _, layout_headers, wide = open_page(base, first + '/layouts/wide/database')
+    assert layout_headers['ETag'] == '"' + hashlib.sha256(wide).hexdigest() + '"'
+    assert layout_headers['X-Keelsplice-Layout'] == 'wide'
+    wide_file = root / 'handoff-wide.sqlite'
+    wide_file.write_bytes(wide)
+    with closing(sqlite3.connect(wide_file)) as conn:
+        assert conn.execute('PRAGMA page_size').fetchone() == (8192,)
+        assert conn.execute('PRAGMA freelist_count').fetchone() == (8,)
+        assert conn.execute("SELECT length_um FROM assay WHERE mark='S-01'").fetchone() == (3.25,)
+        assert conn.execute('PRAGMA foreign_key_check').fetchall() == []
+    _, headers, database = open_page(base, first + '/database')
+    assert headers['ETag'] == '"' + hashlib.sha256(database).hexdigest() + '"' == '"' + hashlib.sha256(handoff.read_bytes()).hexdigest() + '"'
+    print('浏览器端到端检查通过：目录、配方、试算、捕获、证据、对比、停用、构建、认证、下载、双布局交付')
 
 
 def main():

@@ -61,7 +61,24 @@ class Workbench:
     def describe(self, record):
         sealed = record['sealed']
         return {k: record[k] for k in ('id', 'name', 'version', 'state', 'certificate')} | {
-            'schema_digest': sealed['schema_digest'], 'summary': capture.summarize(sealed['result']), 'roots': sealed['result']['roots']}
+            'schema_digest': sealed['schema_digest'],
+            'layouts': self.layouts(record), 'summary': capture.summarize(sealed['result']),
+            'roots': sealed['result']['roots']}
+
+    def layouts(self, record):
+        rows = {item['layout']: item for item in record['layouts']}
+        result = {}
+        for name, profile in bundle.LAYOUTS.items():
+            if name == 'default':
+                state = 'pending' if record['state'] == 'sealed' else record['state']
+                certificate = record['certificate']
+            else:
+                row = rows.get(name)
+                state, certificate = (row['state'], row['certificate']) if row else ('pending', None)
+            result[name] = {'label': profile['label'], 'description': profile['description'],
+                            'page_size': profile['page_size'], 'free_pages': profile['free_pages'],
+                            'state': state, 'certificate': certificate}
+        return result
 
     def status(self, capture_id):
         return self.describe(self.repository.load_capture(capture_id))
@@ -76,33 +93,59 @@ class Workbench:
         left, right = (self.repository.load_capture(body[k])['sealed'] for k in ('left', 'right'))
         return {'left': body['left'], 'right': body['right'], 'changes': capture.compare(left, right)}
 
-    def build(self, capture_id):
-        record = self.repository.load_capture(capture_id)
-        if record['state'] == 'sealed':
+    def build(self, capture_id, layout='default'):
+        name, _ = bundle.profile(layout)
+        record = self.repository.load_capture(capture_id, with_artifact=True)
+        if name != 'default' and record['state'] == 'sealed':
+            raise Fault('fixture_not_built', 'Build the default layout before an alternate one', 409)
+        built = next((item for item in record['layouts'] if item['layout'] == name), None)
+        if name == 'default':
+            todo = record['state'] == 'sealed'
+        else:
+            todo = built is None
+        if todo:
             try:
-                data = bundle.build(record['sealed'])
+                data = bundle.build(record['sealed'], name)
             except sqlite3.Error as exc:
                 raise Fault('artifact_build', 'SQLite rejected the sealed schema or values') from exc
-            record = self.repository.promote(capture_id, artifact=data)
+            record = self.repository.promote(capture_id, artifact=data, layout=name)
         return self.describe(record)
 
-    def certify(self, capture_id):
+    def certify(self, capture_id, layout='default'):
+        name, _ = bundle.profile(layout)
         record = self.repository.load_capture(capture_id, with_artifact=True)
-        if record['state'] == 'sealed':
-            raise Fault('fixture_not_built', 'Build the fixture before certifying', 409)
-        if record['state'] == 'built':
+        if name == 'default':
+            state, data = record['state'], record['artifact']
+        else:
+            built = next((item for item in record['layouts'] if item['layout'] == name), None)
+            if built is None:
+                raise Fault('fixture_not_built', 'Build this layout before certifying it', 409)
+            state = built['state']
+            data = self.repository.load_layout(capture_id, name, with_artifact=True)['artifact']
+        if state == 'sealed':
+            raise Fault('fixture_not_built', 'Build the fixture before certifying it', 409)
+        if state == 'built':
             try:
-                certificate = bundle.certify(record['artifact'], record['sealed'])
+                certificate = bundle.certify(data, record['sealed'], name)
             except sqlite3.Error as exc:
                 raise Fault('artifact_unreadable', 'SQLite could not read the resulting fixture') from exc
-            record = self.repository.promote(capture_id, certificate=certificate)
+            record = self.repository.promote(capture_id, certificate=certificate, layout=name)
         return self.describe(record)
 
-    def download(self, capture_id):
+    def download(self, capture_id, layout='default'):
+        name, _ = bundle.profile(layout)
         record = self.repository.load_capture(capture_id, with_artifact=True)
-        if record['state'] != 'certified':
+        if name == 'default':
+            state, sha = record['state'], (record['certificate'] or {}).get('sha256')
+            data = record['artifact']
+        else:
+            built = next((item for item in record['layouts'] if item['layout'] == name), None)
+            if built is None or built['state'] != 'certified':
+                raise Fault('fixture_not_certified', 'Certify this layout before handing it off', 409)
+            state, sha = built['state'], built['certificate']['sha256']
+            data = self.repository.load_layout(capture_id, name, with_artifact=True)['artifact']
+        if state != 'certified':
             raise Fault('fixture_not_certified', 'Certify the fixture before handing it off', 409)
-        data, sha = record['artifact'], record['certificate']['sha256']
         if bundle.digest_bytes(data) != sha:
             raise Fault('artifact_integrity', 'Stored fixture bytes do not match the certificate', 409)
         return data, sha

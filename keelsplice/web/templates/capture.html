@@ -4,8 +4,10 @@
     <div class="wide"><dt>捕获编号</dt><dd><code>$id</code></dd></div>
     <div><dt>源配方</dt><dd><a href="$recipe">$name · 版本 $number</a></dd></div>
     <div class="wide"><dt>封存模式摘要</dt><dd><code>$digest</code></dd></div></dl>
-  <div class="actions">$actions</div>
-  $certificate
+  <section><h2>交付布局</h2>
+    <p class="notice info">两种布局由同一份封存行分别重建，内容等价但文件字节与证书各自独立。默认布局的下载地址与证书与既有交付保持一致。</p>
+    <div class="scroll"><table><thead><tr><th scope="col">布局</th><th scope="col">物理参数</th><th scope="col">阶段</th><th scope="col">证书</th><th scope="col">操作</th></tr></thead><tbody>$layouts</tbody></table></div>
+  </section>
   <div class="editor-grid">
     <section><h2>源库实存根</h2><ol class="data-list">$roots</ol></section>
     <section><h2>逐表计数</h2><div class="scroll"><table><thead><tr><th scope="col">表</th><th scope="col">入选行</th></tr></thead><tbody>$counts</tbody></table></div></section>

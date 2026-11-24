@@ -18,6 +18,13 @@ CREATE TABLE IF NOT EXISTS captures (
     artifact BLOB, certificate TEXT,
     FOREIGN KEY(name, version) REFERENCES recipes(name, version)
 );
+CREATE TABLE IF NOT EXISTS layouts (
+    capture_id TEXT NOT NULL, layout TEXT NOT NULL,
+    state TEXT NOT NULL CHECK(state IN ('built','certified')),
+    artifact BLOB NOT NULL, certificate TEXT,
+    PRIMARY KEY (capture_id, layout),
+    FOREIGN KEY(capture_id) REFERENCES captures(id)
+);
 '''
 
 
@@ -111,23 +118,51 @@ class Repository:
                 (capture_id, dumps(sealed), name, number))
             if saved.rowcount != 1:
                 raise Fault('retired_recipe', 'Recipe retired before this capture could be sealed', 409)
-        return dict(id=capture_id, name=name, version=number, sealed=sealed, state='sealed', certificate=None)
+        return dict(id=capture_id, name=name, version=number, sealed=sealed, state='sealed',
+                    certificate=None, layouts=[])
 
     def load_capture(self, capture_id, with_artifact=False):
         columns = 'id,name,version,sealed,state,certificate' + (',artifact' if with_artifact else '')
         with self.session() as conn:
             row = conn.execute(f'SELECT {columns} FROM captures WHERE id=?', (capture_id,)).fetchone()
+            layouts = conn.execute(
+                'SELECT layout,state,certificate FROM layouts WHERE capture_id=? ORDER BY layout',
+                (capture_id,)).fetchall()
         if row is None:
             raise Fault('unknown_capture', 'Capture does not exist', 404)
         return dict(row) | {'sealed': loads(row['sealed']),
-                            'certificate': loads(row['certificate']) if row['certificate'] else None}
+                            'certificate': loads(row['certificate']) if row['certificate'] else None,
+                            'layouts': [dict(item) | {'certificate': loads(item['certificate'])
+                                                      if item['certificate'] else None} for item in layouts]}
 
-    def promote(self, capture_id, *, artifact=None, certificate=None):
+    def load_layout(self, capture_id, layout, with_artifact=False):
+        columns = 'layout,state,certificate' + (',artifact' if with_artifact else '')
+        with self.session() as conn:
+            row = conn.execute(f'SELECT {columns} FROM layouts WHERE capture_id=? AND layout=?',
+                               (capture_id, layout)).fetchone()
+        if row is None:
+            raise Fault('layout_not_built', f'Layout {layout} has not been built for this capture', 404)
+        return dict(row) | {'certificate': loads(row['certificate']) if row['certificate'] else None}
+
+    def promote(self, capture_id, *, artifact=None, certificate=None, layout='default'):
+        """Advance one layout to built or certified without touching the others."""
         with self.session(write=True) as conn:
-            if artifact is not None:
-                conn.execute("UPDATE captures SET state='built',artifact=? WHERE id=? AND state='sealed'",
-                             (artifact, capture_id))
+            if layout == 'default':
+                if artifact is not None:
+                    conn.execute("UPDATE captures SET state='built',artifact=? WHERE id=? AND state='sealed'",
+                                 (artifact, capture_id))
+                else:
+                    conn.execute("UPDATE captures SET state='certified',certificate=? WHERE id=? AND state='built'",
+                                 (dumps(certificate), capture_id))
+            elif artifact is not None:
+                conn.execute("""INSERT INTO layouts (capture_id,layout,state,artifact)
+                    VALUES (?,?,'built',?)
+                    ON CONFLICT(capture_id,layout) DO UPDATE SET state='built',artifact=excluded.artifact,
+                        certificate=NULL""", (capture_id, layout, artifact))
             else:
-                conn.execute("UPDATE captures SET state='certified',certificate=? WHERE id=? AND state='built'",
-                             (dumps(certificate), capture_id))
+                updated = conn.execute("""UPDATE layouts SET state='certified',certificate=?
+                    WHERE capture_id=? AND layout=? AND state='built'""",
+                                       (dumps(certificate), capture_id, layout))
+                if updated.rowcount != 1:
+                    raise Fault('fixture_not_built', 'Build this layout before certifying it', 409)
         return self.load_capture(capture_id)

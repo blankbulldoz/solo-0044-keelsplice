@@ -21,7 +21,7 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 2. 登记配方，填写一个或多个根及封存行上限。样例可填 `[{"table":"substrate","key":["east","MICA"]}]`，再选 `substrate → assay`。
 3. 试算查看逐表计数和实存根。点「封存当前样本」时服务重新读取源。配方绑定的模式有变化时，需要重新核对目录。
 4. 在捕获详情按实存主键追踪。可从直接入选原因或必需父行继续查看相关记录。对比页面按实存带类型主键显示两个同模式捕获的新增、移除和修改。
-5. 构建后再认证。认证后可下载文件并用其 SHA-256 或独立 SQLite 连接核对。停用配方后，既有捕获仍可完成这些操作。
+5. 构建后再认证。认证后可下载文件并用其 SHA-256 或独立 SQLite 连接核对。捕获详情分别列出两种布局的阶段、证书与下载入口，默认布局的旧地址和证书保持不变。停用配方后，既有捕获仍可完成这些操作。
 
 ## JSON 接口
 
@@ -36,9 +36,21 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 | `POST /preview`、`POST /captures` | 接收 `{"name":"swatch","version":1}`，分别试算和封存 |
 | `GET /captures/{id}` | 读取捕获状态、实存根、计数和证书 |
 | `POST /captures/{id}/trace` | 接收如 `{"table":"substrate","key":["East","Mica"]}`，返回直接证据和从零开始的根序号 |
-| `POST /captures/{id}/build`、`POST /captures/{id}/certify` | 接收空对象，构建或认证该捕获的子库 |
+| `POST /captures/{id}/build`、`POST /captures/{id}/certify` | 接收空对象，构建或认证该捕获的子库；可带 `{"layout":"wide"}` 构建或认证第二种布局 |
 | `POST /compare` | 接收 `{"left":"id-a","right":"id-b"}`，按表报告带类型主键的差异 |
-| `GET /captures/{id}/database` | 返回已认证 SQLite 字节，`ETag` 为带引号的 SHA-256 |
+| `GET /captures/{id}/database` | 返回默认布局已认证的 SQLite 字节，`ETag` 为带引号的 SHA-256 |
+| `GET /captures/{id}/layouts/{layout}/database` | 返回该布局已认证的 SQLite 字节，`ETag` 为对应证书摘要 |
+
+### 两种交付布局
+
+同一封存可以分别交付两种经认证的布局，二者都由同一份封存行重建，逐表行内容等价，但文件字节与证书各自独立：
+
+| 布局 | 页大小 | 空闲页 | 既有入口 |
+| --- | --- | --- | --- |
+| `default` | SQLite 默认（当前 4096） | 0 | `GET /captures/{id}/database`，字节与 `POST .../build`、`.../certify` 空对象的结果保持既有实现 |
+| `wide` | 8192 | 8 | `GET /captures/{id}/layouts/wide/database` |
+
+默认布局的构建、认证和下载沿用原来的调用形状与字节，已有证书可继续使用。第二种布局要等默认布局构建之后才能构建；它构建失败时只留下自己的 `pending` 状态，默认布局的字节、证书和下载不受影响。两种布局都认证后，`GET /captures/{id}` 的 `layouts` 字段分别列出各自证书中的 `sha256`、`bytes`、`page_size`、`free_pages`。
 
 根记录中的键按目录的列顺序填写。整数为有符号 64 位 JSON 数字。字节用 `{"blob":"AAD/"}`，实数用 `{"real":"0x1.a000000000000p+1"}`，文本用 JSON 字符串。配方可以用不同拼写定位同一个 NOCASE 根，封存与追踪使用实存键。结果中的行去重，输入根出现项保留顺序。工作台近期列表显示最后登记的 50 个配方版本和最后封存的 50 次捕获，历史详情地址依然可访问。
 
@@ -50,4 +62,4 @@ python3 -m examples.walkthrough all
 python3 -m examples.browser_walkthrough
 ```
 
-两份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。独立自动化测试套件延后。
+两份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。`python3 -m examples.walkthrough layouts` 单独演练双布局交付，包括第二布局构建失败时默认布局的字节与证书保持不变。独立自动化测试套件延后。

@@ -165,8 +165,8 @@
       "id": "build",
       "name": "从捕获重建子库",
       "entry": "POST /captures/{id}/build",
-      "success": "对完整目录重建约束、回填数据并通过外键检查",
-      "failure": "返回错误并保留 sealed 状态，不向下载暴露半成品",
+      "success": "对完整目录重建约束、回填数据并通过外键检查；可按布局分别重建",
+      "failure": "返回错误并保留 sealed 状态，不向下载暴露半成品；第二布局失败不影响默认布局",
       "verification": "python3 -m examples.walkthrough build",
       "steps": [
         "接收请求 POST /captures/{id}/build",
@@ -185,7 +185,7 @@
       "id": "certify",
       "name": "认证子库内容",
       "entry": "POST /captures/{id}/certify",
-      "success": "重开生成的 SQLite 文件并核对模式、行内容和外键，保存证明",
+      "success": "重开生成的 SQLite 文件并核对模式、物理布局、行内容和外键，按布局保存证明",
       "failure": "未生成的捕获拒绝认证",
       "verification": "python3 -m examples.walkthrough certify",
       "steps": [
@@ -224,7 +224,7 @@
       "id": "download",
       "name": "交接已认证成果",
       "entry": "GET /captures/{id}/database",
-      "success": "输出已认证库字节与摘要，响应同一个认证记录",
+      "success": "输出已认证库字节与摘要，响应同一个认证记录；按布局地址交付各自字节",
       "failure": "未认证捕获拒绝下载",
       "verification": "python3 -m examples.walkthrough download",
       "steps": [

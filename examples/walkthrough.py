@@ -13,7 +13,8 @@ from urllib.request import Request, urlopen
 
 from keelsplice.api import create_server
 
-WORKFLOWS = ('catalog', 'recipe', 'retire', 'preview', 'capture', 'trace', 'build', 'certify', 'compare', 'download')
+WORKFLOWS = ('catalog', 'recipe', 'retire', 'preview', 'capture', 'trace', 'build', 'certify',
+             'compare', 'download', 'layouts')
 
 
 def seed(file):
@@ -131,7 +132,95 @@ def walkthrough(base, selected, source, root):
         assert row == (3.25, 6.5)
         assert conn.execute('SELECT texture FROM substrate').fetchone()[0] == b'\x00\x00\xff'
         assert conn.execute('SELECT count(*) FROM frame').fetchone()[0] == 0
-    observe('download', {'sha256': etag, 'source_changes_isolated': True, 'length_and_generated': row})
+    if observe('download', {'sha256': etag, 'source_changes_isolated': True, 'length_and_generated': row}):
+        return
+    layouts(base, request, cap['id'], data, certificate, root)
+
+
+def contents(data, directory, name):
+    """Canonical schema and typed row content of a handoff file."""
+    file = directory / name
+    file.write_bytes(data)
+    with closing(sqlite3.connect(file.as_uri() + '?mode=ro', uri=True)) as conn:
+        conn.row_factory = sqlite3.Row
+        ddl = [tuple(row) for row in conn.execute(
+            'SELECT type,name,tbl_name,sql FROM sqlite_schema WHERE sql IS NOT NULL ORDER BY type,name')]
+        tables = {}
+        for table in conn.execute(
+                "SELECT name FROM sqlite_schema WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name"):
+            tables[table[0]] = [tuple(row) for row in conn.execute(f'SELECT * FROM "{table[0]}" ORDER BY 1')]
+    return ddl, tables
+
+
+def layouts(base, request, capture_id, default_data, default_certificate, root):
+    """Deliver a second authenticated layout without disturbing the first."""
+    from keelsplice import bundle
+
+    endpoint = '/captures/' + capture_id
+    status = request(endpoint)
+    assert status['layouts']['default']['state'] == 'certified'
+    assert status['layouts']['wide']['state'] == 'pending'
+    assert request(endpoint + '/database')[0] == default_data
+
+    original = bundle.build
+
+    def broken(sealed, layout='default'):
+        if layout == 'wide':
+            raise sqlite3.OperationalError('injected second-layout failure')
+        return original(sealed, layout)
+
+    bundle.build = broken
+    try:
+        failed = request(endpoint + '/build', {'layout': 'wide'}, 422)
+        assert failed['error'] == 'artifact_build'
+    finally:
+        bundle.build = original
+    after = request(endpoint)
+    assert after['layouts']['default']['state'] == 'certified'
+    assert after['layouts']['default']['certificate'] == default_certificate
+    assert after['layouts']['wide']['state'] == 'pending'
+    assert request(endpoint + '/database') == (default_data, default_certificate['sha256'])
+
+    built = request(endpoint + '/build', {'layout': 'wide'})
+    assert built['layouts']['wide']['state'] == 'built'
+    assert built['state'] == 'certified' and built['certificate'] == default_certificate
+    assert request('/captures/' + capture_id + '/database')[0] == default_data
+
+    certified = request(endpoint + '/certify', {'layout': 'wide'})
+    wide = certified['layouts']['wide']['certificate']
+    assert certified['layouts']['wide']['state'] == 'certified'
+    assert wide['layout'] == 'wide' and wide['page_size'] == 8192 and wide['free_pages'] == 8
+    assert certified['layouts']['default']['certificate'] == default_certificate
+
+    data, etag = request(endpoint + '/layouts/wide/database')
+    assert sha256(data).hexdigest() == etag == wide['sha256'] and data != default_data
+    assert request(endpoint + '/database') == (default_data, default_certificate['sha256'])
+
+    wide_file = root / 'handoff-wide.sqlite'
+    wide_file.write_bytes(data)
+    with closing(sqlite3.connect(wide_file.as_uri() + '?mode=ro', uri=True)) as conn:
+        conn.row_factory = sqlite3.Row
+        assert conn.execute('PRAGMA page_size').fetchone()[0] == 8192
+        assert conn.execute('PRAGMA freelist_count').fetchone()[0] == 8
+        assert conn.execute('PRAGMA integrity_check').fetchall()[0][0] == 'ok'
+        assert conn.execute('PRAGMA foreign_key_check').fetchall() == []
+        counted = {row['name']: row['n'] for row in conn.execute(
+            'SELECT "substrate" AS name, count(*) AS n FROM substrate UNION ALL '
+            'SELECT "assay", count(*) FROM assay UNION ALL '
+            'SELECT "cassette", count(*) FROM cassette UNION ALL '
+            'SELECT "frame", count(*) FROM frame')}
+        assert counted == default_certificate['counts']
+        assert conn.execute("SELECT length_um,doubled FROM assay WHERE mark='S-01'").fetchone()[:] == (3.25, 6.5)
+        assert conn.execute('SELECT texture FROM substrate').fetchone()[0] == b'\x00\x00\xff'
+        assert conn.execute('SELECT serial,prior FROM cassette ORDER BY serial').fetchall()[1][:] == (12, 11)
+    assert wide['sha256'] != default_certificate['sha256']
+    default_contents = contents(default_data, root, 'handoff-default.sqlite')
+    assert contents(data, root, 'handoff-wide.sqlite') == default_contents
+    assert default_contents[1]['assay'][0][1:5] == ('east', 'MICA', 11, 3.25)
+    assert request(endpoint + '/layouts/default/database') == (default_data, default_certificate['sha256'])
+    assert request(endpoint + '/build', {'layout': 'narrow'}, 404)['error'] == 'unknown_layout'
+    print('layouts', json.dumps({'default': default_certificate['sha256'], 'wide': wide['sha256'],
+                                 'equivalent': True}, sort_keys=True))
 
 
 def main():
