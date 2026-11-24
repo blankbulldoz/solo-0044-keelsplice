@@ -48,6 +48,11 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 python3 -m compileall -q keelsplice examples
 python3 -m examples.walkthrough all
 python3 -m examples.browser_walkthrough
+python3 -m examples.acceptance_compat
 ```
 
 两份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。独立自动化测试套件延后。
+
+## 接收方兼容
+
+认证子库交付全部普通表（含零行表）的 DDL、约束和显式索引，但不交付视图和触发器，证书也不覆盖它们。`python3 -m examples.acceptance_compat` 用可复跑 SQLite 输入分清「没有入选行、结构仍在、功能对象根本不交付」三种情况，并给出两个下游的放行与请求另一份交付的判据。一线维护说明见 [docs/hand-off-compatibility.md](docs/hand-off-compatibility.md)。
