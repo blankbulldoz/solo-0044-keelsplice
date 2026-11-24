@@ -48,6 +48,7 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 python3 -m compileall -q keelsplice examples
 python3 -m examples.walkthrough all
 python3 -m examples.browser_walkthrough
+python3 -m examples.handoff_walkthrough
 ```
 
-两份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。独立自动化测试套件延后。
+前两份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。第三份让 JSON 接口、浏览器工作台和一个进程内本机入口交错进入同一捕获的构建与认证，并覆盖未构建先认证、持久化后重试（含重启）三种情况：这些状态决策集中在 `keelsplice.handoff`，各入口只做传输表达。独立自动化测试套件延后。

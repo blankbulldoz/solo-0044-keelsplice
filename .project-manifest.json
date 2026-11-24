@@ -12,6 +12,11 @@
       "responsibility": "公开入口与持久生命周期协调"
     },
     {
+      "id": "handoff",
+      "path": "keelsplice/handoff.py",
+      "responsibility": "构建、认证、下载的阶段门槛与重试决策"
+    },
+    {
       "id": "storage",
       "path": "keelsplice/storage.py",
       "responsibility": "源路径只读入口、配方、捕获和成果持久状态"
@@ -175,6 +180,7 @@
       "module_ids": [
         "api",
         "service",
+        "handoff",
         "bundle",
         "catalog",
         "codec",
@@ -195,6 +201,7 @@
       "module_ids": [
         "api",
         "service",
+        "handoff",
         "bundle",
         "catalog",
         "codec",
@@ -234,6 +241,7 @@
       "module_ids": [
         "api",
         "service",
+        "handoff",
         "storage",
         "bundle"
       ]

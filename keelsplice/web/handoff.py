@@ -1,4 +1,9 @@
-"""Describe the certificate and the action allowed by the persisted stage."""
+"""Render the certificate and the action allowed by the persisted stage.
+
+Presentation mirror of ``keelsplice.handoff``: the stage gates and retries
+live in that domain module; here the persisted stage only becomes the next
+link or form the browser may use, never a decision of its own.
+"""
 
 from .render import code, template
 

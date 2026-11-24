@@ -1,10 +1,10 @@
 """Use-case coordinator linking API requests to source and repository state."""
 
 import re
-import sqlite3
 
-from . import bundle, capture, catalog, recipe
+from . import capture, catalog, recipe
 from .codec import Fault
+from .handoff import Handoff
 
 NAME = re.compile(r'[a-z][a-z0-9_-]{0,63}\Z')
 
@@ -12,6 +12,7 @@ NAME = re.compile(r'[a-z][a-z0-9_-]{0,63}\Z')
 class Workbench:
     def __init__(self, repository):
         self.repository = repository
+        self.handoff = Handoff(repository)
 
     def catalog(self, alias):
         with self.repository.source(alias) as conn:
@@ -77,32 +78,10 @@ class Workbench:
         return {'left': body['left'], 'right': body['right'], 'changes': capture.compare(left, right)}
 
     def build(self, capture_id):
-        record = self.repository.load_capture(capture_id)
-        if record['state'] == 'sealed':
-            try:
-                data = bundle.build(record['sealed'])
-            except sqlite3.Error as exc:
-                raise Fault('artifact_build', 'SQLite rejected the sealed schema or values') from exc
-            record = self.repository.promote(capture_id, artifact=data)
-        return self.describe(record)
+        return self.describe(self.handoff.build(capture_id))
 
     def certify(self, capture_id):
-        record = self.repository.load_capture(capture_id, with_artifact=True)
-        if record['state'] == 'sealed':
-            raise Fault('fixture_not_built', 'Build the fixture before certifying', 409)
-        if record['state'] == 'built':
-            try:
-                certificate = bundle.certify(record['artifact'], record['sealed'])
-            except sqlite3.Error as exc:
-                raise Fault('artifact_unreadable', 'SQLite could not read the resulting fixture') from exc
-            record = self.repository.promote(capture_id, certificate=certificate)
-        return self.describe(record)
+        return self.describe(self.handoff.certify(capture_id))
 
     def download(self, capture_id):
-        record = self.repository.load_capture(capture_id, with_artifact=True)
-        if record['state'] != 'certified':
-            raise Fault('fixture_not_certified', 'Certify the fixture before handing it off', 409)
-        data, sha = record['artifact'], record['certificate']['sha256']
-        if bundle.digest_bytes(data) != sha:
-            raise Fault('artifact_integrity', 'Stored fixture bytes do not match the certificate', 409)
-        return data, sha
+        return self.handoff.download(capture_id)
