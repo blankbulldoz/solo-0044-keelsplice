@@ -1,11 +1,14 @@
 """Read-only source snapshots and transactional local repository state."""
 
+import re
 import sqlite3
 from contextlib import closing, contextmanager
 from pathlib import Path
 from uuid import uuid4
 
 from .codec import Fault, dumps, loads
+
+ALIAS = re.compile('[a-z][a-z0-9_-]{0,63}')
 
 REPOSITORY_DDL = '''
 CREATE TABLE IF NOT EXISTS recipes (

@@ -4,12 +4,22 @@
     {
       "id": "api",
       "path": "keelsplice/api.py",
-      "responsibility": "传输、协议错误、JSON 与数据库响应"
+      "responsibility": "回环 http.server 入口，调用共享传输核心"
     },
     {
       "id": "service",
       "path": "keelsplice/service.py",
       "responsibility": "公开入口与持久生命周期协调"
+    },
+    {
+      "id": "transport",
+      "path": "keelsplice/transport.py",
+      "responsibility": "两条入口共享的请求解析、路由、JSON/HTML 响应与错误映射"
+    },
+    {
+      "id": "wsgi",
+      "path": "keelsplice/wsgi.py",
+      "responsibility": "PEP 3333 应用、环境变量装配与内置线程化 WSGI 宿主"
     },
     {
       "id": "storage",
@@ -60,10 +70,11 @@
         "从同一个读事务提取列、主键和外键目标，返回模式摘要"
       ],
       "module_ids": [
-        "api",
+        "transport",
         "service",
         "catalog",
-        "storage"
+        "storage",
+        "api"
       ]
     },
     {
@@ -78,11 +89,12 @@
         "现行目录参与校验，归档原配方与摘要并分配递增版本"
       ],
       "module_ids": [
-        "api",
+        "transport",
         "service",
         "recipe",
         "catalog",
-        "storage"
+        "storage",
+        "api"
       ]
     },
     {
@@ -97,10 +109,11 @@
         "冻结版本的读取与既有捕获仍可用，新捕获被拒绝"
       ],
       "module_ids": [
-        "api",
+        "transport",
         "service",
         "storage",
-        "recipe"
+        "recipe",
+        "api"
       ]
     },
     {
@@ -115,11 +128,12 @@
         "报告在锚点及可选反向边下的容量与图形统计"
       ],
       "module_ids": [
-        "api",
+        "transport",
         "service",
         "capture",
         "catalog",
-        "recipe"
+        "recipe",
+        "api"
       ]
     },
     {
@@ -134,12 +148,13 @@
         "保存同一事务内的模式、行和入选证据；通过状态接口读取"
       ],
       "module_ids": [
-        "api",
+        "transport",
         "service",
         "capture",
         "catalog",
         "storage",
-        "codec"
+        "codec",
+        "api"
       ]
     },
     {
@@ -154,11 +169,12 @@
         "主键定位后返回根标记及指向该行的边和依赖"
       ],
       "module_ids": [
-        "api",
+        "transport",
         "service",
         "capture",
         "storage",
-        "codec"
+        "codec",
+        "api"
       ]
     },
     {
@@ -173,12 +189,13 @@
         "对完整目录重建约束、回填数据并通过外键检查"
       ],
       "module_ids": [
-        "api",
+        "transport",
         "service",
         "bundle",
         "catalog",
         "codec",
-        "storage"
+        "storage",
+        "api"
       ]
     },
     {
@@ -193,12 +210,13 @@
         "重开生成的 SQLite 文件并核对模式、行内容和外键，保存证明"
       ],
       "module_ids": [
-        "api",
+        "transport",
         "service",
         "bundle",
         "catalog",
         "codec",
-        "storage"
+        "storage",
+        "api"
       ]
     },
     {
@@ -213,11 +231,12 @@
         "同模式下按类型化主键比较加入、离开或修改"
       ],
       "module_ids": [
-        "api",
+        "transport",
         "service",
         "capture",
         "storage",
-        "codec"
+        "codec",
+        "api"
       ]
     },
     {
@@ -232,10 +251,11 @@
         "输出已认证库字节与摘要，响应同一个认证记录"
       ],
       "module_ids": [
-        "api",
+        "transport",
         "service",
         "storage",
-        "bundle"
+        "bundle",
+        "api"
       ]
     },
     {
@@ -252,12 +272,39 @@
       ],
       "module_ids": [
         "web",
+        "transport",
         "api",
+        "wsgi",
         "service",
         "storage",
         "catalog",
         "recipe",
         "capture",
+        "bundle",
+        "codec"
+      ]
+    },
+    {
+      "id": "switchover",
+      "name": "并行部署与入口切换",
+      "entry": "GET /workbench（原 http.server 入口与 WSGI 宿主共用仓库）",
+      "success": "两入口并行读写同一持久仓库；旧 JSON 客户端得到相同路径与错误结构；认证后的子库在两侧给出同一 SHA-256，切回原入口仍可续办新封存记录",
+      "failure": "源别名、仓库路径或挂载点不一致时明确拒绝启动或返回相同错误，不产生分叉状态",
+      "verification": "python3 -m examples.deployment_walkthrough / python3 -m examples.process_switchover",
+      "steps": [
+        "以同一 --repository 与 --source 启动原入口和 --wsgi 入口",
+        "用原入口登记配方、由 WSGI 入口封存，并在另一侧读取同一记录",
+        "经 WSGI 入口提交浏览器表单，核对类型化主键与同源边界",
+        "在一侧构建认证、两侧下载并比对证书摘要",
+        "停掉 WSGI 入口后由原入口继续追踪、构建、认证与下载"
+      ],
+      "module_ids": [
+        "transport",
+        "wsgi",
+        "api",
+        "service",
+        "storage",
+        "web",
         "bundle",
         "codec"
       ]

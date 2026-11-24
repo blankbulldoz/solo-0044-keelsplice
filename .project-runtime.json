@@ -53,6 +53,14 @@
     {
       "workflow_id": "workbench",
       "command": "python3 -m examples.browser_walkthrough"
+    },
+    {
+      "workflow_id": "switchover",
+      "command": "python3 -m examples.process_switchover"
+    },
+    {
+      "workflow_id": "deployment",
+      "command": "python3 -m examples.deployment_walkthrough"
     }
   ]
 }

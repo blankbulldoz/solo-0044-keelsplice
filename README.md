@@ -15,6 +15,41 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 
 浏览器打开 <http://127.0.0.1:8794/workbench>。同一进程可用多个 `--source 别名=文件` 注册不同源库。工作台仅用于受信任的本机操作人员，服务监听回环地址。源文件必须与状态库分开，状态库所在目录须可写。
 
+## 并行运行的原入口与 WSGI 入口
+
+内建入口仍由标准库 `http.server` 提供，行为与之前一致。需要受支持的 WSGI 宿主时，可用同一份代码另起一个进程：
+
+```sh
+# 受支持的 WSGI 宿主：把 keelsplice.wsgi:application 交给宿主加载
+KEELSPLICE_REPOSITORY=keelsplice-local/state.sqlite \
+KEELSPLICE_SOURCES='{"microscope": "keelsplice-local/microscope.sqlite"}' \
+python3 -m waitress --host 127.0.0.1 --port 8795 keelsplice.wsgi:application
+
+# 或使用随代码附带、行为相同的线程化 WSGI 宿主
+python3 -m keelsplice --wsgi --repository keelsplice-local/state.sqlite \
+  --source microscope=keelsplice-local/microscope.sqlite --port 8795
+```
+
+两条入口必须用同一对 `--repository` 和源文件路径（WSGI 宿主使用同名环境变量），因此共用同一个状态库、同一批证书和同一条模式摘要。两个进程可以同时在线：SQLite 串行化写入，读取只看已提交记录，任一侧封存的新捕获在另一侧立即可见。切换期间只要保证同一时刻只有一个入口在接待写请求，就可以随时把旧入口流量切到 WSGI 入口，再按需要切回。
+
+WSGI 应用需挂载在站点根（`SCRIPT_NAME` 为空），因为页面表单与重定向使用 `/workbench` 根相对地址；非空挂载会以 500 明确拒绝，而不是悄悄生成错误链接。`transport.py` 是两条入口唯一共享的协议层：路径、状态码、JSON 错误结构 `{"error", "message"}`、`ETag` 与下载头、浏览器同源检查和表单错误页面都由它产出，所以旧客户端和浏览器不会因入口不同而看到差异。仅支持 GET 与 POST；其他方法在两条入口都返回 501 和同样的 JSON 错误。
+
+浏览器表单继续提交真实类型的键（例如 `roots` 中的 `[{"table":"substrate","key":["east","MICA"]}]`）和 `digest`，服务按目录摘要校验后用同一套编解码落库，因此 NOCASE 拼写、BLOB、实数与 64 位整数在两侧没有区别。认证后的下载在两条入口使用同一份存储字节与同一 `certificate.sha256`：`ETag` 与响应体摘要相同，接收方可用任一入口的结果复核，也可以拿它和原入口此前下载的文件比对。
+
+对照清单（同一仓库、同一证书）：
+
+| 关注点 | 原入口 | WSGI 入口 | 一致性来源 |
+| --- | --- | --- | --- |
+| 监听 | `python3 -m keelsplice` | `python3 -m waitress ... keelsplice.wsgi:application` 或 `--wsgi` | 同一 `Repository`、同一源路径 |
+| JSON 路径与错误 | `/sources/...` 等 | 完全相同 | `transport.route_json` |
+| 浏览器路径 | `/workbench/...` | 完全相同 | `web.http.route` |
+| 同源检查 | `Origin` 等于 `Host` 且为主机回环 | 完全相同 | `transport.Request.form_values` |
+| 类型化键 | JSON 文本经 `codec.decode` | 完全相同 | `recipe.validate` |
+| 捕获/证书 | 存于状态库 | 完全相同 | `storage.Repository` |
+| 下载 | `ETag` 为 SHA-256 | 完全相同 | `service.download` |
+
+不需要清空或迁移状态库：停掉旧入口后直接以相同参数启动 WSGI 入口即可，反向切换同理。进行中的捕获若只到 `sealed` 或 `built`，在新入口继续构建或认证仍按原状态机推进。
+
 ## 从配方到交付
 
 1. 在「关系目录」选源和表。主键顺序用于填写根，外键映射用于判断哪些子行需要反向纳入。
@@ -48,6 +83,8 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 python3 -m compileall -q keelsplice examples
 python3 -m examples.walkthrough all
 python3 -m examples.browser_walkthrough
+python3 -m examples.deployment_walkthrough
+python3 -m examples.process_switchover
 ```
 
-两份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。独立自动化测试套件延后。
+前两份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。`deployment_walkthrough` 在同一进程内并行启动两条入口、共用一份状态库，覆盖目录与错误结构一致、跨入口封存/读取、WSGI 侧表单与同源边界、两侧同一证书摘要，以及切回原入口后继续操作 WSGI 侧新封存记录。`process_switchover` 用 `python -m keelsplice` 起两个真实进程做同样的切换检查。独立自动化测试套件延后。
