@@ -1,0 +1,10 @@
+{
+  "purpose": "错误结论诱导 4：行预算收紧到 1。单根闭包至少 3 行（1 substrate + 2 盒循环成员），预算不足必须整体拒绝且不留部分捕获，防止用截断样本得出循环不存在的结论。",
+  "request": {
+    "source": "surrogate",
+    "roots": [{"table": "substrate", "key": ["North", "Quartz"]}],
+    "follow_children": [{"child": "assay", "id": 0}],
+    "row_limit": 1
+  },
+  "expect": {"http_status": 422, "error": "row_budget", "no_partial_capture": true}
+}

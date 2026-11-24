@@ -1,0 +1,26 @@
+{
+  "purpose": "正确结论 B：两个复合 NOCASE 根分别命中两个父键，展示两套不同大小写拼写、盒循环对（41<->42）与 NULL 尾盒 43 的区分。T-12 的复合子键含 NULL，反向扇出不会命中任何 substrate，只能作为独立显式根入选——这本身就是部分 NULL 关系与普通 NOCASE 关系的关键区分。",
+  "request": {
+    "source": "surrogate",
+    "roots": [
+      {"table": "substrate", "key": ["north", "QUARTZ"]},
+      {"table": "substrate", "key": ["SOUTH", "granite"]},
+      {"table": "assay", "key": ["T-12"]}
+    ],
+    "follow_children": [{"child": "assay", "id": 0}, {"child": "frame", "id": 0}],
+    "row_limit": 30
+  },
+  "expect": {
+    "normalized_roots": [
+      ["substrate", ["North", "Quartz"]],
+      ["substrate", ["South", "Granite"]],
+      ["assay", ["T-12"]]
+    ],
+    "preview_counts": {"substrate": 2, "cassette": 3, "assay": 4, "frame": 3},
+    "null_relationship_row": "T-12",
+    "null_relationship_reachable_by_substrate_fanout": false,
+    "null_relationship_has_parent_arc": false,
+    "frame_204_included": false,
+    "cassette_43_reached_only_via": "T-12"
+  }
+}

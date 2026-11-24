@@ -1,0 +1,17 @@
+{
+  "purpose": "错误结论诱导 3：把 NULL 放进根主键，或指向不存在的盒节点。前者违反完整实存主键要求（invalid_key），后者在源中找不到唯一根（missing_root），均不得静默落到别的行。",
+  "cases": [
+    {
+      "label": "null_pk_component",
+      "request": {"source": "surrogate", "roots": [{"table": "assay", "key": [null]}],
+                  "follow_children": [], "row_limit": 10},
+      "expect": {"http_status": 422, "error": "invalid_key"}
+    },
+    {
+      "label": "missing_cassette_root",
+      "request": {"source": "surrogate", "roots": [{"table": "cassette", "key": [99]}],
+                  "follow_children": [], "row_limit": 10},
+      "expect": {"reject_phase": "preview", "http_status": 422, "error": "missing_root"}
+    }
+  ]
+}

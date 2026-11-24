@@ -1,0 +1,6 @@
+{
+  "purpose": "错误结论诱导 1：用输入拼写而非实存键去追踪。NOCASE 只在根定位时折叠大小写，封存后追踪要求实存带类型主键，错误拼写必须得到 row_not_captured(404)，不能伪造证据路径。",
+  "request": {"table": "substrate", "key": ["north", "QUARTZ"]},
+  "expect": {"http_status": 404, "error": "row_not_captured",
+             "correct_alternative": {"table": "substrate", "key": ["North", "Quartz"]}}
+}

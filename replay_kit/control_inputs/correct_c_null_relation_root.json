@@ -1,0 +1,21 @@
+{
+  "purpose": "正确结论 C：根直接取部分 NULL 关系行 T-12。其复合子键含 NULL 分量，parent 方向不产生任何父行弧；cassette 父边仍强制纳入尾盒 43；不跟随 frame 边时 frame 表为 0 行但表结构保留。",
+  "request": {
+    "source": "surrogate",
+    "roots": [{"table": "assay", "key": ["T-12"]}],
+    "follow_children": [],
+    "row_limit": 10
+  },
+  "expect": {
+    "normalized_roots": [["assay", ["T-12"]]],
+    "preview_counts": {"substrate": 0, "cassette": 1, "assay": 1, "frame": 0},
+    "trace_actual_key": {"table": "assay", "key": ["T-12"]},
+    "trace_root_indices": [0],
+    "trace_cause_count": 0,
+    "trace_cause_note": "根行没有指向自身的入弧；根身份由 roots=[0] 证明",
+    "substrate_parent_arcs": [],
+    "cassette_parent_arcs": 1,
+    "included_cassette": 43,
+    "substrate_table_present_with_zero_rows": true
+  }
+}

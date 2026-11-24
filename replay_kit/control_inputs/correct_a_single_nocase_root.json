@@ -1,0 +1,20 @@
+{
+  "purpose": "正确结论 A：单根 + 反向选 assay 边 0（复合 NOCASE 边）。输入拼写与实存键大小写不同，须解析到同一父行；闭包应为 substrate=1, cassette=2, assay=2, frame=0，且不纳入孤立尾盒 43 与部分 NULL 关系行 T-12。",
+  "request": {
+    "source": "surrogate",
+    "roots": [{"table": "substrate", "key": ["north", "QUARTZ"]}],
+    "follow_children": [{"child": "assay", "id": 0}],
+    "row_limit": 20
+  },
+  "expect": {
+    "normalized_roots": [["substrate", ["North", "Quartz"]]],
+    "preview_counts": {"substrate": 1, "cassette": 2, "assay": 2, "frame": 0},
+    "trace_actual_key": {"table": "substrate", "key": ["North", "Quartz"]},
+    "trace_root_indices": [0],
+    "trace_cause_count": 2,
+    "fixture_tables": ["assay", "cassette", "frame", "substrate"],
+    "fixture_frame_rows": 0,
+    "fixture_cassette_serials": [41, 42],
+    "fixture_generated": {"T-10": [4.5, 9.0]}
+  }
+}

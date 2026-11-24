@@ -1,0 +1,20 @@
+{
+  "purpose": "错误结论诱导 5：引用不存在的外键编号，或在跨模式捕获之间做对比。前者登记即被拒（invalid_edge），后者模式摘要不同必须拒绝直接比较（schema_conflict），不能按新目录偷偷重解读。",
+  "cases": [
+    {
+      "label": "unknown_edge_id",
+      "request": {"source": "surrogate",
+                  "roots": [{"table": "substrate", "key": ["North", "Quartz"]}],
+                  "follow_children": [{"child": "assay", "id": 9}],
+                  "row_limit": 20},
+      "expect": {"http_status": 422, "error": "invalid_edge"}
+    },
+    {
+      "label": "cross_schema_compare",
+      "setup": "先封存 correct_a，再在源库执行 ALTER TABLE frame ADD COLUMN caption TEXT 并重新登记同形配方后再次封存",
+      "request": {"left": "<capture_before_alter>", "right": "<capture_after_alter>"},
+      "endpoint": "/compare",
+      "expect": {"http_status": 409, "error": "schema_conflict"}
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "surrogate_sql": "replay_kit/microscope_surrogate.sql",
+  "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+  "captures": {
+    "A_single_nocase": "6e775fe8640441da97342cf885dd05ac",
+    "B_dual_nocase": "e8ab3b97559249d6af957c3c92f33e37",
+    "C_null_relation": "32cf43ff1b274ea8b52d5e716fd5b29b"
+  },
+  "certificate_A": {
+    "bytes": 32768,
+    "capture_digest": "81d1cc93d36f1d67e935aeedf1cc7698486630495af19423ac3ba38a42af8d90",
+    "counts": {
+      "assay": 2,
+      "cassette": 2,
+      "frame": 0,
+      "substrate": 1
+    },
+    "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+    "sha256": "ec53b39c85ad04d1c5dd8000bfc66a00a03c3ef59784108597b06e2e48afab91"
+  },
+  "handoff_files": {
+    "A_single_nocase": {
+      "file": "surrogate_handoff_A.sqlite",
+      "sha256": "ec53b39c85ad04d1c5dd8000bfc66a00a03c3ef59784108597b06e2e48afab91",
+      "bytes": 32768,
+      "counts": {
+        "assay": 2,
+        "cassette": 2,
+        "frame": 0,
+        "substrate": 1
+      }
+    },
+    "B_dual_nocase": {
+      "file": "surrogate_handoff_B.sqlite",
+      "sha256": "2b7d0b542170086750e95ea3743661bb7c4cdaef8992ea29bd2f02b9a89ff98a",
+      "bytes": 32768,
+      "counts": {
+        "assay": 4,
+        "cassette": 3,
+        "frame": 3,
+        "substrate": 2
+      }
+    },
+    "C_null_relation": {
+      "file": "surrogate_handoff_C.sqlite",
+      "sha256": "fbb85c70254720d65f9e8a2a2a14795f87b9b8922531d4be7e622d0d08e467b2",
+      "bytes": 32768,
+      "counts": {
+        "assay": 1,
+        "cassette": 1,
+        "frame": 0,
+        "substrate": 0
+      }
+    }
+  }
+}

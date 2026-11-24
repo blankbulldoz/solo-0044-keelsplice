@@ -1,0 +1,10 @@
+{
+  "purpose": "错误结论诱导 2：维数不完整的复合根（缺少 code 分量）。主键元组必须完整且非 NULL，登记阶段即被拒绝，不产生配方版本。",
+  "request": {
+    "source": "surrogate",
+    "roots": [{"table": "substrate", "key": ["North"]}],
+    "follow_children": [{"child": "assay", "id": 0}],
+    "row_limit": 20
+  },
+  "expect": {"http_status": 422, "error": "invalid_key", "no_recipe_version_created": true}
+}
