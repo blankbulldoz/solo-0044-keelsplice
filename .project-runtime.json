@@ -19,6 +19,10 @@
       "command": "python3 -m examples.walkthrough recipe"
     },
     {
+      "workflow_id": "readiness",
+      "command": "python3 -m examples.index_readiness all"
+    },
+    {
       "workflow_id": "retire",
       "command": "python3 -m examples.walkthrough retire"
     },

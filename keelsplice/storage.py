@@ -7,6 +7,11 @@ from uuid import uuid4
 
 from .codec import Fault, dumps, loads
 
+SOURCE_INTERVAL = 1000
+SOURCE_CALLBACKS = 5000
+SOURCE_WORK = SOURCE_INTERVAL * SOURCE_CALLBACKS
+SOURCE_BYTES = 8 * 1024 * 1024
+
 REPOSITORY_DDL = '''
 CREATE TABLE IF NOT EXISTS recipes (
     name TEXT NOT NULL, version INTEGER NOT NULL, active INTEGER NOT NULL,
@@ -51,20 +56,20 @@ class Repository:
         def check_work():
             nonlocal work
             work += 1
-            return work > 5000
+            return work > SOURCE_CALLBACKS
 
         with closing(sqlite3.connect(self.sources[alias].as_uri() + '?mode=ro', uri=True,
                                      timeout=2, isolation_level=None)) as conn:
             conn.row_factory = sqlite3.Row
             conn.execute('PRAGMA query_only=ON')
             conn.execute('PRAGMA trusted_schema=OFF')
-            conn.setlimit(sqlite3.SQLITE_LIMIT_LENGTH, 8 * 1024 * 1024)
-            conn.set_progress_handler(check_work, 1000)
+            conn.setlimit(sqlite3.SQLITE_LIMIT_LENGTH, SOURCE_BYTES)
+            conn.set_progress_handler(check_work, SOURCE_INTERVAL)
             conn.execute('BEGIN')
             try:
                 yield conn
             except sqlite3.OperationalError as exc:
-                if work > 5000:
+                if work > SOURCE_CALLBACKS:
                     raise Fault('scan_budget', 'Source query work exceeded the snapshot budget') from exc
                 raise
 

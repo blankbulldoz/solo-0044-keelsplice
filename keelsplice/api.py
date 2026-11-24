@@ -60,6 +60,9 @@ class RequestHandler(BaseHTTPRequestHandler):
             case 'POST', ['recipes', name, 'versions', number, 'retire'] if VERSION.fullmatch(number) and int(number) < 2**63:
                 fields(body)
                 return 200, bench.retire(name, int(number))
+            case 'POST', ['recipes', name, 'versions', number, 'readiness'] if VERSION.fullmatch(number) and int(number) < 2**63:
+                fields(body)
+                return 200, bench.readiness(dict(name=name, version=int(number)))
             case 'POST', ['preview']:
                 return 200, bench.preview(body)
             case 'POST', ['captures']:

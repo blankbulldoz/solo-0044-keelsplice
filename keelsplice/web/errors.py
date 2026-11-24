@@ -27,6 +27,7 @@ MESSAGES = {
     'database_busy': '数据库正忙，请稍后重试。',
     'database_input': 'SQLite 无法处理当前数据或文件。',
     'scan_budget': '读取工作量超过源库预算。',
+    'readiness_shape': '实际读取形状与捕获引擎不一致，无法给出索引就绪判断。',
     'row_budget': '闭包行数超出配方上限。',
     'payload_budget': '选中的数据及关系证据超过体积上限。',
     'edge_budget': '关系证据数量超过上限。',

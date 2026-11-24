@@ -4,7 +4,7 @@ import re
 import sqlite3
 from urllib.parse import urlsplit
 
-from . import assets, captures, comparison, directory, evidence, preview, selection, versions
+from . import assets, captures, comparison, directory, evidence, preview, readiness, selection, versions
 from .errors import invalid_route, message
 from .forms import MAX_BYTES, decode_form, field, version
 from .render import page, segment, text
@@ -63,6 +63,8 @@ def route(handler, path):
             base = f'/workbench/recipes/{segment(name)}/{number}'
             if action == 'preview':
                 status, body = preview.show(bench, name, number)
+            elif action == 'readiness':
+                status, body = readiness.show(bench, name, number)
             elif action == 'capture':
                 capture = bench.capture(dict(name=name, version=number))
                 return redirect(f'/workbench/captures/{segment(capture["id"])}')

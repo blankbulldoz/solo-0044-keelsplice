@@ -1,0 +1,14 @@
+<div class="content">
+  <header class="pagehead"><div><p class="breadcrumb"><a href="$base">配方版本</a> / $name · $number</p>
+    <h1>索引就绪</h1></div><span class="status muted">$active</span></header>
+  <p class="notice info">此检查只在只读快照上解释并试跑本配方的实际查询，不在源库安装任何索引，源文件不会被改动。计划、实际工作量与关系闭包分开报告。</p>
+  <dl class="facts">
+    <div><dt>模式摘要</dt><dd><code>$digest</code></dd></div>
+    <div><dt>探测用量（VM 步）</dt><dd>$probe</dd></div>
+  </dl>
+  <section aria-labelledby="summary"><h2 id="summary">按结论汇总</h2>
+    <div class="scroll"><table><thead><tr><th scope="col">结论</th><th scope="col">索引次数</th></tr></thead><tbody>$summary</tbody></table></div>
+  </section>
+  <section aria-labelledby="closure"><h2 id="closure">关系闭包</h2>$closure</section>
+  $reads
+</div>

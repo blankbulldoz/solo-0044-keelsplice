@@ -36,8 +36,9 @@ def detail(bench, name, number):
         )
     edges = ''.join(f'<li>{code(edge["child"])} · 外键 {edge["id"]}</li>'
                     for edge in recipe['follow_children'])
+    readiness = (f'<form method="post" action="{href}/readiness"><button>检查索引就绪</button></form>')
     return 200, page('配方详情', 'recipe', 'recipe',
                      name=text(name), number=number, source=code(recipe['source']),
                      status=status(saved['active']), digest=text(saved['schema_digest']),
                      roots=root_list(recipe['roots']), edges=edges or '<li class="empty">未选择反向关系。</li>',
-                     limit=recipe['row_limit'], actions=actions)
+                     limit=recipe['row_limit'], actions=actions, readiness=readiness)

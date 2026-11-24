@@ -3,7 +3,7 @@
 import re
 import sqlite3
 
-from . import bundle, capture, catalog, recipe
+from . import bundle, capture, catalog, indexes, recipe
 from .codec import Fault
 
 NAME = re.compile(r'[a-z][a-z0-9_-]{0,63}\Z')
@@ -53,6 +53,22 @@ class Workbench:
         name, number, sealed = self.execute(body)
         return {'name': name, 'version': number, 'schema_digest': sealed['schema_digest'],
                 'summary': capture.summarize(sealed['result']), 'roots': sealed['result']['roots']}
+
+    def readiness(self, body):
+        """Report which declared indexes serve this recipe's reads, without changing the source."""
+        recipe.fields(body, ('name', 'version'))
+        name, number = body['name'], body['version']
+        if not isinstance(name, str) or not NAME.fullmatch(name) or type(number) is not int or not 1 <= number < 2**63:
+            raise Fault('invalid_version', 'Supply a recipe name and positive version')
+        version = self.repository.version(name, number)
+        normalized = version['recipe']
+        with self.repository.source(normalized['source']) as conn:
+            disclosed = catalog.snapshot(conn)
+            if disclosed['schema_digest'] != version['schema_digest']:
+                raise Fault('schema_conflict', 'Source schema differs from the recipe binding', 409)
+            report = indexes.readiness(conn, disclosed['schema'], normalized)
+        return {'name': name, 'version': number, 'active': version['active'],
+                'recipe': recipe.describe(version), **report}
 
     def capture(self, body):
         name, number, sealed = self.execute(body)

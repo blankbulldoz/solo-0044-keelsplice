@@ -10,17 +10,29 @@ def condition(columns, alias):
     return ' AND '.join(f'{alias}.{quote(column)} = ?' for column in columns)
 
 
+def source(table, alias, hint=None):
+    return f'{quote(table)} {alias}' if hint is None else f'{quote(table)} {alias} {hint}'
+
+
+def find_sql(table, columns, hint=None):
+    return f'SELECT t.* FROM {source(table, "t", hint)} WHERE {condition(columns, "t")} LIMIT 2'
+
+
+def children_sql(parent, child, parent_cols, child_cols, pk, hint=None):
+    # Unary plus removes child affinity so comparison follows the parent key.
+    same = ' AND '.join(f'p.{quote(p)} = +c.{quote(c)}' for p, c in zip(parent_cols, child_cols))
+    return (f'SELECT c.* FROM {quote(parent)} p JOIN {source(child, "c", hint)} ON {same} '
+            f'WHERE {condition(pk, "p")}')
+
+
 def find(conn, table, columns, vals):
-    return conn.execute(f'SELECT t.* FROM {quote(table)} t WHERE {condition(columns, "t")} LIMIT 2', vals).fetchall()
+    return conn.execute(find_sql(table, columns), vals).fetchall()
 
 
 def children(conn, schema, edge, parent_row):
     parent = edge['parent']
     pk = schema['tables'][parent]['pk']
-    # Unary plus removes child affinity so comparison follows the parent key.
-    same = ' AND '.join(f'p.{quote(p)} = +c.{quote(c)}' for p, c in zip(edge['parent_cols'], edge['child_cols']))
-    sql = (f'SELECT c.* FROM {quote(parent)} p JOIN {quote(edge["child"])} c ON {same} '
-           f'WHERE {condition(pk, "p")}')
+    sql = children_sql(parent, edge['child'], edge['parent_cols'], edge['child_cols'], pk)
     return conn.execute(sql, [parent_row[col] for col in pk])
 
 

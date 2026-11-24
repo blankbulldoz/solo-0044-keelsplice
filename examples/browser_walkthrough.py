@@ -60,6 +60,9 @@ def run(base, source, root):
 
     _, preview = html(base, version + '/preview', {})
     assert '未封存' in preview and 'East' in preview and 'Mica' in preview
+    _, readiness = html(base, version + '/readiness', {})
+    assert '索引就绪' in readiness and '关系闭包' in readiness and '无索引基线' in readiness
+    assert 'assay_substrate_lookup' in readiness and '不在源库安装任何索引' in readiness
     first, sealed = html(base, version + '/capture', {})
     assert '已封存' in sealed and '下载认证子库' not in sealed
     assert first in html(base, '/workbench/captures')[1]

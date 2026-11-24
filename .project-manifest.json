@@ -32,6 +32,11 @@
       "responsibility": "沿入出关系选样、追踪和比较"
     },
     {
+      "id": "indexes",
+      "path": "keelsplice/indexes.py",
+      "responsibility": "源索引就绪分析、计划与工作量探测、同一快照闭包复算"
+    },
+    {
       "id": "codec",
       "path": "keelsplice/codec.py",
       "responsibility": "SQLite 值类型、主键及稳定摘要"
@@ -82,6 +87,27 @@
         "service",
         "recipe",
         "catalog",
+        "storage"
+      ]
+    },
+    {
+      "id": "readiness",
+      "name": "检查源索引就绪",
+      "entry": "POST /recipes/{name}/versions/{version}/readiness",
+      "success": "只读试跑配方实际的两条读取形状，分别报告计划变化、实际工作量与同一快照闭包",
+      "failure": "未知配方或模式漂移拒绝；不改变源库或源文件",
+      "verification": "python3 -m examples.index_readiness all",
+      "steps": [
+        "在只读事务中复读目录并核对配方绑定的模式摘要",
+        "对父键定位与子行扇出分别解释自然计划、无索引基线与强制各索引的计划",
+        "用真实取样键计量 VM 步数并由捕获引擎在同一快照上复算闭包"
+      ],
+      "module_ids": [
+        "api",
+        "service",
+        "indexes",
+        "catalog",
+        "capture",
         "storage"
       ]
     },
