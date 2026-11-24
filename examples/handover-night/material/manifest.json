@@ -1,0 +1,1685 @@
+{
+  "built_at": "2026-11-24T00:41:31+00:00",
+  "captures": [
+    {
+      "capture_digest": "dbf294a0a92d116c10324d81bd85a234800428466787661006a3a24d3031c873",
+      "id": "bc0b76f8f0564c719ed12339d515dca7",
+      "label": "relay-early",
+      "name": "relay",
+      "recipe": {
+        "follow_children": [
+          {
+            "child": "assay",
+            "id": 0
+          }
+        ],
+        "roots": [
+          {
+            "key": [
+              "east",
+              "MICA"
+            ],
+            "table": "substrate"
+          }
+        ],
+        "row_limit": 20,
+        "source": "microscope"
+      },
+      "roots": [
+        [
+          "substrate",
+          [
+            "East",
+            "Mica"
+          ]
+        ]
+      ],
+      "row_values": {
+        "assay:[\"S-01\"]": "1dac3abf8e6d27510b2e236dee4b2bbadaa831ac892ec32b3117c5980211514f",
+        "assay:[\"S-02\"]": "8b8cef97bcc6ef645c41395d533d347b296aec168ca86d14ba55c6fae9b483f9",
+        "cassette:[11]": "12317b921da2453b38eba8c86df648b346e397bf00872f0ed6fb38f29dbd9918",
+        "cassette:[12]": "d997c008d25c14cc35676eb56bc6e0dba42ac1c12eb880e766cff0e9cbd77b9c",
+        "substrate:[\"East\",\"Mica\"]": "c1504dcf72c52dbf9705a8fe5adb62c202533ec668bdf6f11e2f273449bd4d5c"
+      },
+      "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+      "snapshot": "00-public-sample",
+      "state": "sealed",
+      "summary": {
+        "counts": {
+          "assay": 2,
+          "cassette": 2,
+          "frame": 0,
+          "substrate": 1
+        },
+        "root_occurrences": 1,
+        "roots": [
+          [
+            "substrate",
+            [
+              "East",
+              "Mica"
+            ]
+          ]
+        ],
+        "rows": 5,
+        "witnesses": 8
+      },
+      "trace": {
+        "assay:[\"S-01\"]": {
+          "causes": [
+            {
+              "direction": "child",
+              "edge": [
+                "assay",
+                0
+              ],
+              "origin": [
+                "substrate",
+                [
+                  "East",
+                  "Mica"
+                ]
+              ],
+              "target": [
+                "assay",
+                [
+                  "S-01"
+                ]
+              ]
+            }
+          ],
+          "dependencies": [
+            {
+              "direction": "parent",
+              "edge": [
+                "assay",
+                0
+              ],
+              "origin": [
+                "assay",
+                [
+                  "S-01"
+                ]
+              ],
+              "target": [
+                "substrate",
+                [
+                  "East",
+                  "Mica"
+                ]
+              ]
+            },
+            {
+              "direction": "parent",
+              "edge": [
+                "assay",
+                1
+              ],
+              "origin": [
+                "assay",
+                [
+                  "S-01"
+                ]
+              ],
+              "target": [
+                "cassette",
+                [
+                  11
+                ]
+              ]
+            }
+          ],
+          "roots": [],
+          "row": [
+            "assay",
+            [
+              "S-01"
+            ]
+          ]
+        },
+        "assay:[\"S-02\"]": {
+          "causes": [
+            {
+              "direction": "child",
+              "edge": [
+                "assay",
+                0
+              ],
+              "origin": [
+                "substrate",
+                [
+                  "East",
+                  "Mica"
+                ]
+              ],
+              "target": [
+                "assay",
+                [
+                  "S-02"
+                ]
+              ]
+            }
+          ],
+          "dependencies": [
+            {
+              "direction": "parent",
+              "edge": [
+                "assay",
+                0
+              ],
+              "origin": [
+                "assay",
+                [
+                  "S-02"
+                ]
+              ],
+              "target": [
+                "substrate",
+                [
+                  "East",
+                  "Mica"
+                ]
+              ]
+            },
+            {
+              "direction": "parent",
+              "edge": [
+                "assay",
+                1
+              ],
+              "origin": [
+                "assay",
+                [
+                  "S-02"
+                ]
+              ],
+              "target": [
+                "cassette",
+                [
+                  12
+                ]
+              ]
+            }
+          ],
+          "roots": [],
+          "row": [
+            "assay",
+            [
+              "S-02"
+            ]
+          ]
+        },
+        "cassette:[11]": {
+          "causes": [
+            {
+              "direction": "parent",
+              "edge": [
+                "assay",
+                1
+              ],
+              "origin": [
+                "assay",
+                [
+                  "S-01"
+                ]
+              ],
+              "target": [
+                "cassette",
+                [
+                  11
+                ]
+              ]
+            },
+            {
+              "direction": "parent",
+              "edge": [
+                "cassette",
+                0
+              ],
+              "origin": [
+                "cassette",
+                [
+                  12
+                ]
+              ],
+              "target": [
+                "cassette",
+                [
+                  11
+                ]
+              ]
+            }
+          ],
+          "dependencies": [
+            {
+              "direction": "parent",
+              "edge": [
+                "cassette",
+                0
+              ],
+              "origin": [
+                "cassette",
+                [
+                  11
+                ]
+              ],
+              "target": [
+                "cassette",
+                [
+                  12
+                ]
+              ]
+            }
+          ],
+          "roots": [],
+          "row": [
+            "cassette",
+            [
+              11
+            ]
+          ]
+        },
+        "cassette:[12]": {
+          "causes": [
+            {
+              "direction": "parent",
+              "edge": [
+                "assay",
+                1
+              ],
+              "origin": [
+                "assay",
+                [
+                  "S-02"
+                ]
+              ],
+              "target": [
+                "cassette",
+                [
+                  12
+                ]
+              ]
+            },
+            {
+              "direction": "parent",
+              "edge": [
+                "cassette",
+                0
+              ],
+              "origin": [
+                "cassette",
+                [
+                  11
+                ]
+              ],
+              "target": [
+                "cassette",
+                [
+                  12
+                ]
+              ]
+            }
+          ],
+          "dependencies": [
+            {
+              "direction": "parent",
+              "edge": [
+                "cassette",
+                0
+              ],
+              "origin": [
+                "cassette",
+                [
+                  12
+                ]
+              ],
+              "target": [
+                "cassette",
+                [
+                  11
+                ]
+              ]
+            }
+          ],
+          "roots": [],
+          "row": [
+            "cassette",
+            [
+              12
+            ]
+          ]
+        },
+        "substrate:[\"East\",\"Mica\"]": {
+          "causes": [
+            {
+              "direction": "parent",
+              "edge": [
+                "assay",
+                0
+              ],
+              "origin": [
+                "assay",
+                [
+                  "S-01"
+                ]
+              ],
+              "target": [
+                "substrate",
+                [
+                  "East",
+                  "Mica"
+                ]
+              ]
+            },
+            {
+              "direction": "parent",
+              "edge": [
+                "assay",
+                0
+              ],
+              "origin": [
+                "assay",
+                [
+                  "S-02"
+                ]
+              ],
+              "target": [
+                "substrate",
+                [
+                  "East",
+                  "Mica"
+                ]
+              ]
+            }
+          ],
+          "dependencies": [],
+          "roots": [
+            0
+          ],
+          "row": [
+            "substrate",
+            [
+              "East",
+              "Mica"
+            ]
+          ]
+        }
+      },
+      "version": 1
+    },
+    {
+      "capture_digest": "c3a2ed30205be80566fac874809dd5052b7ef77049b6dbeadde37e07099a62eb",
+      "id": "f463ca5adc14407294e6fe2a412b0a6c",
+      "label": "attic-legacy",
+      "name": "attic",
+      "recipe": {
+        "follow_children": [
+          {
+            "child": "assay",
+            "id": 0
+          }
+        ],
+        "roots": [
+          {
+            "key": [
+              "West",
+              "Basalt"
+            ],
+            "table": "substrate"
+          }
+        ],
+        "row_limit": 20,
+        "source": "microscope"
+      },
+      "roots": [
+        [
+          "substrate",
+          [
+            "West",
+            "Basalt"
+          ]
+        ]
+      ],
+      "row_values": {
+        "assay:[\"S-04\"]": "904199790368397080a5bf12103089b0029abab755d817aa1d7f53a52797e909",
+        "cassette:[13]": "1e1845d67dc6942481daa97273ad7347ec040aa688c597d9bae58f7230b3e803",
+        "substrate:[\"West\",\"Basalt\"]": "e3ac7060207f6a1923475c304d35a3c609170c261d350b8e3404e0abf6217be2"
+      },
+      "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+      "snapshot": "00-public-sample",
+      "state": "sealed",
+      "summary": {
+        "counts": {
+          "assay": 1,
+          "cassette": 1,
+          "frame": 0,
+          "substrate": 1
+        },
+        "root_occurrences": 1,
+        "roots": [
+          [
+            "substrate",
+            [
+              "West",
+              "Basalt"
+            ]
+          ]
+        ],
+        "rows": 3,
+        "witnesses": 3
+      },
+      "trace": {
+        "assay:[\"S-04\"]": {
+          "causes": [
+            {
+              "direction": "child",
+              "edge": [
+                "assay",
+                0
+              ],
+              "origin": [
+                "substrate",
+                [
+                  "West",
+                  "Basalt"
+                ]
+              ],
+              "target": [
+                "assay",
+                [
+                  "S-04"
+                ]
+              ]
+            }
+          ],
+          "dependencies": [
+            {
+              "direction": "parent",
+              "edge": [
+                "assay",
+                0
+              ],
+              "origin": [
+                "assay",
+                [
+                  "S-04"
+                ]
+              ],
+              "target": [
+                "substrate",
+                [
+                  "West",
+                  "Basalt"
+                ]
+              ]
+            },
+            {
+              "direction": "parent",
+              "edge": [
+                "assay",
+                1
+              ],
+              "origin": [
+                "assay",
+                [
+                  "S-04"
+                ]
+              ],
+              "target": [
+                "cassette",
+                [
+                  13
+                ]
+              ]
+            }
+          ],
+          "roots": [],
+          "row": [
+            "assay",
+            [
+              "S-04"
+            ]
+          ]
+        },
+        "cassette:[13]": {
+          "causes": [
+            {
+              "direction": "parent",
+              "edge": [
+                "assay",
+                1
+              ],
+              "origin": [
+                "assay",
+                [
+                  "S-04"
+                ]
+              ],
+              "target": [
+                "cassette",
+                [
+                  13
+                ]
+              ]
+            }
+          ],
+          "dependencies": [],
+          "roots": [],
+          "row": [
+            "cassette",
+            [
+              13
+            ]
+          ]
+        },
+        "substrate:[\"West\",\"Basalt\"]": {
+          "causes": [
+            {
+              "direction": "parent",
+              "edge": [
+                "assay",
+                0
+              ],
+              "origin": [
+                "assay",
+                [
+                  "S-04"
+                ]
+              ],
+              "target": [
+                "substrate",
+                [
+                  "West",
+                  "Basalt"
+                ]
+              ]
+            }
+          ],
+          "dependencies": [],
+          "roots": [
+            0
+          ],
+          "row": [
+            "substrate",
+            [
+              "West",
+              "Basalt"
+            ]
+          ]
+        }
+      },
+      "version": 1
+    },
+    {
+      "capture_digest": "c90f92e1e80f92982b6d7079a14ff5e1877a4249d4ab38f36f26abf6725512e7",
+      "id": "cf0d5e9381534c5a95733f5bef5dbeeb",
+      "label": "relay-lost",
+      "name": "relay",
+      "recipe": {
+        "follow_children": [
+          {
+            "child": "assay",
+            "id": 0
+          }
+        ],
+        "roots": [
+          {
+            "key": [
+              "east",
+              "MICA"
+            ],
+            "table": "substrate"
+          }
+        ],
+        "row_limit": 20,
+        "source": "microscope"
+      },
+      "roots": [
+        [
+          "substrate",
+          [
+            "East",
+            "Mica"
+          ]
+        ]
+      ],
+      "row_values": {
+        "assay:[\"S-01\"]": "c88685db95b6956fa157574daaaf28a30a1959f9f47617e79a397ccad2d47b48",
+        "assay:[\"S-02\"]": "8b8cef97bcc6ef645c41395d533d347b296aec168ca86d14ba55c6fae9b483f9",
+        "cassette:[11]": "12317b921da2453b38eba8c86df648b346e397bf00872f0ed6fb38f29dbd9918",
+        "cassette:[12]": "d997c008d25c14cc35676eb56bc6e0dba42ac1c12eb880e766cff0e9cbd77b9c",
+        "substrate:[\"East\",\"Mica\"]": "c1504dcf72c52dbf9705a8fe5adb62c202533ec668bdf6f11e2f273449bd4d5c"
+      },
+      "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+      "snapshot": "01-after-value",
+      "state": "sealed",
+      "summary": {
+        "counts": {
+          "assay": 2,
+          "cassette": 2,
+          "frame": 0,
+          "substrate": 1
+        },
+        "root_occurrences": 1,
+        "roots": [
+          [
+            "substrate",
+            [
+              "East",
+              "Mica"
+            ]
+          ]
+        ],
+        "rows": 5,
+        "witnesses": 8
+      },
+      "trace": {
+        "assay:[\"S-01\"]": {
+          "causes": [
+            {
+              "direction": "child",
+              "edge": [
+                "assay",
+                0
+              ],
+              "origin": [
+                "substrate",
+                [
+                  "East",
+                  "Mica"
+                ]
+              ],
+              "target": [
+                "assay",
+                [
+                  "S-01"
+                ]
+              ]
+            }
+          ],
+          "dependencies": [
+            {
+              "direction": "parent",
+              "edge": [
+                "assay",
+                0
+              ],
+              "origin": [
+                "assay",
+                [
+                  "S-01"
+                ]
+              ],
+              "target": [
+                "substrate",
+                [
+                  "East",
+                  "Mica"
+                ]
+              ]
+            },
+            {
+              "direction": "parent",
+              "edge": [
+                "assay",
+                1
+              ],
+              "origin": [
+                "assay",
+                [
+                  "S-01"
+                ]
+              ],
+              "target": [
+                "cassette",
+                [
+                  11
+                ]
+              ]
+            }
+          ],
+          "roots": [],
+          "row": [
+            "assay",
+            [
+              "S-01"
+            ]
+          ]
+        },
+        "assay:[\"S-02\"]": {
+          "causes": [
+            {
+              "direction": "child",
+              "edge": [
+                "assay",
+                0
+              ],
+              "origin": [
+                "substrate",
+                [
+                  "East",
+                  "Mica"
+                ]
+              ],
+              "target": [
+                "assay",
+                [
+                  "S-02"
+                ]
+              ]
+            }
+          ],
+          "dependencies": [
+            {
+              "direction": "parent",
+              "edge": [
+                "assay",
+                0
+              ],
+              "origin": [
+                "assay",
+                [
+                  "S-02"
+                ]
+              ],
+              "target": [
+                "substrate",
+                [
+                  "East",
+                  "Mica"
+                ]
+              ]
+            },
+            {
+              "direction": "parent",
+              "edge": [
+                "assay",
+                1
+              ],
+              "origin": [
+                "assay",
+                [
+                  "S-02"
+                ]
+              ],
+              "target": [
+                "cassette",
+                [
+                  12
+                ]
+              ]
+            }
+          ],
+          "roots": [],
+          "row": [
+            "assay",
+            [
+              "S-02"
+            ]
+          ]
+        },
+        "cassette:[11]": {
+          "causes": [
+            {
+              "direction": "parent",
+              "edge": [
+                "assay",
+                1
+              ],
+              "origin": [
+                "assay",
+                [
+                  "S-01"
+                ]
+              ],
+              "target": [
+                "cassette",
+                [
+                  11
+                ]
+              ]
+            },
+            {
+              "direction": "parent",
+              "edge": [
+                "cassette",
+                0
+              ],
+              "origin": [
+                "cassette",
+                [
+                  12
+                ]
+              ],
+              "target": [
+                "cassette",
+                [
+                  11
+                ]
+              ]
+            }
+          ],
+          "dependencies": [
+            {
+              "direction": "parent",
+              "edge": [
+                "cassette",
+                0
+              ],
+              "origin": [
+                "cassette",
+                [
+                  11
+                ]
+              ],
+              "target": [
+                "cassette",
+                [
+                  12
+                ]
+              ]
+            }
+          ],
+          "roots": [],
+          "row": [
+            "cassette",
+            [
+              11
+            ]
+          ]
+        },
+        "cassette:[12]": {
+          "causes": [
+            {
+              "direction": "parent",
+              "edge": [
+                "assay",
+                1
+              ],
+              "origin": [
+                "assay",
+                [
+                  "S-02"
+                ]
+              ],
+              "target": [
+                "cassette",
+                [
+                  12
+                ]
+              ]
+            },
+            {
+              "direction": "parent",
+              "edge": [
+                "cassette",
+                0
+              ],
+              "origin": [
+                "cassette",
+                [
+                  11
+                ]
+              ],
+              "target": [
+                "cassette",
+                [
+                  12
+                ]
+              ]
+            }
+          ],
+          "dependencies": [
+            {
+              "direction": "parent",
+              "edge": [
+                "cassette",
+                0
+              ],
+              "origin": [
+                "cassette",
+                [
+                  12
+                ]
+              ],
+              "target": [
+                "cassette",
+                [
+                  11
+                ]
+              ]
+            }
+          ],
+          "roots": [],
+          "row": [
+            "cassette",
+            [
+              12
+            ]
+          ]
+        },
+        "substrate:[\"East\",\"Mica\"]": {
+          "causes": [
+            {
+              "direction": "parent",
+              "edge": [
+                "assay",
+                0
+              ],
+              "origin": [
+                "assay",
+                [
+                  "S-01"
+                ]
+              ],
+              "target": [
+                "substrate",
+                [
+                  "East",
+                  "Mica"
+                ]
+              ]
+            },
+            {
+              "direction": "parent",
+              "edge": [
+                "assay",
+                0
+              ],
+              "origin": [
+                "assay",
+                [
+                  "S-02"
+                ]
+              ],
+              "target": [
+                "substrate",
+                [
+                  "East",
+                  "Mica"
+                ]
+              ]
+            }
+          ],
+          "dependencies": [],
+          "roots": [
+            0
+          ],
+          "row": [
+            "substrate",
+            [
+              "East",
+              "Mica"
+            ]
+          ]
+        }
+      },
+      "version": 1
+    },
+    {
+      "capture_digest": "c90f92e1e80f92982b6d7079a14ff5e1877a4249d4ab38f36f26abf6725512e7",
+      "id": "b93ab4bc606f4c288b13ea9a9dc55002",
+      "label": "relay-retry",
+      "name": "relay",
+      "recipe": {
+        "follow_children": [
+          {
+            "child": "assay",
+            "id": 0
+          }
+        ],
+        "roots": [
+          {
+            "key": [
+              "east",
+              "MICA"
+            ],
+            "table": "substrate"
+          }
+        ],
+        "row_limit": 20,
+        "source": "microscope"
+      },
+      "roots": [
+        [
+          "substrate",
+          [
+            "East",
+            "Mica"
+          ]
+        ]
+      ],
+      "row_values": {
+        "assay:[\"S-01\"]": "c88685db95b6956fa157574daaaf28a30a1959f9f47617e79a397ccad2d47b48",
+        "assay:[\"S-02\"]": "8b8cef97bcc6ef645c41395d533d347b296aec168ca86d14ba55c6fae9b483f9",
+        "cassette:[11]": "12317b921da2453b38eba8c86df648b346e397bf00872f0ed6fb38f29dbd9918",
+        "cassette:[12]": "d997c008d25c14cc35676eb56bc6e0dba42ac1c12eb880e766cff0e9cbd77b9c",
+        "substrate:[\"East\",\"Mica\"]": "c1504dcf72c52dbf9705a8fe5adb62c202533ec668bdf6f11e2f273449bd4d5c"
+      },
+      "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+      "snapshot": "01-after-value",
+      "state": "sealed",
+      "summary": {
+        "counts": {
+          "assay": 2,
+          "cassette": 2,
+          "frame": 0,
+          "substrate": 1
+        },
+        "root_occurrences": 1,
+        "roots": [
+          [
+            "substrate",
+            [
+              "East",
+              "Mica"
+            ]
+          ]
+        ],
+        "rows": 5,
+        "witnesses": 8
+      },
+      "trace": {
+        "assay:[\"S-01\"]": {
+          "causes": [
+            {
+              "direction": "child",
+              "edge": [
+                "assay",
+                0
+              ],
+              "origin": [
+                "substrate",
+                [
+                  "East",
+                  "Mica"
+                ]
+              ],
+              "target": [
+                "assay",
+                [
+                  "S-01"
+                ]
+              ]
+            }
+          ],
+          "dependencies": [
+            {
+              "direction": "parent",
+              "edge": [
+                "assay",
+                0
+              ],
+              "origin": [
+                "assay",
+                [
+                  "S-01"
+                ]
+              ],
+              "target": [
+                "substrate",
+                [
+                  "East",
+                  "Mica"
+                ]
+              ]
+            },
+            {
+              "direction": "parent",
+              "edge": [
+                "assay",
+                1
+              ],
+              "origin": [
+                "assay",
+                [
+                  "S-01"
+                ]
+              ],
+              "target": [
+                "cassette",
+                [
+                  11
+                ]
+              ]
+            }
+          ],
+          "roots": [],
+          "row": [
+            "assay",
+            [
+              "S-01"
+            ]
+          ]
+        },
+        "assay:[\"S-02\"]": {
+          "causes": [
+            {
+              "direction": "child",
+              "edge": [
+                "assay",
+                0
+              ],
+              "origin": [
+                "substrate",
+                [
+                  "East",
+                  "Mica"
+                ]
+              ],
+              "target": [
+                "assay",
+                [
+                  "S-02"
+                ]
+              ]
+            }
+          ],
+          "dependencies": [
+            {
+              "direction": "parent",
+              "edge": [
+                "assay",
+                0
+              ],
+              "origin": [
+                "assay",
+                [
+                  "S-02"
+                ]
+              ],
+              "target": [
+                "substrate",
+                [
+                  "East",
+                  "Mica"
+                ]
+              ]
+            },
+            {
+              "direction": "parent",
+              "edge": [
+                "assay",
+                1
+              ],
+              "origin": [
+                "assay",
+                [
+                  "S-02"
+                ]
+              ],
+              "target": [
+                "cassette",
+                [
+                  12
+                ]
+              ]
+            }
+          ],
+          "roots": [],
+          "row": [
+            "assay",
+            [
+              "S-02"
+            ]
+          ]
+        },
+        "cassette:[11]": {
+          "causes": [
+            {
+              "direction": "parent",
+              "edge": [
+                "assay",
+                1
+              ],
+              "origin": [
+                "assay",
+                [
+                  "S-01"
+                ]
+              ],
+              "target": [
+                "cassette",
+                [
+                  11
+                ]
+              ]
+            },
+            {
+              "direction": "parent",
+              "edge": [
+                "cassette",
+                0
+              ],
+              "origin": [
+                "cassette",
+                [
+                  12
+                ]
+              ],
+              "target": [
+                "cassette",
+                [
+                  11
+                ]
+              ]
+            }
+          ],
+          "dependencies": [
+            {
+              "direction": "parent",
+              "edge": [
+                "cassette",
+                0
+              ],
+              "origin": [
+                "cassette",
+                [
+                  11
+                ]
+              ],
+              "target": [
+                "cassette",
+                [
+                  12
+                ]
+              ]
+            }
+          ],
+          "roots": [],
+          "row": [
+            "cassette",
+            [
+              11
+            ]
+          ]
+        },
+        "cassette:[12]": {
+          "causes": [
+            {
+              "direction": "parent",
+              "edge": [
+                "assay",
+                1
+              ],
+              "origin": [
+                "assay",
+                [
+                  "S-02"
+                ]
+              ],
+              "target": [
+                "cassette",
+                [
+                  12
+                ]
+              ]
+            },
+            {
+              "direction": "parent",
+              "edge": [
+                "cassette",
+                0
+              ],
+              "origin": [
+                "cassette",
+                [
+                  11
+                ]
+              ],
+              "target": [
+                "cassette",
+                [
+                  12
+                ]
+              ]
+            }
+          ],
+          "dependencies": [
+            {
+              "direction": "parent",
+              "edge": [
+                "cassette",
+                0
+              ],
+              "origin": [
+                "cassette",
+                [
+                  12
+                ]
+              ],
+              "target": [
+                "cassette",
+                [
+                  11
+                ]
+              ]
+            }
+          ],
+          "roots": [],
+          "row": [
+            "cassette",
+            [
+              12
+            ]
+          ]
+        },
+        "substrate:[\"East\",\"Mica\"]": {
+          "causes": [
+            {
+              "direction": "parent",
+              "edge": [
+                "assay",
+                0
+              ],
+              "origin": [
+                "assay",
+                [
+                  "S-01"
+                ]
+              ],
+              "target": [
+                "substrate",
+                [
+                  "East",
+                  "Mica"
+                ]
+              ]
+            },
+            {
+              "direction": "parent",
+              "edge": [
+                "assay",
+                0
+              ],
+              "origin": [
+                "assay",
+                [
+                  "S-02"
+                ]
+              ],
+              "target": [
+                "substrate",
+                [
+                  "East",
+                  "Mica"
+                ]
+              ]
+            }
+          ],
+          "dependencies": [],
+          "roots": [
+            0
+          ],
+          "row": [
+            "substrate",
+            [
+              "East",
+              "Mica"
+            ]
+          ]
+        }
+      },
+      "version": 1
+    }
+  ],
+  "drill": "keelsplice-night-handover-v1",
+  "labels": [
+    "attic-legacy",
+    "relay-early",
+    "relay-lost",
+    "relay-retry"
+  ],
+  "lost_response": {
+    "capture_id": "cf0d5e9381534c5a95733f5bef5dbeeb",
+    "label": "relay-lost",
+    "observation_file": "dropped-response.json",
+    "page_response_observed": false
+  },
+  "material_files": {
+    "journal.jsonl": "f3175f6125925b7c673ec70ee63a9a404a6616f0eb14d7ce9f5842696096ae87",
+    "observations/captures-page.html": "373b07076807538bef4ae49e6c8975552a60a9428af874cd855a5f8b05df92bf",
+    "observations/dropped-response.json": "3615ccf968c449be80ce568c2d62ed46df2075c3541b43d601a0025b39f4fcf7",
+    "observations/previews.json": "0a45e65b36cb8e097f7a0c14cb977dc78639311a5ca2cbacea49df4c7cc48940",
+    "sources/00-public-sample.sqlite": "edda118208e2e52f1bc1aeda4cf22afa33e2f85715a365ef9b3bc8a39fb1a6c8",
+    "sources/01-after-value.sqlite": "b7186b49c70dd9b8608a0c1a52218baecc78dd404ce6b2acf4c2b18ccb7ab429",
+    "sources/02-after-retarget.sqlite": "4b303b79166b1709324e164ebbe3f31fe40ec81be65e7fff90b5aba5c306da80",
+    "state/repository.sqlite": "9ea3ea49cdcc2798c0444f3299856d0c22ea31ae4c49b6546cc0602750b90f7a"
+  },
+  "previews": [
+    {
+      "action": "preview-before-value",
+      "note": "First rehearsal. No sealed record exists yet.",
+      "roots": [
+        [
+          "substrate",
+          [
+            "East",
+            "Mica"
+          ]
+        ]
+      ],
+      "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+      "summary": {
+        "counts": {
+          "assay": 2,
+          "cassette": 2,
+          "frame": 0,
+          "substrate": 1
+        },
+        "root_occurrences": 1,
+        "rows": 5,
+        "witnesses": 8
+      }
+    },
+    {
+      "action": "preview-after-value",
+      "note": "Same row counts as the first rehearsal; a stored value moved.",
+      "roots": [
+        [
+          "substrate",
+          [
+            "East",
+            "Mica"
+          ]
+        ]
+      ],
+      "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+      "summary": {
+        "counts": {
+          "assay": 2,
+          "cassette": 2,
+          "frame": 0,
+          "substrate": 1
+        },
+        "root_occurrences": 1,
+        "rows": 5,
+        "witnesses": 8
+      }
+    },
+    {
+      "action": "preview-after-retarget",
+      "note": "The relationship target moved. Only this live rehearsal exists; nothing was sealed for it.",
+      "roots": [
+        [
+          "substrate",
+          [
+            "East",
+            "Mica"
+          ]
+        ]
+      ],
+      "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+      "summary": {
+        "counts": {
+          "assay": 1,
+          "cassette": 2,
+          "frame": 0,
+          "substrate": 1
+        },
+        "root_occurrences": 1,
+        "rows": 4,
+        "witnesses": 5
+      }
+    }
+  ],
+  "recipes": [
+    {
+      "active": true,
+      "name": "relay",
+      "recipe": {
+        "follow_children": [
+          {
+            "child": "assay",
+            "id": 0
+          }
+        ],
+        "roots": [
+          {
+            "key": [
+              "east",
+              "MICA"
+            ],
+            "table": "substrate"
+          }
+        ],
+        "row_limit": 20,
+        "source": "microscope"
+      },
+      "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+      "version": 1
+    },
+    {
+      "active": false,
+      "name": "attic",
+      "recipe": {
+        "follow_children": [
+          {
+            "child": "assay",
+            "id": 0
+          }
+        ],
+        "roots": [
+          {
+            "key": [
+              "West",
+              "Basalt"
+            ],
+            "table": "substrate"
+          }
+        ],
+        "row_limit": 20,
+        "source": "microscope"
+      },
+      "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+      "version": 1
+    }
+  ],
+  "retirement": {
+    "recipe": "attic",
+    "refusals": [
+      "retired_recipe",
+      "retired_recipe"
+    ],
+    "version": 1
+  },
+  "sample": {
+    "path": "examples/microscope.sql",
+    "sha256": "d9be8c5876f4f510c1e2f9f85712a7c94b0f8e3b500b2dd436b3b6a3f720b83d"
+  },
+  "snapshots": [
+    {
+      "file": "00-public-sample.sqlite",
+      "key": "00-public-sample",
+      "relay_v1_summary": {
+        "counts": {
+          "assay": 2,
+          "cassette": 2,
+          "frame": 0,
+          "substrate": 1
+        },
+        "root_occurrences": 1,
+        "roots": [
+          [
+            "substrate",
+            [
+              "East",
+              "Mica"
+            ]
+          ]
+        ],
+        "rows": 5,
+        "witnesses": 8
+      },
+      "sha256": "edda118208e2e52f1bc1aeda4cf22afa33e2f85715a365ef9b3bc8a39fb1a6c8"
+    },
+    {
+      "file": "01-after-value.sqlite",
+      "key": "01-after-value",
+      "relay_v1_summary": {
+        "counts": {
+          "assay": 2,
+          "cassette": 2,
+          "frame": 0,
+          "substrate": 1
+        },
+        "root_occurrences": 1,
+        "roots": [
+          [
+            "substrate",
+            [
+              "East",
+              "Mica"
+            ]
+          ]
+        ],
+        "rows": 5,
+        "witnesses": 8
+      },
+      "sha256": "b7186b49c70dd9b8608a0c1a52218baecc78dd404ce6b2acf4c2b18ccb7ab429"
+    },
+    {
+      "file": "02-after-retarget.sqlite",
+      "key": "02-after-retarget",
+      "relay_v1_summary": {
+        "counts": {
+          "assay": 1,
+          "cassette": 2,
+          "frame": 0,
+          "substrate": 1
+        },
+        "root_occurrences": 1,
+        "roots": [
+          [
+            "substrate",
+            [
+              "East",
+              "Mica"
+            ]
+          ]
+        ],
+        "rows": 4,
+        "witnesses": 5
+      },
+      "sha256": "4b303b79166b1709324e164ebbe3f31fe40ec81be65e7fff90b5aba5c306da80"
+    }
+  ],
+  "source_alias": "microscope",
+  "unsealed_work": {
+    "relay-retargeted-closure": {
+      "note": "This rehearsal was never sealed; the source has already moved on.",
+      "preview_action": "preview-after-retarget",
+      "summary": {
+        "counts": {
+          "assay": 1,
+          "cassette": 2,
+          "frame": 0,
+          "substrate": 1
+        },
+        "root_occurrences": 1,
+        "rows": 4,
+        "witnesses": 5
+      }
+    }
+  }
+}

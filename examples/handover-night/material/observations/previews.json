@@ -1,0 +1,100 @@
+{
+  "counts": {
+    "first": {
+      "assay": 2,
+      "cassette": 2,
+      "frame": 0,
+      "substrate": 1
+    },
+    "second": {
+      "assay": 2,
+      "cassette": 2,
+      "frame": 0,
+      "substrate": 1
+    },
+    "third": {
+      "assay": 1,
+      "cassette": 2,
+      "frame": 0,
+      "substrate": 1
+    }
+  },
+  "equal_counts": true,
+  "previews": [
+    {
+      "action": "preview-before-value",
+      "note": "First rehearsal. No sealed record exists yet.",
+      "roots": [
+        [
+          "substrate",
+          [
+            "East",
+            "Mica"
+          ]
+        ]
+      ],
+      "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+      "summary": {
+        "counts": {
+          "assay": 2,
+          "cassette": 2,
+          "frame": 0,
+          "substrate": 1
+        },
+        "root_occurrences": 1,
+        "rows": 5,
+        "witnesses": 8
+      }
+    },
+    {
+      "action": "preview-after-value",
+      "note": "Same row counts as the first rehearsal; a stored value moved.",
+      "roots": [
+        [
+          "substrate",
+          [
+            "East",
+            "Mica"
+          ]
+        ]
+      ],
+      "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+      "summary": {
+        "counts": {
+          "assay": 2,
+          "cassette": 2,
+          "frame": 0,
+          "substrate": 1
+        },
+        "root_occurrences": 1,
+        "rows": 5,
+        "witnesses": 8
+      }
+    },
+    {
+      "action": "preview-after-retarget",
+      "note": "The relationship target moved. Only this live rehearsal exists; nothing was sealed for it.",
+      "roots": [
+        [
+          "substrate",
+          [
+            "East",
+            "Mica"
+          ]
+        ]
+      ],
+      "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+      "summary": {
+        "counts": {
+          "assay": 1,
+          "cassette": 2,
+          "frame": 0,
+          "substrate": 1
+        },
+        "root_occurrences": 1,
+        "rows": 4,
+        "witnesses": 5
+      }
+    }
+  ]
+}

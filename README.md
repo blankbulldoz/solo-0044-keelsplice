@@ -48,6 +48,7 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 python3 -m compileall -q keelsplice examples
 python3 -m examples.walkthrough all
 python3 -m examples.browser_walkthrough
+python3 -m examples.handover_night replay --probe
 ```
 
-两份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。独立自动化测试套件延后。
+前两份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。`handover_night` 是夜班断连后的接续演练：交付材料在 `examples/handover-night/`，`replay` 离线校验真实持久记录并给出"可恢复 / 仅候选 / 需重读源"的判定，`--probe` 再用真实 HTTP 复核。详见 [examples/handover-night/README.md](examples/handover-night/README.md)。独立自动化测试套件延后。

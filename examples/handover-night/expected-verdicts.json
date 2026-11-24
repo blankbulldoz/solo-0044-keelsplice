@@ -1,0 +1,31 @@
+{
+  "captures": {
+    "attic-legacy": {
+      "verdict": "recover",
+      "why": "sealed before retire; still readable and completable after retirement"
+    },
+    "relay-early": {
+      "verdict": "recover",
+      "why": "unique sealed record; recomputes byte-for-byte from snapshot 00-public-sample"
+    },
+    "relay-lost": {
+      "verdict": "recover",
+      "why": "sealed record exists although its page response was lost; the journal shows the night-a request and the repository row, and it recomputes from snapshot 01"
+    },
+    "relay-retry": {
+      "verdict": "candidate",
+      "why": "identical content to relay-lost but no evidence ties it to the original operator; it proves a candidate sample only"
+    }
+  },
+  "drill": "keelsplice-night-handover-v1",
+  "requested_work": {
+    "attic-fresh-sample": {
+      "verdict": "reread",
+      "why": "attic v1 is retired and cannot seal; a new sample needs a fresh source read and a new version"
+    },
+    "relay-retargeted-closure": {
+      "verdict": "reread",
+      "why": "only a live preview exists after the relationship target moved; a preview is not a record"
+    }
+  }
+}

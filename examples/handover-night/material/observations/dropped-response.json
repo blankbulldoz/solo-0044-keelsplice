@@ -1,0 +1,54 @@
+{
+  "capture_id": "cf0d5e9381534c5a95733f5bef5dbeeb",
+  "client_observation": {
+    "detail": "Socket reset after the request. The operator never saw a confirmation page and cannot quote a capture id from it.",
+    "response_body": null,
+    "response_status": null
+  },
+  "label": "relay-lost",
+  "reconciled": {
+    "duplicate_id": "b93ab4bc606f4c288b13ea9a9dc55002",
+    "listed_ids": [
+      "b93ab4bc606f4c288b13ea9a9dc55002",
+      "bc0b76f8f0564c719ed12339d515dca7",
+      "cf0d5e9381534c5a95733f5bef5dbeeb",
+      "f463ca5adc14407294e6fe2a412b0a6c"
+    ],
+    "note": "The lost record and the blind retry both appear in one list; only the stable repository identifier and this journal tell them apart."
+  },
+  "request": {
+    "headers": {
+      "Content-Length": "0",
+      "Content-Type": "application/x-www-form-urlencoded",
+      "Origin": "http://127.0.0.1:43321"
+    },
+    "method": "POST",
+    "path": "/workbench/recipes/relay/1/capture",
+    "raw_sha256": "0b90c2600a0c50e1cf19c655f86da25512645c09da605cc724aa464a37558302"
+  },
+  "server_side_evidence": {
+    "discovered_by": "capture id set difference in the same repository",
+    "repository_row_present": true,
+    "roots": [
+      [
+        "substrate",
+        [
+          "East",
+          "Mica"
+        ]
+      ]
+    ],
+    "state": "sealed",
+    "summary": {
+      "counts": {
+        "assay": 2,
+        "cassette": 2,
+        "frame": 0,
+        "substrate": 1
+      },
+      "root_occurrences": 1,
+      "rows": 5,
+      "witnesses": 8
+    }
+  }
+}

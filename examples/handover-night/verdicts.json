@@ -1,0 +1,3931 @@
+{
+  "checks": [
+    {
+      "check": "manifest checksums cover every delivered file",
+      "detail": [
+        "journal.jsonl",
+        "observations/captures-page.html",
+        "observations/dropped-response.json",
+        "observations/previews.json",
+        "sources/00-public-sample.sqlite",
+        "sources/01-after-value.sqlite",
+        "sources/02-after-retarget.sqlite",
+        "state/repository.sqlite"
+      ],
+      "ok": true
+    },
+    {
+      "check": "repository rows match the manifest",
+      "detail": [
+        {
+          "b93ab4bc606f4c288b13ea9a9dc55002": {
+            "id": "b93ab4bc606f4c288b13ea9a9dc55002",
+            "name": "relay",
+            "sealed": {
+              "recipe": {
+                "follow_children": [
+                  {
+                    "child": "assay",
+                    "id": 0
+                  }
+                ],
+                "roots": [
+                  {
+                    "key": [
+                      "east",
+                      "MICA"
+                    ],
+                    "table": "substrate"
+                  }
+                ],
+                "row_limit": 20,
+                "source": "microscope"
+              },
+              "result": {
+                "arcs": [
+                  {
+                    "direction": "child",
+                    "edge": [
+                      "assay",
+                      0
+                    ],
+                    "origin": [
+                      "substrate",
+                      [
+                        "East",
+                        "Mica"
+                      ]
+                    ],
+                    "target": [
+                      "assay",
+                      [
+                        "S-01"
+                      ]
+                    ]
+                  },
+                  {
+                    "direction": "child",
+                    "edge": [
+                      "assay",
+                      0
+                    ],
+                    "origin": [
+                      "substrate",
+                      [
+                        "East",
+                        "Mica"
+                      ]
+                    ],
+                    "target": [
+                      "assay",
+                      [
+                        "S-02"
+                      ]
+                    ]
+                  },
+                  {
+                    "direction": "parent",
+                    "edge": [
+                      "assay",
+                      0
+                    ],
+                    "origin": [
+                      "assay",
+                      [
+                        "S-01"
+                      ]
+                    ],
+                    "target": [
+                      "substrate",
+                      [
+                        "East",
+                        "Mica"
+                      ]
+                    ]
+                  },
+                  {
+                    "direction": "parent",
+                    "edge": [
+                      "assay",
+                      0
+                    ],
+                    "origin": [
+                      "assay",
+                      [
+                        "S-02"
+                      ]
+                    ],
+                    "target": [
+                      "substrate",
+                      [
+                        "East",
+                        "Mica"
+                      ]
+                    ]
+                  },
+                  {
+                    "direction": "parent",
+                    "edge": [
+                      "assay",
+                      1
+                    ],
+                    "origin": [
+                      "assay",
+                      [
+                        "S-01"
+                      ]
+                    ],
+                    "target": [
+                      "cassette",
+                      [
+                        11
+                      ]
+                    ]
+                  },
+                  {
+                    "direction": "parent",
+                    "edge": [
+                      "assay",
+                      1
+                    ],
+                    "origin": [
+                      "assay",
+                      [
+                        "S-02"
+                      ]
+                    ],
+                    "target": [
+                      "cassette",
+                      [
+                        12
+                      ]
+                    ]
+                  },
+                  {
+                    "direction": "parent",
+                    "edge": [
+                      "cassette",
+                      0
+                    ],
+                    "origin": [
+                      "cassette",
+                      [
+                        11
+                      ]
+                    ],
+                    "target": [
+                      "cassette",
+                      [
+                        12
+                      ]
+                    ]
+                  },
+                  {
+                    "direction": "parent",
+                    "edge": [
+                      "cassette",
+                      0
+                    ],
+                    "origin": [
+                      "cassette",
+                      [
+                        12
+                      ]
+                    ],
+                    "target": [
+                      "cassette",
+                      [
+                        11
+                      ]
+                    ]
+                  }
+                ],
+                "roots": [
+                  [
+                    "substrate",
+                    [
+                      "East",
+                      "Mica"
+                    ]
+                  ]
+                ],
+                "rows": {
+                  "assay": {
+                    "[\"S-01\"]": [
+                      "S-01",
+                      "east",
+                      "MICA",
+                      11,
+                      {
+                        "real": "0x1.3000000000000p+2"
+                      },
+                      {
+                        "real": "0x1.3000000000000p+3"
+                      }
+                    ],
+                    "[\"S-02\"]": [
+                      "S-02",
+                      "EAST",
+                      "mica",
+                      12,
+                      {
+                        "real": "0x1.6000000000000p+2"
+                      },
+                      {
+                        "real": "0x1.6000000000000p+3"
+                      }
+                    ]
+                  },
+                  "cassette": {
+                    "[11]": [
+                      11,
+                      12,
+                      "opal"
+                    ],
+                    "[12]": [
+                      12,
+                      11,
+                      "agate"
+                    ]
+                  },
+                  "frame": {},
+                  "substrate": {
+                    "[\"East\",\"Mica\"]": [
+                      "East",
+                      "Mica",
+                      {
+                        "blob": "AAD/"
+                      }
+                    ]
+                  }
+                }
+              },
+              "schema": {
+                "edges": [
+                  {
+                    "child": "assay",
+                    "child_cols": [
+                      "region",
+                      "code"
+                    ],
+                    "id": 0,
+                    "on_delete": "NO ACTION",
+                    "on_update": "NO ACTION",
+                    "parent": "substrate",
+                    "parent_cols": [
+                      "region",
+                      "code"
+                    ]
+                  },
+                  {
+                    "child": "assay",
+                    "child_cols": [
+                      "cassette"
+                    ],
+                    "id": 1,
+                    "on_delete": "NO ACTION",
+                    "on_update": "NO ACTION",
+                    "parent": "cassette",
+                    "parent_cols": [
+                      "serial"
+                    ]
+                  },
+                  {
+                    "child": "cassette",
+                    "child_cols": [
+                      "prior"
+                    ],
+                    "id": 0,
+                    "on_delete": "NO ACTION",
+                    "on_update": "NO ACTION",
+                    "parent": "cassette",
+                    "parent_cols": [
+                      "serial"
+                    ]
+                  },
+                  {
+                    "child": "frame",
+                    "child_cols": [
+                      "mark"
+                    ],
+                    "id": 0,
+                    "on_delete": "NO ACTION",
+                    "on_update": "NO ACTION",
+                    "parent": "assay",
+                    "parent_cols": [
+                      "mark"
+                    ]
+                  }
+                ],
+                "indexes": [
+                  {
+                    "name": "assay_substrate_lookup",
+                    "sql": "CREATE INDEX assay_substrate_lookup ON assay(region,code) WHERE code IS NOT NULL",
+                    "tbl_name": "assay"
+                  },
+                  {
+                    "name": "frame_mark_lookup",
+                    "sql": "CREATE INDEX frame_mark_lookup ON frame(mark)",
+                    "tbl_name": "frame"
+                  }
+                ],
+                "tables": {
+                  "assay": {
+                    "columns": [
+                      {
+                        "cid": 0,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "mark",
+                        "notnull": 1,
+                        "pk": 1,
+                        "type": "TEXT"
+                      },
+                      {
+                        "cid": 1,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "region",
+                        "notnull": 0,
+                        "pk": 0,
+                        "type": "TEXT"
+                      },
+                      {
+                        "cid": 2,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "code",
+                        "notnull": 0,
+                        "pk": 0,
+                        "type": "TEXT"
+                      },
+                      {
+                        "cid": 3,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "cassette",
+                        "notnull": 1,
+                        "pk": 0,
+                        "type": "INTEGER"
+                      },
+                      {
+                        "cid": 4,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "length_um",
+                        "notnull": 1,
+                        "pk": 0,
+                        "type": "REAL"
+                      },
+                      {
+                        "cid": 5,
+                        "dflt_value": null,
+                        "hidden": 3,
+                        "name": "doubled",
+                        "notnull": 0,
+                        "pk": 0,
+                        "type": "REAL"
+                      }
+                    ],
+                    "ddl": "CREATE TABLE assay (\n    mark TEXT PRIMARY KEY NOT NULL,\n    region TEXT,\n    code TEXT,\n    cassette INTEGER NOT NULL REFERENCES cassette,\n    length_um REAL NOT NULL,\n    doubled REAL GENERATED ALWAYS AS (length_um * 2) STORED,\n    FOREIGN KEY (region, code) REFERENCES substrate\n)",
+                    "pk": [
+                      "mark"
+                    ],
+                    "strict": false,
+                    "without_rowid": false
+                  },
+                  "cassette": {
+                    "columns": [
+                      {
+                        "cid": 0,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "serial",
+                        "notnull": 0,
+                        "pk": 1,
+                        "type": "INTEGER"
+                      },
+                      {
+                        "cid": 1,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "prior",
+                        "notnull": 0,
+                        "pk": 0,
+                        "type": "INTEGER"
+                      },
+                      {
+                        "cid": 2,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "label",
+                        "notnull": 1,
+                        "pk": 0,
+                        "type": "TEXT"
+                      }
+                    ],
+                    "ddl": "CREATE TABLE cassette (\n    serial INTEGER PRIMARY KEY,\n    prior INTEGER REFERENCES cassette,\n    label TEXT NOT NULL\n)",
+                    "pk": [
+                      "serial"
+                    ],
+                    "strict": false,
+                    "without_rowid": false
+                  },
+                  "frame": {
+                    "columns": [
+                      {
+                        "cid": 0,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "frame_id",
+                        "notnull": 0,
+                        "pk": 1,
+                        "type": "INTEGER"
+                      },
+                      {
+                        "cid": 1,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "mark",
+                        "notnull": 0,
+                        "pk": 0,
+                        "type": "TEXT"
+                      },
+                      {
+                        "cid": 2,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "note",
+                        "notnull": 1,
+                        "pk": 0,
+                        "type": "TEXT"
+                      }
+                    ],
+                    "ddl": "CREATE TABLE frame (\n    frame_id INTEGER PRIMARY KEY,\n    mark TEXT REFERENCES assay,\n    note TEXT NOT NULL\n)",
+                    "pk": [
+                      "frame_id"
+                    ],
+                    "strict": false,
+                    "without_rowid": false
+                  },
+                  "substrate": {
+                    "columns": [
+                      {
+                        "cid": 0,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "region",
+                        "notnull": 1,
+                        "pk": 1,
+                        "type": "TEXT"
+                      },
+                      {
+                        "cid": 1,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "code",
+                        "notnull": 1,
+                        "pk": 2,
+                        "type": "TEXT"
+                      },
+                      {
+                        "cid": 2,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "texture",
+                        "notnull": 1,
+                        "pk": 0,
+                        "type": "BLOB"
+                      }
+                    ],
+                    "ddl": "CREATE TABLE substrate (\n    region TEXT COLLATE NOCASE NOT NULL,\n    code TEXT COLLATE NOCASE NOT NULL,\n    texture BLOB NOT NULL,\n    PRIMARY KEY (region, code)\n) WITHOUT ROWID",
+                    "pk": [
+                      "region",
+                      "code"
+                    ],
+                    "strict": false,
+                    "without_rowid": true
+                  }
+                }
+              },
+              "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e"
+            },
+            "state": "sealed",
+            "version": 1
+          },
+          "bc0b76f8f0564c719ed12339d515dca7": {
+            "id": "bc0b76f8f0564c719ed12339d515dca7",
+            "name": "relay",
+            "sealed": {
+              "recipe": {
+                "follow_children": [
+                  {
+                    "child": "assay",
+                    "id": 0
+                  }
+                ],
+                "roots": [
+                  {
+                    "key": [
+                      "east",
+                      "MICA"
+                    ],
+                    "table": "substrate"
+                  }
+                ],
+                "row_limit": 20,
+                "source": "microscope"
+              },
+              "result": {
+                "arcs": [
+                  {
+                    "direction": "child",
+                    "edge": [
+                      "assay",
+                      0
+                    ],
+                    "origin": [
+                      "substrate",
+                      [
+                        "East",
+                        "Mica"
+                      ]
+                    ],
+                    "target": [
+                      "assay",
+                      [
+                        "S-01"
+                      ]
+                    ]
+                  },
+                  {
+                    "direction": "child",
+                    "edge": [
+                      "assay",
+                      0
+                    ],
+                    "origin": [
+                      "substrate",
+                      [
+                        "East",
+                        "Mica"
+                      ]
+                    ],
+                    "target": [
+                      "assay",
+                      [
+                        "S-02"
+                      ]
+                    ]
+                  },
+                  {
+                    "direction": "parent",
+                    "edge": [
+                      "assay",
+                      0
+                    ],
+                    "origin": [
+                      "assay",
+                      [
+                        "S-01"
+                      ]
+                    ],
+                    "target": [
+                      "substrate",
+                      [
+                        "East",
+                        "Mica"
+                      ]
+                    ]
+                  },
+                  {
+                    "direction": "parent",
+                    "edge": [
+                      "assay",
+                      0
+                    ],
+                    "origin": [
+                      "assay",
+                      [
+                        "S-02"
+                      ]
+                    ],
+                    "target": [
+                      "substrate",
+                      [
+                        "East",
+                        "Mica"
+                      ]
+                    ]
+                  },
+                  {
+                    "direction": "parent",
+                    "edge": [
+                      "assay",
+                      1
+                    ],
+                    "origin": [
+                      "assay",
+                      [
+                        "S-01"
+                      ]
+                    ],
+                    "target": [
+                      "cassette",
+                      [
+                        11
+                      ]
+                    ]
+                  },
+                  {
+                    "direction": "parent",
+                    "edge": [
+                      "assay",
+                      1
+                    ],
+                    "origin": [
+                      "assay",
+                      [
+                        "S-02"
+                      ]
+                    ],
+                    "target": [
+                      "cassette",
+                      [
+                        12
+                      ]
+                    ]
+                  },
+                  {
+                    "direction": "parent",
+                    "edge": [
+                      "cassette",
+                      0
+                    ],
+                    "origin": [
+                      "cassette",
+                      [
+                        11
+                      ]
+                    ],
+                    "target": [
+                      "cassette",
+                      [
+                        12
+                      ]
+                    ]
+                  },
+                  {
+                    "direction": "parent",
+                    "edge": [
+                      "cassette",
+                      0
+                    ],
+                    "origin": [
+                      "cassette",
+                      [
+                        12
+                      ]
+                    ],
+                    "target": [
+                      "cassette",
+                      [
+                        11
+                      ]
+                    ]
+                  }
+                ],
+                "roots": [
+                  [
+                    "substrate",
+                    [
+                      "East",
+                      "Mica"
+                    ]
+                  ]
+                ],
+                "rows": {
+                  "assay": {
+                    "[\"S-01\"]": [
+                      "S-01",
+                      "east",
+                      "MICA",
+                      11,
+                      {
+                        "real": "0x1.a000000000000p+1"
+                      },
+                      {
+                        "real": "0x1.a000000000000p+2"
+                      }
+                    ],
+                    "[\"S-02\"]": [
+                      "S-02",
+                      "EAST",
+                      "mica",
+                      12,
+                      {
+                        "real": "0x1.6000000000000p+2"
+                      },
+                      {
+                        "real": "0x1.6000000000000p+3"
+                      }
+                    ]
+                  },
+                  "cassette": {
+                    "[11]": [
+                      11,
+                      12,
+                      "opal"
+                    ],
+                    "[12]": [
+                      12,
+                      11,
+                      "agate"
+                    ]
+                  },
+                  "frame": {},
+                  "substrate": {
+                    "[\"East\",\"Mica\"]": [
+                      "East",
+                      "Mica",
+                      {
+                        "blob": "AAD/"
+                      }
+                    ]
+                  }
+                }
+              },
+              "schema": {
+                "edges": [
+                  {
+                    "child": "assay",
+                    "child_cols": [
+                      "region",
+                      "code"
+                    ],
+                    "id": 0,
+                    "on_delete": "NO ACTION",
+                    "on_update": "NO ACTION",
+                    "parent": "substrate",
+                    "parent_cols": [
+                      "region",
+                      "code"
+                    ]
+                  },
+                  {
+                    "child": "assay",
+                    "child_cols": [
+                      "cassette"
+                    ],
+                    "id": 1,
+                    "on_delete": "NO ACTION",
+                    "on_update": "NO ACTION",
+                    "parent": "cassette",
+                    "parent_cols": [
+                      "serial"
+                    ]
+                  },
+                  {
+                    "child": "cassette",
+                    "child_cols": [
+                      "prior"
+                    ],
+                    "id": 0,
+                    "on_delete": "NO ACTION",
+                    "on_update": "NO ACTION",
+                    "parent": "cassette",
+                    "parent_cols": [
+                      "serial"
+                    ]
+                  },
+                  {
+                    "child": "frame",
+                    "child_cols": [
+                      "mark"
+                    ],
+                    "id": 0,
+                    "on_delete": "NO ACTION",
+                    "on_update": "NO ACTION",
+                    "parent": "assay",
+                    "parent_cols": [
+                      "mark"
+                    ]
+                  }
+                ],
+                "indexes": [
+                  {
+                    "name": "assay_substrate_lookup",
+                    "sql": "CREATE INDEX assay_substrate_lookup ON assay(region,code) WHERE code IS NOT NULL",
+                    "tbl_name": "assay"
+                  },
+                  {
+                    "name": "frame_mark_lookup",
+                    "sql": "CREATE INDEX frame_mark_lookup ON frame(mark)",
+                    "tbl_name": "frame"
+                  }
+                ],
+                "tables": {
+                  "assay": {
+                    "columns": [
+                      {
+                        "cid": 0,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "mark",
+                        "notnull": 1,
+                        "pk": 1,
+                        "type": "TEXT"
+                      },
+                      {
+                        "cid": 1,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "region",
+                        "notnull": 0,
+                        "pk": 0,
+                        "type": "TEXT"
+                      },
+                      {
+                        "cid": 2,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "code",
+                        "notnull": 0,
+                        "pk": 0,
+                        "type": "TEXT"
+                      },
+                      {
+                        "cid": 3,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "cassette",
+                        "notnull": 1,
+                        "pk": 0,
+                        "type": "INTEGER"
+                      },
+                      {
+                        "cid": 4,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "length_um",
+                        "notnull": 1,
+                        "pk": 0,
+                        "type": "REAL"
+                      },
+                      {
+                        "cid": 5,
+                        "dflt_value": null,
+                        "hidden": 3,
+                        "name": "doubled",
+                        "notnull": 0,
+                        "pk": 0,
+                        "type": "REAL"
+                      }
+                    ],
+                    "ddl": "CREATE TABLE assay (\n    mark TEXT PRIMARY KEY NOT NULL,\n    region TEXT,\n    code TEXT,\n    cassette INTEGER NOT NULL REFERENCES cassette,\n    length_um REAL NOT NULL,\n    doubled REAL GENERATED ALWAYS AS (length_um * 2) STORED,\n    FOREIGN KEY (region, code) REFERENCES substrate\n)",
+                    "pk": [
+                      "mark"
+                    ],
+                    "strict": false,
+                    "without_rowid": false
+                  },
+                  "cassette": {
+                    "columns": [
+                      {
+                        "cid": 0,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "serial",
+                        "notnull": 0,
+                        "pk": 1,
+                        "type": "INTEGER"
+                      },
+                      {
+                        "cid": 1,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "prior",
+                        "notnull": 0,
+                        "pk": 0,
+                        "type": "INTEGER"
+                      },
+                      {
+                        "cid": 2,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "label",
+                        "notnull": 1,
+                        "pk": 0,
+                        "type": "TEXT"
+                      }
+                    ],
+                    "ddl": "CREATE TABLE cassette (\n    serial INTEGER PRIMARY KEY,\n    prior INTEGER REFERENCES cassette,\n    label TEXT NOT NULL\n)",
+                    "pk": [
+                      "serial"
+                    ],
+                    "strict": false,
+                    "without_rowid": false
+                  },
+                  "frame": {
+                    "columns": [
+                      {
+                        "cid": 0,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "frame_id",
+                        "notnull": 0,
+                        "pk": 1,
+                        "type": "INTEGER"
+                      },
+                      {
+                        "cid": 1,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "mark",
+                        "notnull": 0,
+                        "pk": 0,
+                        "type": "TEXT"
+                      },
+                      {
+                        "cid": 2,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "note",
+                        "notnull": 1,
+                        "pk": 0,
+                        "type": "TEXT"
+                      }
+                    ],
+                    "ddl": "CREATE TABLE frame (\n    frame_id INTEGER PRIMARY KEY,\n    mark TEXT REFERENCES assay,\n    note TEXT NOT NULL\n)",
+                    "pk": [
+                      "frame_id"
+                    ],
+                    "strict": false,
+                    "without_rowid": false
+                  },
+                  "substrate": {
+                    "columns": [
+                      {
+                        "cid": 0,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "region",
+                        "notnull": 1,
+                        "pk": 1,
+                        "type": "TEXT"
+                      },
+                      {
+                        "cid": 1,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "code",
+                        "notnull": 1,
+                        "pk": 2,
+                        "type": "TEXT"
+                      },
+                      {
+                        "cid": 2,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "texture",
+                        "notnull": 1,
+                        "pk": 0,
+                        "type": "BLOB"
+                      }
+                    ],
+                    "ddl": "CREATE TABLE substrate (\n    region TEXT COLLATE NOCASE NOT NULL,\n    code TEXT COLLATE NOCASE NOT NULL,\n    texture BLOB NOT NULL,\n    PRIMARY KEY (region, code)\n) WITHOUT ROWID",
+                    "pk": [
+                      "region",
+                      "code"
+                    ],
+                    "strict": false,
+                    "without_rowid": true
+                  }
+                }
+              },
+              "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e"
+            },
+            "state": "sealed",
+            "version": 1
+          },
+          "cf0d5e9381534c5a95733f5bef5dbeeb": {
+            "id": "cf0d5e9381534c5a95733f5bef5dbeeb",
+            "name": "relay",
+            "sealed": {
+              "recipe": {
+                "follow_children": [
+                  {
+                    "child": "assay",
+                    "id": 0
+                  }
+                ],
+                "roots": [
+                  {
+                    "key": [
+                      "east",
+                      "MICA"
+                    ],
+                    "table": "substrate"
+                  }
+                ],
+                "row_limit": 20,
+                "source": "microscope"
+              },
+              "result": {
+                "arcs": [
+                  {
+                    "direction": "child",
+                    "edge": [
+                      "assay",
+                      0
+                    ],
+                    "origin": [
+                      "substrate",
+                      [
+                        "East",
+                        "Mica"
+                      ]
+                    ],
+                    "target": [
+                      "assay",
+                      [
+                        "S-01"
+                      ]
+                    ]
+                  },
+                  {
+                    "direction": "child",
+                    "edge": [
+                      "assay",
+                      0
+                    ],
+                    "origin": [
+                      "substrate",
+                      [
+                        "East",
+                        "Mica"
+                      ]
+                    ],
+                    "target": [
+                      "assay",
+                      [
+                        "S-02"
+                      ]
+                    ]
+                  },
+                  {
+                    "direction": "parent",
+                    "edge": [
+                      "assay",
+                      0
+                    ],
+                    "origin": [
+                      "assay",
+                      [
+                        "S-01"
+                      ]
+                    ],
+                    "target": [
+                      "substrate",
+                      [
+                        "East",
+                        "Mica"
+                      ]
+                    ]
+                  },
+                  {
+                    "direction": "parent",
+                    "edge": [
+                      "assay",
+                      0
+                    ],
+                    "origin": [
+                      "assay",
+                      [
+                        "S-02"
+                      ]
+                    ],
+                    "target": [
+                      "substrate",
+                      [
+                        "East",
+                        "Mica"
+                      ]
+                    ]
+                  },
+                  {
+                    "direction": "parent",
+                    "edge": [
+                      "assay",
+                      1
+                    ],
+                    "origin": [
+                      "assay",
+                      [
+                        "S-01"
+                      ]
+                    ],
+                    "target": [
+                      "cassette",
+                      [
+                        11
+                      ]
+                    ]
+                  },
+                  {
+                    "direction": "parent",
+                    "edge": [
+                      "assay",
+                      1
+                    ],
+                    "origin": [
+                      "assay",
+                      [
+                        "S-02"
+                      ]
+                    ],
+                    "target": [
+                      "cassette",
+                      [
+                        12
+                      ]
+                    ]
+                  },
+                  {
+                    "direction": "parent",
+                    "edge": [
+                      "cassette",
+                      0
+                    ],
+                    "origin": [
+                      "cassette",
+                      [
+                        11
+                      ]
+                    ],
+                    "target": [
+                      "cassette",
+                      [
+                        12
+                      ]
+                    ]
+                  },
+                  {
+                    "direction": "parent",
+                    "edge": [
+                      "cassette",
+                      0
+                    ],
+                    "origin": [
+                      "cassette",
+                      [
+                        12
+                      ]
+                    ],
+                    "target": [
+                      "cassette",
+                      [
+                        11
+                      ]
+                    ]
+                  }
+                ],
+                "roots": [
+                  [
+                    "substrate",
+                    [
+                      "East",
+                      "Mica"
+                    ]
+                  ]
+                ],
+                "rows": {
+                  "assay": {
+                    "[\"S-01\"]": [
+                      "S-01",
+                      "east",
+                      "MICA",
+                      11,
+                      {
+                        "real": "0x1.3000000000000p+2"
+                      },
+                      {
+                        "real": "0x1.3000000000000p+3"
+                      }
+                    ],
+                    "[\"S-02\"]": [
+                      "S-02",
+                      "EAST",
+                      "mica",
+                      12,
+                      {
+                        "real": "0x1.6000000000000p+2"
+                      },
+                      {
+                        "real": "0x1.6000000000000p+3"
+                      }
+                    ]
+                  },
+                  "cassette": {
+                    "[11]": [
+                      11,
+                      12,
+                      "opal"
+                    ],
+                    "[12]": [
+                      12,
+                      11,
+                      "agate"
+                    ]
+                  },
+                  "frame": {},
+                  "substrate": {
+                    "[\"East\",\"Mica\"]": [
+                      "East",
+                      "Mica",
+                      {
+                        "blob": "AAD/"
+                      }
+                    ]
+                  }
+                }
+              },
+              "schema": {
+                "edges": [
+                  {
+                    "child": "assay",
+                    "child_cols": [
+                      "region",
+                      "code"
+                    ],
+                    "id": 0,
+                    "on_delete": "NO ACTION",
+                    "on_update": "NO ACTION",
+                    "parent": "substrate",
+                    "parent_cols": [
+                      "region",
+                      "code"
+                    ]
+                  },
+                  {
+                    "child": "assay",
+                    "child_cols": [
+                      "cassette"
+                    ],
+                    "id": 1,
+                    "on_delete": "NO ACTION",
+                    "on_update": "NO ACTION",
+                    "parent": "cassette",
+                    "parent_cols": [
+                      "serial"
+                    ]
+                  },
+                  {
+                    "child": "cassette",
+                    "child_cols": [
+                      "prior"
+                    ],
+                    "id": 0,
+                    "on_delete": "NO ACTION",
+                    "on_update": "NO ACTION",
+                    "parent": "cassette",
+                    "parent_cols": [
+                      "serial"
+                    ]
+                  },
+                  {
+                    "child": "frame",
+                    "child_cols": [
+                      "mark"
+                    ],
+                    "id": 0,
+                    "on_delete": "NO ACTION",
+                    "on_update": "NO ACTION",
+                    "parent": "assay",
+                    "parent_cols": [
+                      "mark"
+                    ]
+                  }
+                ],
+                "indexes": [
+                  {
+                    "name": "assay_substrate_lookup",
+                    "sql": "CREATE INDEX assay_substrate_lookup ON assay(region,code) WHERE code IS NOT NULL",
+                    "tbl_name": "assay"
+                  },
+                  {
+                    "name": "frame_mark_lookup",
+                    "sql": "CREATE INDEX frame_mark_lookup ON frame(mark)",
+                    "tbl_name": "frame"
+                  }
+                ],
+                "tables": {
+                  "assay": {
+                    "columns": [
+                      {
+                        "cid": 0,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "mark",
+                        "notnull": 1,
+                        "pk": 1,
+                        "type": "TEXT"
+                      },
+                      {
+                        "cid": 1,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "region",
+                        "notnull": 0,
+                        "pk": 0,
+                        "type": "TEXT"
+                      },
+                      {
+                        "cid": 2,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "code",
+                        "notnull": 0,
+                        "pk": 0,
+                        "type": "TEXT"
+                      },
+                      {
+                        "cid": 3,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "cassette",
+                        "notnull": 1,
+                        "pk": 0,
+                        "type": "INTEGER"
+                      },
+                      {
+                        "cid": 4,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "length_um",
+                        "notnull": 1,
+                        "pk": 0,
+                        "type": "REAL"
+                      },
+                      {
+                        "cid": 5,
+                        "dflt_value": null,
+                        "hidden": 3,
+                        "name": "doubled",
+                        "notnull": 0,
+                        "pk": 0,
+                        "type": "REAL"
+                      }
+                    ],
+                    "ddl": "CREATE TABLE assay (\n    mark TEXT PRIMARY KEY NOT NULL,\n    region TEXT,\n    code TEXT,\n    cassette INTEGER NOT NULL REFERENCES cassette,\n    length_um REAL NOT NULL,\n    doubled REAL GENERATED ALWAYS AS (length_um * 2) STORED,\n    FOREIGN KEY (region, code) REFERENCES substrate\n)",
+                    "pk": [
+                      "mark"
+                    ],
+                    "strict": false,
+                    "without_rowid": false
+                  },
+                  "cassette": {
+                    "columns": [
+                      {
+                        "cid": 0,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "serial",
+                        "notnull": 0,
+                        "pk": 1,
+                        "type": "INTEGER"
+                      },
+                      {
+                        "cid": 1,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "prior",
+                        "notnull": 0,
+                        "pk": 0,
+                        "type": "INTEGER"
+                      },
+                      {
+                        "cid": 2,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "label",
+                        "notnull": 1,
+                        "pk": 0,
+                        "type": "TEXT"
+                      }
+                    ],
+                    "ddl": "CREATE TABLE cassette (\n    serial INTEGER PRIMARY KEY,\n    prior INTEGER REFERENCES cassette,\n    label TEXT NOT NULL\n)",
+                    "pk": [
+                      "serial"
+                    ],
+                    "strict": false,
+                    "without_rowid": false
+                  },
+                  "frame": {
+                    "columns": [
+                      {
+                        "cid": 0,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "frame_id",
+                        "notnull": 0,
+                        "pk": 1,
+                        "type": "INTEGER"
+                      },
+                      {
+                        "cid": 1,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "mark",
+                        "notnull": 0,
+                        "pk": 0,
+                        "type": "TEXT"
+                      },
+                      {
+                        "cid": 2,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "note",
+                        "notnull": 1,
+                        "pk": 0,
+                        "type": "TEXT"
+                      }
+                    ],
+                    "ddl": "CREATE TABLE frame (\n    frame_id INTEGER PRIMARY KEY,\n    mark TEXT REFERENCES assay,\n    note TEXT NOT NULL\n)",
+                    "pk": [
+                      "frame_id"
+                    ],
+                    "strict": false,
+                    "without_rowid": false
+                  },
+                  "substrate": {
+                    "columns": [
+                      {
+                        "cid": 0,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "region",
+                        "notnull": 1,
+                        "pk": 1,
+                        "type": "TEXT"
+                      },
+                      {
+                        "cid": 1,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "code",
+                        "notnull": 1,
+                        "pk": 2,
+                        "type": "TEXT"
+                      },
+                      {
+                        "cid": 2,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "texture",
+                        "notnull": 1,
+                        "pk": 0,
+                        "type": "BLOB"
+                      }
+                    ],
+                    "ddl": "CREATE TABLE substrate (\n    region TEXT COLLATE NOCASE NOT NULL,\n    code TEXT COLLATE NOCASE NOT NULL,\n    texture BLOB NOT NULL,\n    PRIMARY KEY (region, code)\n) WITHOUT ROWID",
+                    "pk": [
+                      "region",
+                      "code"
+                    ],
+                    "strict": false,
+                    "without_rowid": true
+                  }
+                }
+              },
+              "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e"
+            },
+            "state": "sealed",
+            "version": 1
+          },
+          "f463ca5adc14407294e6fe2a412b0a6c": {
+            "id": "f463ca5adc14407294e6fe2a412b0a6c",
+            "name": "attic",
+            "sealed": {
+              "recipe": {
+                "follow_children": [
+                  {
+                    "child": "assay",
+                    "id": 0
+                  }
+                ],
+                "roots": [
+                  {
+                    "key": [
+                      "West",
+                      "Basalt"
+                    ],
+                    "table": "substrate"
+                  }
+                ],
+                "row_limit": 20,
+                "source": "microscope"
+              },
+              "result": {
+                "arcs": [
+                  {
+                    "direction": "child",
+                    "edge": [
+                      "assay",
+                      0
+                    ],
+                    "origin": [
+                      "substrate",
+                      [
+                        "West",
+                        "Basalt"
+                      ]
+                    ],
+                    "target": [
+                      "assay",
+                      [
+                        "S-04"
+                      ]
+                    ]
+                  },
+                  {
+                    "direction": "parent",
+                    "edge": [
+                      "assay",
+                      0
+                    ],
+                    "origin": [
+                      "assay",
+                      [
+                        "S-04"
+                      ]
+                    ],
+                    "target": [
+                      "substrate",
+                      [
+                        "West",
+                        "Basalt"
+                      ]
+                    ]
+                  },
+                  {
+                    "direction": "parent",
+                    "edge": [
+                      "assay",
+                      1
+                    ],
+                    "origin": [
+                      "assay",
+                      [
+                        "S-04"
+                      ]
+                    ],
+                    "target": [
+                      "cassette",
+                      [
+                        13
+                      ]
+                    ]
+                  }
+                ],
+                "roots": [
+                  [
+                    "substrate",
+                    [
+                      "West",
+                      "Basalt"
+                    ]
+                  ]
+                ],
+                "rows": {
+                  "assay": {
+                    "[\"S-04\"]": [
+                      "S-04",
+                      "west",
+                      "basalt",
+                      13,
+                      {
+                        "real": "0x1.2000000000000p+3"
+                      },
+                      {
+                        "real": "0x1.2000000000000p+4"
+                      }
+                    ]
+                  },
+                  "cassette": {
+                    "[13]": [
+                      13,
+                      null,
+                      "garnet"
+                    ]
+                  },
+                  "frame": {},
+                  "substrate": {
+                    "[\"West\",\"Basalt\"]": [
+                      "West",
+                      "Basalt",
+                      {
+                        "blob": "/g=="
+                      }
+                    ]
+                  }
+                }
+              },
+              "schema": {
+                "edges": [
+                  {
+                    "child": "assay",
+                    "child_cols": [
+                      "region",
+                      "code"
+                    ],
+                    "id": 0,
+                    "on_delete": "NO ACTION",
+                    "on_update": "NO ACTION",
+                    "parent": "substrate",
+                    "parent_cols": [
+                      "region",
+                      "code"
+                    ]
+                  },
+                  {
+                    "child": "assay",
+                    "child_cols": [
+                      "cassette"
+                    ],
+                    "id": 1,
+                    "on_delete": "NO ACTION",
+                    "on_update": "NO ACTION",
+                    "parent": "cassette",
+                    "parent_cols": [
+                      "serial"
+                    ]
+                  },
+                  {
+                    "child": "cassette",
+                    "child_cols": [
+                      "prior"
+                    ],
+                    "id": 0,
+                    "on_delete": "NO ACTION",
+                    "on_update": "NO ACTION",
+                    "parent": "cassette",
+                    "parent_cols": [
+                      "serial"
+                    ]
+                  },
+                  {
+                    "child": "frame",
+                    "child_cols": [
+                      "mark"
+                    ],
+                    "id": 0,
+                    "on_delete": "NO ACTION",
+                    "on_update": "NO ACTION",
+                    "parent": "assay",
+                    "parent_cols": [
+                      "mark"
+                    ]
+                  }
+                ],
+                "indexes": [
+                  {
+                    "name": "assay_substrate_lookup",
+                    "sql": "CREATE INDEX assay_substrate_lookup ON assay(region,code) WHERE code IS NOT NULL",
+                    "tbl_name": "assay"
+                  },
+                  {
+                    "name": "frame_mark_lookup",
+                    "sql": "CREATE INDEX frame_mark_lookup ON frame(mark)",
+                    "tbl_name": "frame"
+                  }
+                ],
+                "tables": {
+                  "assay": {
+                    "columns": [
+                      {
+                        "cid": 0,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "mark",
+                        "notnull": 1,
+                        "pk": 1,
+                        "type": "TEXT"
+                      },
+                      {
+                        "cid": 1,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "region",
+                        "notnull": 0,
+                        "pk": 0,
+                        "type": "TEXT"
+                      },
+                      {
+                        "cid": 2,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "code",
+                        "notnull": 0,
+                        "pk": 0,
+                        "type": "TEXT"
+                      },
+                      {
+                        "cid": 3,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "cassette",
+                        "notnull": 1,
+                        "pk": 0,
+                        "type": "INTEGER"
+                      },
+                      {
+                        "cid": 4,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "length_um",
+                        "notnull": 1,
+                        "pk": 0,
+                        "type": "REAL"
+                      },
+                      {
+                        "cid": 5,
+                        "dflt_value": null,
+                        "hidden": 3,
+                        "name": "doubled",
+                        "notnull": 0,
+                        "pk": 0,
+                        "type": "REAL"
+                      }
+                    ],
+                    "ddl": "CREATE TABLE assay (\n    mark TEXT PRIMARY KEY NOT NULL,\n    region TEXT,\n    code TEXT,\n    cassette INTEGER NOT NULL REFERENCES cassette,\n    length_um REAL NOT NULL,\n    doubled REAL GENERATED ALWAYS AS (length_um * 2) STORED,\n    FOREIGN KEY (region, code) REFERENCES substrate\n)",
+                    "pk": [
+                      "mark"
+                    ],
+                    "strict": false,
+                    "without_rowid": false
+                  },
+                  "cassette": {
+                    "columns": [
+                      {
+                        "cid": 0,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "serial",
+                        "notnull": 0,
+                        "pk": 1,
+                        "type": "INTEGER"
+                      },
+                      {
+                        "cid": 1,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "prior",
+                        "notnull": 0,
+                        "pk": 0,
+                        "type": "INTEGER"
+                      },
+                      {
+                        "cid": 2,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "label",
+                        "notnull": 1,
+                        "pk": 0,
+                        "type": "TEXT"
+                      }
+                    ],
+                    "ddl": "CREATE TABLE cassette (\n    serial INTEGER PRIMARY KEY,\n    prior INTEGER REFERENCES cassette,\n    label TEXT NOT NULL\n)",
+                    "pk": [
+                      "serial"
+                    ],
+                    "strict": false,
+                    "without_rowid": false
+                  },
+                  "frame": {
+                    "columns": [
+                      {
+                        "cid": 0,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "frame_id",
+                        "notnull": 0,
+                        "pk": 1,
+                        "type": "INTEGER"
+                      },
+                      {
+                        "cid": 1,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "mark",
+                        "notnull": 0,
+                        "pk": 0,
+                        "type": "TEXT"
+                      },
+                      {
+                        "cid": 2,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "note",
+                        "notnull": 1,
+                        "pk": 0,
+                        "type": "TEXT"
+                      }
+                    ],
+                    "ddl": "CREATE TABLE frame (\n    frame_id INTEGER PRIMARY KEY,\n    mark TEXT REFERENCES assay,\n    note TEXT NOT NULL\n)",
+                    "pk": [
+                      "frame_id"
+                    ],
+                    "strict": false,
+                    "without_rowid": false
+                  },
+                  "substrate": {
+                    "columns": [
+                      {
+                        "cid": 0,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "region",
+                        "notnull": 1,
+                        "pk": 1,
+                        "type": "TEXT"
+                      },
+                      {
+                        "cid": 1,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "code",
+                        "notnull": 1,
+                        "pk": 2,
+                        "type": "TEXT"
+                      },
+                      {
+                        "cid": 2,
+                        "dflt_value": null,
+                        "hidden": 0,
+                        "name": "texture",
+                        "notnull": 1,
+                        "pk": 0,
+                        "type": "BLOB"
+                      }
+                    ],
+                    "ddl": "CREATE TABLE substrate (\n    region TEXT COLLATE NOCASE NOT NULL,\n    code TEXT COLLATE NOCASE NOT NULL,\n    texture BLOB NOT NULL,\n    PRIMARY KEY (region, code)\n) WITHOUT ROWID",
+                    "pk": [
+                      "region",
+                      "code"
+                    ],
+                    "strict": false,
+                    "without_rowid": true
+                  }
+                }
+              },
+              "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e"
+            },
+            "state": "sealed",
+            "version": 1
+          }
+        },
+        [
+          {
+            "active": true,
+            "name": "relay",
+            "recipe": {
+              "follow_children": [
+                {
+                  "child": "assay",
+                  "id": 0
+                }
+              ],
+              "roots": [
+                {
+                  "key": [
+                    "east",
+                    "MICA"
+                  ],
+                  "table": "substrate"
+                }
+              ],
+              "row_limit": 20,
+              "source": "microscope"
+            },
+            "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+            "version": 1
+          },
+          {
+            "active": false,
+            "name": "attic",
+            "recipe": {
+              "follow_children": [
+                {
+                  "child": "assay",
+                  "id": 0
+                }
+              ],
+              "roots": [
+                {
+                  "key": [
+                    "West",
+                    "Basalt"
+                  ],
+                  "table": "substrate"
+                }
+              ],
+              "row_limit": 20,
+              "source": "microscope"
+            },
+            "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+            "version": 1
+          }
+        ]
+      ],
+      "ok": true
+    },
+    {
+      "check": "recipe versions and the retirement flag match the manifest",
+      "detail": {
+        "recipes": [
+          {
+            "active": false,
+            "name": "attic",
+            "version": 1
+          },
+          {
+            "active": true,
+            "name": "relay",
+            "version": 1
+          }
+        ]
+      },
+      "ok": true
+    },
+    {
+      "check": "every sealed capture recomputes from its labelled snapshot",
+      "detail": {
+        "attic-legacy": {
+          "appearance": {
+            "counts": {
+              "assay": 1,
+              "cassette": 1,
+              "frame": 0,
+              "substrate": 1
+            },
+            "roots": [
+              [
+                "substrate",
+                [
+                  "West",
+                  "Basalt"
+                ]
+              ]
+            ],
+            "rows": 3,
+            "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+            "witnesses": 3
+          },
+          "byte_equal": true,
+          "capture_id": "f463ca5adc14407294e6fe2a412b0a6c",
+          "label": "attic-legacy",
+          "manifest_digest": "c3a2ed30205be80566fac874809dd5052b7ef77049b6dbeadde37e07099a62eb",
+          "recipe": {
+            "follow_children": [
+              {
+                "child": "assay",
+                "id": 0
+              }
+            ],
+            "roots": [
+              {
+                "key": [
+                  "West",
+                  "Basalt"
+                ],
+                "table": "substrate"
+              }
+            ],
+            "row_limit": 20,
+            "source": "microscope"
+          },
+          "recomputed_digest": "c3a2ed30205be80566fac874809dd5052b7ef77049b6dbeadde37e07099a62eb",
+          "roots": [
+            [
+              "substrate",
+              [
+                "West",
+                "Basalt"
+              ]
+            ]
+          ],
+          "sealed_digest": "c3a2ed30205be80566fac874809dd5052b7ef77049b6dbeadde37e07099a62eb",
+          "snapshot": "00-public-sample",
+          "state": "sealed",
+          "summary": {
+            "counts": {
+              "assay": 1,
+              "cassette": 1,
+              "frame": 0,
+              "substrate": 1
+            },
+            "root_occurrences": 1,
+            "roots": [
+              [
+                "substrate",
+                [
+                  "West",
+                  "Basalt"
+                ]
+              ]
+            ],
+            "rows": 3,
+            "witnesses": 3
+          }
+        },
+        "relay-early": {
+          "appearance": {
+            "counts": {
+              "assay": 2,
+              "cassette": 2,
+              "frame": 0,
+              "substrate": 1
+            },
+            "roots": [
+              [
+                "substrate",
+                [
+                  "East",
+                  "Mica"
+                ]
+              ]
+            ],
+            "rows": 5,
+            "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+            "witnesses": 8
+          },
+          "byte_equal": true,
+          "capture_id": "bc0b76f8f0564c719ed12339d515dca7",
+          "label": "relay-early",
+          "manifest_digest": "dbf294a0a92d116c10324d81bd85a234800428466787661006a3a24d3031c873",
+          "recipe": {
+            "follow_children": [
+              {
+                "child": "assay",
+                "id": 0
+              }
+            ],
+            "roots": [
+              {
+                "key": [
+                  "east",
+                  "MICA"
+                ],
+                "table": "substrate"
+              }
+            ],
+            "row_limit": 20,
+            "source": "microscope"
+          },
+          "recomputed_digest": "dbf294a0a92d116c10324d81bd85a234800428466787661006a3a24d3031c873",
+          "roots": [
+            [
+              "substrate",
+              [
+                "East",
+                "Mica"
+              ]
+            ]
+          ],
+          "sealed_digest": "dbf294a0a92d116c10324d81bd85a234800428466787661006a3a24d3031c873",
+          "snapshot": "00-public-sample",
+          "state": "sealed",
+          "summary": {
+            "counts": {
+              "assay": 2,
+              "cassette": 2,
+              "frame": 0,
+              "substrate": 1
+            },
+            "root_occurrences": 1,
+            "roots": [
+              [
+                "substrate",
+                [
+                  "East",
+                  "Mica"
+                ]
+              ]
+            ],
+            "rows": 5,
+            "witnesses": 8
+          }
+        },
+        "relay-lost": {
+          "appearance": {
+            "counts": {
+              "assay": 2,
+              "cassette": 2,
+              "frame": 0,
+              "substrate": 1
+            },
+            "roots": [
+              [
+                "substrate",
+                [
+                  "East",
+                  "Mica"
+                ]
+              ]
+            ],
+            "rows": 5,
+            "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+            "witnesses": 8
+          },
+          "byte_equal": true,
+          "capture_id": "cf0d5e9381534c5a95733f5bef5dbeeb",
+          "label": "relay-lost",
+          "manifest_digest": "c90f92e1e80f92982b6d7079a14ff5e1877a4249d4ab38f36f26abf6725512e7",
+          "recipe": {
+            "follow_children": [
+              {
+                "child": "assay",
+                "id": 0
+              }
+            ],
+            "roots": [
+              {
+                "key": [
+                  "east",
+                  "MICA"
+                ],
+                "table": "substrate"
+              }
+            ],
+            "row_limit": 20,
+            "source": "microscope"
+          },
+          "recomputed_digest": "c90f92e1e80f92982b6d7079a14ff5e1877a4249d4ab38f36f26abf6725512e7",
+          "roots": [
+            [
+              "substrate",
+              [
+                "East",
+                "Mica"
+              ]
+            ]
+          ],
+          "sealed_digest": "c90f92e1e80f92982b6d7079a14ff5e1877a4249d4ab38f36f26abf6725512e7",
+          "snapshot": "01-after-value",
+          "state": "sealed",
+          "summary": {
+            "counts": {
+              "assay": 2,
+              "cassette": 2,
+              "frame": 0,
+              "substrate": 1
+            },
+            "root_occurrences": 1,
+            "roots": [
+              [
+                "substrate",
+                [
+                  "East",
+                  "Mica"
+                ]
+              ]
+            ],
+            "rows": 5,
+            "witnesses": 8
+          }
+        },
+        "relay-retry": {
+          "appearance": {
+            "counts": {
+              "assay": 2,
+              "cassette": 2,
+              "frame": 0,
+              "substrate": 1
+            },
+            "roots": [
+              [
+                "substrate",
+                [
+                  "East",
+                  "Mica"
+                ]
+              ]
+            ],
+            "rows": 5,
+            "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+            "witnesses": 8
+          },
+          "byte_equal": true,
+          "capture_id": "b93ab4bc606f4c288b13ea9a9dc55002",
+          "label": "relay-retry",
+          "manifest_digest": "c90f92e1e80f92982b6d7079a14ff5e1877a4249d4ab38f36f26abf6725512e7",
+          "recipe": {
+            "follow_children": [
+              {
+                "child": "assay",
+                "id": 0
+              }
+            ],
+            "roots": [
+              {
+                "key": [
+                  "east",
+                  "MICA"
+                ],
+                "table": "substrate"
+              }
+            ],
+            "row_limit": 20,
+            "source": "microscope"
+          },
+          "recomputed_digest": "c90f92e1e80f92982b6d7079a14ff5e1877a4249d4ab38f36f26abf6725512e7",
+          "roots": [
+            [
+              "substrate",
+              [
+                "East",
+                "Mica"
+              ]
+            ]
+          ],
+          "sealed_digest": "c90f92e1e80f92982b6d7079a14ff5e1877a4249d4ab38f36f26abf6725512e7",
+          "snapshot": "01-after-value",
+          "state": "sealed",
+          "summary": {
+            "counts": {
+              "assay": 2,
+              "cassette": 2,
+              "frame": 0,
+              "substrate": 1
+            },
+            "root_occurrences": 1,
+            "roots": [
+              [
+                "substrate",
+                [
+                  "East",
+                  "Mica"
+                ]
+              ]
+            ],
+            "rows": 5,
+            "witnesses": 8
+          }
+        }
+      },
+      "ok": true
+    },
+    {
+      "check": "identical-looking captures are grouped and separable",
+      "detail": {
+        "{\"counts\":{\"assay\":2,\"cassette\":2,\"frame\":0,\"substrate\":1},\"roots\":[[\"substrate\",[\"East\",\"Mica\"]]],\"rows\":5,\"schema_digest\":\"c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e\",\"witnesses\":8}": {
+          "appearance": {
+            "counts": {
+              "assay": 2,
+              "cassette": 2,
+              "frame": 0,
+              "substrate": 1
+            },
+            "roots": [
+              [
+                "substrate",
+                [
+                  "East",
+                  "Mica"
+                ]
+              ]
+            ],
+            "rows": 5,
+            "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+            "witnesses": 8
+          },
+          "distinct_content_digests": 2,
+          "identical_content_clusters": [
+            {
+              "artifact_sha256": "e5a7f7e7bac17e4157a69d4bae041023016bcef278250a44cbf91d9ed3783d12",
+              "capture_digest": "c90f92e1e80f92982b6d7079a14ff5e1877a4249d4ab38f36f26abf6725512e7",
+              "ids": {
+                "relay-lost": "cf0d5e9381534c5a95733f5bef5dbeeb",
+                "relay-retry": "b93ab4bc606f4c288b13ea9a9dc55002"
+              },
+              "labels": [
+                "relay-lost",
+                "relay-retry"
+              ],
+              "separable_by": [
+                "capture_id_and_journal"
+              ]
+            }
+          ],
+          "labels": [
+            "relay-early",
+            "relay-lost",
+            "relay-retry"
+          ],
+          "per_capture": {
+            "relay-early": {
+              "artifact_sha256": "a55b2cffc863cc6745184cad1a91e4e9b62617c49d3641f54537be404cc393a0",
+              "assay_marks": [
+                "S-01",
+                "S-02"
+              ],
+              "capture_digest": "dbf294a0a92d116c10324d81bd85a234800428466787661006a3a24d3031c873",
+              "capture_id": "bc0b76f8f0564c719ed12339d515dca7",
+              "roots": [
+                [
+                  "substrate",
+                  [
+                    "East",
+                    "Mica"
+                  ]
+                ]
+              ]
+            },
+            "relay-lost": {
+              "artifact_sha256": "e5a7f7e7bac17e4157a69d4bae041023016bcef278250a44cbf91d9ed3783d12",
+              "assay_marks": [
+                "S-01",
+                "S-02"
+              ],
+              "capture_digest": "c90f92e1e80f92982b6d7079a14ff5e1877a4249d4ab38f36f26abf6725512e7",
+              "capture_id": "cf0d5e9381534c5a95733f5bef5dbeeb",
+              "roots": [
+                [
+                  "substrate",
+                  [
+                    "East",
+                    "Mica"
+                  ]
+                ]
+              ]
+            },
+            "relay-retry": {
+              "artifact_sha256": "e5a7f7e7bac17e4157a69d4bae041023016bcef278250a44cbf91d9ed3783d12",
+              "assay_marks": [
+                "S-01",
+                "S-02"
+              ],
+              "capture_digest": "c90f92e1e80f92982b6d7079a14ff5e1877a4249d4ab38f36f26abf6725512e7",
+              "capture_id": "b93ab4bc606f4c288b13ea9a9dc55002",
+              "roots": [
+                [
+                  "substrate",
+                  [
+                    "East",
+                    "Mica"
+                  ]
+                ]
+              ]
+            }
+          },
+          "same_artifact_bytes": false,
+          "separable_by": [
+            "capture_digest",
+            "artifact_bytes"
+          ]
+        }
+      },
+      "ok": true
+    },
+    {
+      "check": "lost record and blind retry are content-identical but separable",
+      "detail": {
+        "cluster": {
+          "artifact_sha256": "e5a7f7e7bac17e4157a69d4bae041023016bcef278250a44cbf91d9ed3783d12",
+          "capture_digest": "c90f92e1e80f92982b6d7079a14ff5e1877a4249d4ab38f36f26abf6725512e7",
+          "ids": {
+            "relay-lost": "cf0d5e9381534c5a95733f5bef5dbeeb",
+            "relay-retry": "b93ab4bc606f4c288b13ea9a9dc55002"
+          },
+          "labels": [
+            "relay-lost",
+            "relay-retry"
+          ],
+          "separable_by": [
+            "capture_id_and_journal"
+          ]
+        },
+        "distinct_content_digests": 2,
+        "group_labels": [
+          "relay-early",
+          "relay-lost",
+          "relay-retry"
+        ],
+        "sibling_labels": [
+          "relay-early"
+        ]
+      },
+      "ok": true
+    },
+    {
+      "check": "all sealed captures build, certify and download on a copy",
+      "detail": [
+        {
+          "attic-legacy": {
+            "artifact_sha256": "570002f32e0be563a79fe8129f4c462f9cf88a25b315b619e16cd52715aaaf3c",
+            "bytes": 32768,
+            "capture_digest": "c3a2ed30205be80566fac874809dd5052b7ef77049b6dbeadde37e07099a62eb",
+            "counts": {
+              "assay": 1,
+              "cassette": 1,
+              "frame": 0,
+              "substrate": 1
+            },
+            "state": "certified"
+          },
+          "relay-early": {
+            "artifact_sha256": "a55b2cffc863cc6745184cad1a91e4e9b62617c49d3641f54537be404cc393a0",
+            "bytes": 32768,
+            "capture_digest": "dbf294a0a92d116c10324d81bd85a234800428466787661006a3a24d3031c873",
+            "counts": {
+              "assay": 2,
+              "cassette": 2,
+              "frame": 0,
+              "substrate": 1
+            },
+            "state": "certified"
+          },
+          "relay-lost": {
+            "artifact_sha256": "e5a7f7e7bac17e4157a69d4bae041023016bcef278250a44cbf91d9ed3783d12",
+            "bytes": 32768,
+            "capture_digest": "c90f92e1e80f92982b6d7079a14ff5e1877a4249d4ab38f36f26abf6725512e7",
+            "counts": {
+              "assay": 2,
+              "cassette": 2,
+              "frame": 0,
+              "substrate": 1
+            },
+            "state": "certified"
+          },
+          "relay-retry": {
+            "artifact_sha256": "e5a7f7e7bac17e4157a69d4bae041023016bcef278250a44cbf91d9ed3783d12",
+            "bytes": 32768,
+            "capture_digest": "c90f92e1e80f92982b6d7079a14ff5e1877a4249d4ab38f36f26abf6725512e7",
+            "counts": {
+              "assay": 2,
+              "cassette": 2,
+              "frame": 0,
+              "substrate": 1
+            },
+            "state": "certified"
+          }
+        },
+        {
+          "attic_refusal": {
+            "error": "retired_recipe",
+            "recipe": "attic",
+            "status": 409,
+            "version": 1
+          },
+          "relay_reseal": {
+            "capture_digest": "caca773d93007e9ac0a204f40d221c6d7dc7a01054af2cac4b96df46f3cce610",
+            "capture_id": "0439ef6783334eddb8c7c90b7d97ddf3",
+            "matches_recorded_preview": true,
+            "summary": {
+              "counts": {
+                "assay": 1,
+                "cassette": 2,
+                "frame": 0,
+                "substrate": 1
+              },
+              "root_occurrences": 1,
+              "roots": [
+                [
+                  "substrate",
+                  [
+                    "East",
+                    "Mica"
+                  ]
+                ]
+              ],
+              "rows": 4,
+              "witnesses": 5
+            }
+          }
+        }
+      ],
+      "ok": true
+    },
+    {
+      "check": "journal and observations reconstruct the shift",
+      "detail": {
+        "actions": [
+          "capture-attic-after-retarget",
+          "capture-attic-legacy",
+          "capture-attic-retired",
+          "capture-early",
+          "capture-lost-page",
+          "capture-retry",
+          "catalog",
+          "open-capture-list",
+          "preview-after-retarget",
+          "preview-after-value",
+          "preview-before-value",
+          "read-lost-status",
+          "register-attic",
+          "register-relay",
+          "retire-attic"
+        ],
+        "checks": {
+          "both_visible_in_browser_list": true,
+          "journal_agrees_with_the_repository": true,
+          "lost_capture_is_not_the_blind_retry": true,
+          "lost_page_response_never_observed": true,
+          "lost_record_exists_server_side": true,
+          "lost_request_is_in_the_journal": true,
+          "retired_capture_remains_sealed_and_usable": true,
+          "retirement_refusals_are_recorded": true,
+          "retry_has_an_observed_response": true
+        },
+        "equal_counts": true,
+        "events": 15,
+        "lost_seq": 10,
+        "previews": {
+          "first": {
+            "assay": 2,
+            "cassette": 2,
+            "frame": 0,
+            "substrate": 1
+          },
+          "second": {
+            "assay": 2,
+            "cassette": 2,
+            "frame": 0,
+            "substrate": 1
+          },
+          "third": {
+            "assay": 1,
+            "cassette": 2,
+            "frame": 0,
+            "substrate": 1
+          }
+        },
+        "retry_seq": 12
+      },
+      "ok": true
+    },
+    {
+      "check": "labelled snapshots contain exactly the claimed changes",
+      "detail": {
+        "relay_closure": {
+          "00-public-sample": {
+            "assay": 2,
+            "cassette": 2,
+            "frame": 0,
+            "substrate": 1
+          },
+          "01-after-value": {
+            "assay": 2,
+            "cassette": 2,
+            "frame": 0,
+            "substrate": 1
+          },
+          "02-after-retarget": {
+            "assay": 1,
+            "cassette": 2,
+            "frame": 0,
+            "substrate": 1
+          }
+        },
+        "retarget_changes": [
+          {
+            "after": {
+              "cassette": 12,
+              "code": "Basalt",
+              "doubled": 11.0,
+              "length_um": 5.5,
+              "mark": "S-02",
+              "region": "West"
+            },
+            "before": {
+              "cassette": 12,
+              "code": "mica",
+              "doubled": 11.0,
+              "length_um": 5.5,
+              "mark": "S-02",
+              "region": "EAST"
+            },
+            "key": [
+              "S-02"
+            ],
+            "table": "assay"
+          }
+        ],
+        "table_totals": {
+          "after_retarget": {
+            "assay": 4,
+            "cassette": 3,
+            "frame": 4,
+            "substrate": 2
+          },
+          "after_value": {
+            "assay": 4,
+            "cassette": 3,
+            "frame": 4,
+            "substrate": 2
+          },
+          "public": {
+            "assay": 4,
+            "cassette": 3,
+            "frame": 4,
+            "substrate": 2
+          }
+        },
+        "value_change": [
+          {
+            "after": {
+              "cassette": 11,
+              "code": "MICA",
+              "doubled": 9.5,
+              "length_um": 4.75,
+              "mark": "S-01",
+              "region": "east"
+            },
+            "before": {
+              "cassette": 11,
+              "code": "MICA",
+              "doubled": 6.5,
+              "length_um": 3.25,
+              "mark": "S-01",
+              "region": "east"
+            },
+            "key": [
+              "S-01"
+            ],
+            "table": "assay"
+          }
+        ]
+      },
+      "ok": true
+    },
+    {
+      "check": "relation and value evidence distinguish same-looking captures",
+      "detail": {
+        "early_vs_lost": {
+          "difference": [
+            [
+              "assay:[\"S-01\"]",
+              "1dac3abf8e6d27510b2e236dee4b2bbadaa831ac892ec32b3117c5980211514f"
+            ],
+            [
+              "assay:[\"S-01\"]",
+              "c88685db95b6956fa157574daaaf28a30a1959f9f47617e79a397ccad2d47b48"
+            ]
+          ],
+          "trace_identical": true,
+          "values_identical": false
+        },
+        "lost_vs_post": {
+          "trace_identical": false,
+          "values_identical": false
+        },
+        "lost_vs_retry": {
+          "only_difference": "capture_id (and the journal event that produced it)",
+          "trace_identical": true,
+          "values_identical": true
+        }
+      },
+      "ok": true
+    },
+    {
+      "check": "derived verdicts match the recorded expectation",
+      "detail": {
+        "candidate": [
+          {
+            "appearance": {
+              "counts": {
+                "assay": 2,
+                "cassette": 2,
+                "frame": 0,
+                "substrate": 1
+              },
+              "roots": [
+                [
+                  "substrate",
+                  [
+                    "East",
+                    "Mica"
+                  ]
+                ]
+              ],
+              "rows": 5,
+              "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+              "witnesses": 8
+            },
+            "artifact_sha256": "e5a7f7e7bac17e4157a69d4bae041023016bcef278250a44cbf91d9ed3783d12",
+            "asserts": {
+              "artifact_sha256": "e5a7f7e7bac17e4157a69d4bae041023016bcef278250a44cbf91d9ed3783d12",
+              "counts": {
+                "assay": 2,
+                "cassette": 2,
+                "frame": 0,
+                "substrate": 1
+              },
+              "kind": "sealed-record",
+              "recomputed_from": "01-after-value",
+              "state": "certified"
+            },
+            "cannot_prove": "Cannot say which identifier is the intended continuation; both have the same rows, witnesses and artifact bytes.",
+            "capture_digest": "c90f92e1e80f92982b6d7079a14ff5e1877a4249d4ab38f36f26abf6725512e7",
+            "capture_id": "b93ab4bc606f4c288b13ea9a9dc55002",
+            "kind": "capture",
+            "label": "relay-retry",
+            "proves": "The sealed record recomputes from its snapshot, but a blind retry left a second record with identical content. Nothing ties either attempt to the operator intent, so this proves a candidate sample, not a unique continuation.",
+            "snapshot": "01-after-value",
+            "state": "sealed",
+            "verdict": "candidate"
+          }
+        ],
+        "entries": [
+          {
+            "appearance": {
+              "counts": {
+                "assay": 1,
+                "cassette": 1,
+                "frame": 0,
+                "substrate": 1
+              },
+              "roots": [
+                [
+                  "substrate",
+                  [
+                    "West",
+                    "Basalt"
+                  ]
+                ]
+              ],
+              "rows": 3,
+              "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+              "witnesses": 3
+            },
+            "artifact_sha256": "570002f32e0be563a79fe8129f4c462f9cf88a25b315b619e16cd52715aaaf3c",
+            "asserts": {
+              "artifact_sha256": "570002f32e0be563a79fe8129f4c462f9cf88a25b315b619e16cd52715aaaf3c",
+              "counts": {
+                "assay": 1,
+                "cassette": 1,
+                "frame": 0,
+                "substrate": 1
+              },
+              "kind": "sealed-record",
+              "recomputed_from": "00-public-sample",
+              "state": "certified"
+            },
+            "cannot_prove": "Cannot prove the operator still wanted this exact sample; the record only proves the sample as sealed.",
+            "capture_digest": "c3a2ed30205be80566fac874809dd5052b7ef77049b6dbeadde37e07099a62eb",
+            "capture_id": "f463ca5adc14407294e6fe2a412b0a6c",
+            "kind": "capture",
+            "label": "attic-legacy",
+            "proves": "Sealed record f463ca5adc14407294e6fe2a412b0a6c recomputes byte-for-byte from snapshot 00-public-sample, and build/certify/download complete on a repository copy.",
+            "snapshot": "00-public-sample",
+            "state": "sealed",
+            "verdict": "recover"
+          },
+          {
+            "appearance": {
+              "counts": {
+                "assay": 2,
+                "cassette": 2,
+                "frame": 0,
+                "substrate": 1
+              },
+              "roots": [
+                [
+                  "substrate",
+                  [
+                    "East",
+                    "Mica"
+                  ]
+                ]
+              ],
+              "rows": 5,
+              "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+              "witnesses": 8
+            },
+            "artifact_sha256": "a55b2cffc863cc6745184cad1a91e4e9b62617c49d3641f54537be404cc393a0",
+            "asserts": {
+              "artifact_sha256": "a55b2cffc863cc6745184cad1a91e4e9b62617c49d3641f54537be404cc393a0",
+              "counts": {
+                "assay": 2,
+                "cassette": 2,
+                "frame": 0,
+                "substrate": 1
+              },
+              "kind": "sealed-record",
+              "recomputed_from": "00-public-sample",
+              "state": "certified"
+            },
+            "cannot_prove": "Cannot prove the operator still wanted this exact sample; the record only proves the sample as sealed.",
+            "capture_digest": "dbf294a0a92d116c10324d81bd85a234800428466787661006a3a24d3031c873",
+            "capture_id": "bc0b76f8f0564c719ed12339d515dca7",
+            "kind": "capture",
+            "label": "relay-early",
+            "proves": "Sealed record bc0b76f8f0564c719ed12339d515dca7 recomputes byte-for-byte from snapshot 00-public-sample, and build/certify/download complete on a repository copy.",
+            "snapshot": "00-public-sample",
+            "state": "sealed",
+            "verdict": "recover"
+          },
+          {
+            "appearance": {
+              "counts": {
+                "assay": 2,
+                "cassette": 2,
+                "frame": 0,
+                "substrate": 1
+              },
+              "roots": [
+                [
+                  "substrate",
+                  [
+                    "East",
+                    "Mica"
+                  ]
+                ]
+              ],
+              "rows": 5,
+              "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+              "witnesses": 8
+            },
+            "artifact_sha256": "e5a7f7e7bac17e4157a69d4bae041023016bcef278250a44cbf91d9ed3783d12",
+            "asserts": {
+              "artifact_sha256": "e5a7f7e7bac17e4157a69d4bae041023016bcef278250a44cbf91d9ed3783d12",
+              "counts": {
+                "assay": 2,
+                "cassette": 2,
+                "frame": 0,
+                "substrate": 1
+              },
+              "kind": "sealed-record",
+              "recomputed_from": "01-after-value",
+              "state": "certified"
+            },
+            "cannot_prove": "Cannot prove the operator still wanted this exact sample; the record only proves the sample as sealed.",
+            "capture_digest": "c90f92e1e80f92982b6d7079a14ff5e1877a4249d4ab38f36f26abf6725512e7",
+            "capture_id": "cf0d5e9381534c5a95733f5bef5dbeeb",
+            "kind": "capture",
+            "label": "relay-lost",
+            "proves": "Sealed record cf0d5e9381534c5a95733f5bef5dbeeb recomputes byte-for-byte from snapshot 01-after-value, and build/certify/download complete on a repository copy.",
+            "snapshot": "01-after-value",
+            "state": "sealed",
+            "verdict": "recover"
+          },
+          {
+            "appearance": {
+              "counts": {
+                "assay": 2,
+                "cassette": 2,
+                "frame": 0,
+                "substrate": 1
+              },
+              "roots": [
+                [
+                  "substrate",
+                  [
+                    "East",
+                    "Mica"
+                  ]
+                ]
+              ],
+              "rows": 5,
+              "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+              "witnesses": 8
+            },
+            "artifact_sha256": "e5a7f7e7bac17e4157a69d4bae041023016bcef278250a44cbf91d9ed3783d12",
+            "asserts": {
+              "artifact_sha256": "e5a7f7e7bac17e4157a69d4bae041023016bcef278250a44cbf91d9ed3783d12",
+              "counts": {
+                "assay": 2,
+                "cassette": 2,
+                "frame": 0,
+                "substrate": 1
+              },
+              "kind": "sealed-record",
+              "recomputed_from": "01-after-value",
+              "state": "certified"
+            },
+            "cannot_prove": "Cannot say which identifier is the intended continuation; both have the same rows, witnesses and artifact bytes.",
+            "capture_digest": "c90f92e1e80f92982b6d7079a14ff5e1877a4249d4ab38f36f26abf6725512e7",
+            "capture_id": "b93ab4bc606f4c288b13ea9a9dc55002",
+            "kind": "capture",
+            "label": "relay-retry",
+            "proves": "The sealed record recomputes from its snapshot, but a blind retry left a second record with identical content. Nothing ties either attempt to the operator intent, so this proves a candidate sample, not a unique continuation.",
+            "snapshot": "01-after-value",
+            "state": "sealed",
+            "verdict": "candidate"
+          },
+          {
+            "appearance": {
+              "counts": {
+                "assay": 1,
+                "cassette": 2,
+                "frame": 0,
+                "substrate": 1
+              },
+              "root_occurrences": 1,
+              "rows": 4,
+              "witnesses": 5
+            },
+            "cannot_prove": "The successor rehearsed relay v1 after S-02 moved to another substrate, but only a live preview exists. A preview is a read snapshot, not a record, and the source can move again; to obtain this sample the successor must read the source and seal it.",
+            "kind": "requested-work",
+            "label": "relay-retargeted-closure",
+            "proves": "There is no persisted record of this work.",
+            "verdict": "reread"
+          },
+          {
+            "appearance": null,
+            "cannot_prove": "Recipe attic v1 is retired and refuses new seals. The old capture remains valid, but any new attic sample needs a fresh source read and a new recipe version.",
+            "kind": "requested-work",
+            "label": "attic-fresh-sample",
+            "proves": "There is no persisted record of this work.",
+            "verdict": "reread"
+          }
+        ],
+        "recover": [
+          {
+            "appearance": {
+              "counts": {
+                "assay": 1,
+                "cassette": 1,
+                "frame": 0,
+                "substrate": 1
+              },
+              "roots": [
+                [
+                  "substrate",
+                  [
+                    "West",
+                    "Basalt"
+                  ]
+                ]
+              ],
+              "rows": 3,
+              "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+              "witnesses": 3
+            },
+            "artifact_sha256": "570002f32e0be563a79fe8129f4c462f9cf88a25b315b619e16cd52715aaaf3c",
+            "asserts": {
+              "artifact_sha256": "570002f32e0be563a79fe8129f4c462f9cf88a25b315b619e16cd52715aaaf3c",
+              "counts": {
+                "assay": 1,
+                "cassette": 1,
+                "frame": 0,
+                "substrate": 1
+              },
+              "kind": "sealed-record",
+              "recomputed_from": "00-public-sample",
+              "state": "certified"
+            },
+            "cannot_prove": "Cannot prove the operator still wanted this exact sample; the record only proves the sample as sealed.",
+            "capture_digest": "c3a2ed30205be80566fac874809dd5052b7ef77049b6dbeadde37e07099a62eb",
+            "capture_id": "f463ca5adc14407294e6fe2a412b0a6c",
+            "kind": "capture",
+            "label": "attic-legacy",
+            "proves": "Sealed record f463ca5adc14407294e6fe2a412b0a6c recomputes byte-for-byte from snapshot 00-public-sample, and build/certify/download complete on a repository copy.",
+            "snapshot": "00-public-sample",
+            "state": "sealed",
+            "verdict": "recover"
+          },
+          {
+            "appearance": {
+              "counts": {
+                "assay": 2,
+                "cassette": 2,
+                "frame": 0,
+                "substrate": 1
+              },
+              "roots": [
+                [
+                  "substrate",
+                  [
+                    "East",
+                    "Mica"
+                  ]
+                ]
+              ],
+              "rows": 5,
+              "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+              "witnesses": 8
+            },
+            "artifact_sha256": "a55b2cffc863cc6745184cad1a91e4e9b62617c49d3641f54537be404cc393a0",
+            "asserts": {
+              "artifact_sha256": "a55b2cffc863cc6745184cad1a91e4e9b62617c49d3641f54537be404cc393a0",
+              "counts": {
+                "assay": 2,
+                "cassette": 2,
+                "frame": 0,
+                "substrate": 1
+              },
+              "kind": "sealed-record",
+              "recomputed_from": "00-public-sample",
+              "state": "certified"
+            },
+            "cannot_prove": "Cannot prove the operator still wanted this exact sample; the record only proves the sample as sealed.",
+            "capture_digest": "dbf294a0a92d116c10324d81bd85a234800428466787661006a3a24d3031c873",
+            "capture_id": "bc0b76f8f0564c719ed12339d515dca7",
+            "kind": "capture",
+            "label": "relay-early",
+            "proves": "Sealed record bc0b76f8f0564c719ed12339d515dca7 recomputes byte-for-byte from snapshot 00-public-sample, and build/certify/download complete on a repository copy.",
+            "snapshot": "00-public-sample",
+            "state": "sealed",
+            "verdict": "recover"
+          },
+          {
+            "appearance": {
+              "counts": {
+                "assay": 2,
+                "cassette": 2,
+                "frame": 0,
+                "substrate": 1
+              },
+              "roots": [
+                [
+                  "substrate",
+                  [
+                    "East",
+                    "Mica"
+                  ]
+                ]
+              ],
+              "rows": 5,
+              "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+              "witnesses": 8
+            },
+            "artifact_sha256": "e5a7f7e7bac17e4157a69d4bae041023016bcef278250a44cbf91d9ed3783d12",
+            "asserts": {
+              "artifact_sha256": "e5a7f7e7bac17e4157a69d4bae041023016bcef278250a44cbf91d9ed3783d12",
+              "counts": {
+                "assay": 2,
+                "cassette": 2,
+                "frame": 0,
+                "substrate": 1
+              },
+              "kind": "sealed-record",
+              "recomputed_from": "01-after-value",
+              "state": "certified"
+            },
+            "cannot_prove": "Cannot prove the operator still wanted this exact sample; the record only proves the sample as sealed.",
+            "capture_digest": "c90f92e1e80f92982b6d7079a14ff5e1877a4249d4ab38f36f26abf6725512e7",
+            "capture_id": "cf0d5e9381534c5a95733f5bef5dbeeb",
+            "kind": "capture",
+            "label": "relay-lost",
+            "proves": "Sealed record cf0d5e9381534c5a95733f5bef5dbeeb recomputes byte-for-byte from snapshot 01-after-value, and build/certify/download complete on a repository copy.",
+            "snapshot": "01-after-value",
+            "state": "sealed",
+            "verdict": "recover"
+          }
+        ],
+        "reread": [
+          {
+            "appearance": {
+              "counts": {
+                "assay": 1,
+                "cassette": 2,
+                "frame": 0,
+                "substrate": 1
+              },
+              "root_occurrences": 1,
+              "rows": 4,
+              "witnesses": 5
+            },
+            "cannot_prove": "The successor rehearsed relay v1 after S-02 moved to another substrate, but only a live preview exists. A preview is a read snapshot, not a record, and the source can move again; to obtain this sample the successor must read the source and seal it.",
+            "kind": "requested-work",
+            "label": "relay-retargeted-closure",
+            "proves": "There is no persisted record of this work.",
+            "verdict": "reread"
+          },
+          {
+            "appearance": null,
+            "cannot_prove": "Recipe attic v1 is retired and refuses new seals. The old capture remains valid, but any new attic sample needs a fresh source read and a new recipe version.",
+            "kind": "requested-work",
+            "label": "attic-fresh-sample",
+            "proves": "There is no persisted record of this work.",
+            "verdict": "reread"
+          }
+        ]
+      },
+      "ok": true
+    },
+    {
+      "check": "negative controls: broken facts are rejected",
+      "detail": [
+        {
+          "caught": true,
+          "message": "relay-lost: cannot be recomputed from snapshot 01-after-value",
+          "mutation": "a stored value in a labelled snapshot is changed"
+        },
+        {
+          "caught": true,
+          "message": "relay-early: sealed payload does not match the manifest",
+          "mutation": "a sealed capture digest is edited in the manifest"
+        },
+        {
+          "caught": true,
+          "message": "relay-lost: sealed payload does not match the manifest",
+          "mutation": "a sealed payload is edited inside the repository"
+        },
+        {
+          "caught": true,
+          "message": "incomplete journal evidence: {'lost_page_response_never_observed': True, 'lost_request_is_in_the_journal': True, 'lost_record_exists_server_side': True, 'journa",
+          "mutation": "the lost record is relabelled as the blind retry"
+        },
+        {
+          "caught": true,
+          "message": "incomplete journal evidence: {'lost_page_response_never_observed': True, 'lost_request_is_in_the_journal': True, 'lost_record_exists_server_side': True, 'journa",
+          "mutation": "the journal forgets the lost record was sealed"
+        }
+      ],
+      "ok": true
+    }
+  ],
+  "completion": {
+    "attic-legacy": {
+      "artifact_sha256": "570002f32e0be563a79fe8129f4c462f9cf88a25b315b619e16cd52715aaaf3c",
+      "bytes": 32768,
+      "capture_digest": "c3a2ed30205be80566fac874809dd5052b7ef77049b6dbeadde37e07099a62eb",
+      "counts": {
+        "assay": 1,
+        "cassette": 1,
+        "frame": 0,
+        "substrate": 1
+      },
+      "state": "certified"
+    },
+    "relay-early": {
+      "artifact_sha256": "a55b2cffc863cc6745184cad1a91e4e9b62617c49d3641f54537be404cc393a0",
+      "bytes": 32768,
+      "capture_digest": "dbf294a0a92d116c10324d81bd85a234800428466787661006a3a24d3031c873",
+      "counts": {
+        "assay": 2,
+        "cassette": 2,
+        "frame": 0,
+        "substrate": 1
+      },
+      "state": "certified"
+    },
+    "relay-lost": {
+      "artifact_sha256": "e5a7f7e7bac17e4157a69d4bae041023016bcef278250a44cbf91d9ed3783d12",
+      "bytes": 32768,
+      "capture_digest": "c90f92e1e80f92982b6d7079a14ff5e1877a4249d4ab38f36f26abf6725512e7",
+      "counts": {
+        "assay": 2,
+        "cassette": 2,
+        "frame": 0,
+        "substrate": 1
+      },
+      "state": "certified"
+    },
+    "relay-retry": {
+      "artifact_sha256": "e5a7f7e7bac17e4157a69d4bae041023016bcef278250a44cbf91d9ed3783d12",
+      "bytes": 32768,
+      "capture_digest": "c90f92e1e80f92982b6d7079a14ff5e1877a4249d4ab38f36f26abf6725512e7",
+      "counts": {
+        "assay": 2,
+        "cassette": 2,
+        "frame": 0,
+        "substrate": 1
+      },
+      "state": "certified"
+    }
+  },
+  "journal_events": 15,
+  "lost_group": {
+    "cluster": {
+      "artifact_sha256": "e5a7f7e7bac17e4157a69d4bae041023016bcef278250a44cbf91d9ed3783d12",
+      "capture_digest": "c90f92e1e80f92982b6d7079a14ff5e1877a4249d4ab38f36f26abf6725512e7",
+      "ids": {
+        "relay-lost": "cf0d5e9381534c5a95733f5bef5dbeeb",
+        "relay-retry": "b93ab4bc606f4c288b13ea9a9dc55002"
+      },
+      "labels": [
+        "relay-lost",
+        "relay-retry"
+      ],
+      "separable_by": [
+        "capture_id_and_journal"
+      ]
+    },
+    "distinct_content_digests": 2,
+    "group_labels": [
+      "relay-early",
+      "relay-lost",
+      "relay-retry"
+    ],
+    "sibling_labels": [
+      "relay-early"
+    ]
+  },
+  "material": "examples/handover-night/material",
+  "negative_controls": [
+    {
+      "caught": true,
+      "message": "relay-lost: cannot be recomputed from snapshot 01-after-value",
+      "mutation": "a stored value in a labelled snapshot is changed"
+    },
+    {
+      "caught": true,
+      "message": "relay-early: sealed payload does not match the manifest",
+      "mutation": "a sealed capture digest is edited in the manifest"
+    },
+    {
+      "caught": true,
+      "message": "relay-lost: sealed payload does not match the manifest",
+      "mutation": "a sealed payload is edited inside the repository"
+    },
+    {
+      "caught": true,
+      "message": "incomplete journal evidence: {'lost_page_response_never_observed': True, 'lost_request_is_in_the_journal': True, 'lost_record_exists_server_side': True, 'journa",
+      "mutation": "the lost record is relabelled as the blind retry"
+    },
+    {
+      "caught": true,
+      "message": "incomplete journal evidence: {'lost_page_response_never_observed': True, 'lost_request_is_in_the_journal': True, 'lost_record_exists_server_side': True, 'journa",
+      "mutation": "the journal forgets the lost record was sealed"
+    }
+  ],
+  "ok": true,
+  "post_retirement": {
+    "attic_refusal": {
+      "error": "retired_recipe",
+      "recipe": "attic",
+      "status": 409,
+      "version": 1
+    },
+    "relay_reseal": {
+      "capture_digest": "caca773d93007e9ac0a204f40d221c6d7dc7a01054af2cac4b96df46f3cce610",
+      "capture_id": "0439ef6783334eddb8c7c90b7d97ddf3",
+      "matches_recorded_preview": true,
+      "summary": {
+        "counts": {
+          "assay": 1,
+          "cassette": 2,
+          "frame": 0,
+          "substrate": 1
+        },
+        "root_occurrences": 1,
+        "roots": [
+          [
+            "substrate",
+            [
+              "East",
+              "Mica"
+            ]
+          ]
+        ],
+        "rows": 4,
+        "witnesses": 5
+      }
+    }
+  },
+  "recipe_state": {
+    "recipes": [
+      {
+        "active": false,
+        "name": "attic",
+        "version": 1
+      },
+      {
+        "active": true,
+        "name": "relay",
+        "version": 1
+      }
+    ]
+  },
+  "separation_groups": {
+    "{\"counts\":{\"assay\":2,\"cassette\":2,\"frame\":0,\"substrate\":1},\"roots\":[[\"substrate\",[\"East\",\"Mica\"]]],\"rows\":5,\"schema_digest\":\"c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e\",\"witnesses\":8}": {
+      "appearance": {
+        "counts": {
+          "assay": 2,
+          "cassette": 2,
+          "frame": 0,
+          "substrate": 1
+        },
+        "roots": [
+          [
+            "substrate",
+            [
+              "East",
+              "Mica"
+            ]
+          ]
+        ],
+        "rows": 5,
+        "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+        "witnesses": 8
+      },
+      "distinct_content_digests": 2,
+      "identical_content_clusters": [
+        {
+          "artifact_sha256": "e5a7f7e7bac17e4157a69d4bae041023016bcef278250a44cbf91d9ed3783d12",
+          "capture_digest": "c90f92e1e80f92982b6d7079a14ff5e1877a4249d4ab38f36f26abf6725512e7",
+          "ids": {
+            "relay-lost": "cf0d5e9381534c5a95733f5bef5dbeeb",
+            "relay-retry": "b93ab4bc606f4c288b13ea9a9dc55002"
+          },
+          "labels": [
+            "relay-lost",
+            "relay-retry"
+          ],
+          "separable_by": [
+            "capture_id_and_journal"
+          ]
+        }
+      ],
+      "labels": [
+        "relay-early",
+        "relay-lost",
+        "relay-retry"
+      ],
+      "per_capture": {
+        "relay-early": {
+          "artifact_sha256": "a55b2cffc863cc6745184cad1a91e4e9b62617c49d3641f54537be404cc393a0",
+          "assay_marks": [
+            "S-01",
+            "S-02"
+          ],
+          "capture_digest": "dbf294a0a92d116c10324d81bd85a234800428466787661006a3a24d3031c873",
+          "capture_id": "bc0b76f8f0564c719ed12339d515dca7",
+          "roots": [
+            [
+              "substrate",
+              [
+                "East",
+                "Mica"
+              ]
+            ]
+          ]
+        },
+        "relay-lost": {
+          "artifact_sha256": "e5a7f7e7bac17e4157a69d4bae041023016bcef278250a44cbf91d9ed3783d12",
+          "assay_marks": [
+            "S-01",
+            "S-02"
+          ],
+          "capture_digest": "c90f92e1e80f92982b6d7079a14ff5e1877a4249d4ab38f36f26abf6725512e7",
+          "capture_id": "cf0d5e9381534c5a95733f5bef5dbeeb",
+          "roots": [
+            [
+              "substrate",
+              [
+                "East",
+                "Mica"
+              ]
+            ]
+          ]
+        },
+        "relay-retry": {
+          "artifact_sha256": "e5a7f7e7bac17e4157a69d4bae041023016bcef278250a44cbf91d9ed3783d12",
+          "assay_marks": [
+            "S-01",
+            "S-02"
+          ],
+          "capture_digest": "c90f92e1e80f92982b6d7079a14ff5e1877a4249d4ab38f36f26abf6725512e7",
+          "capture_id": "b93ab4bc606f4c288b13ea9a9dc55002",
+          "roots": [
+            [
+              "substrate",
+              [
+                "East",
+                "Mica"
+              ]
+            ]
+          ]
+        }
+      },
+      "same_artifact_bytes": false,
+      "separable_by": [
+        "capture_digest",
+        "artifact_bytes"
+      ]
+    }
+  },
+  "snapshot_deltas": {
+    "relay_closure": {
+      "00-public-sample": {
+        "assay": 2,
+        "cassette": 2,
+        "frame": 0,
+        "substrate": 1
+      },
+      "01-after-value": {
+        "assay": 2,
+        "cassette": 2,
+        "frame": 0,
+        "substrate": 1
+      },
+      "02-after-retarget": {
+        "assay": 1,
+        "cassette": 2,
+        "frame": 0,
+        "substrate": 1
+      }
+    },
+    "retarget_changes": [
+      {
+        "after": {
+          "cassette": 12,
+          "code": "Basalt",
+          "doubled": 11.0,
+          "length_um": 5.5,
+          "mark": "S-02",
+          "region": "West"
+        },
+        "before": {
+          "cassette": 12,
+          "code": "mica",
+          "doubled": 11.0,
+          "length_um": 5.5,
+          "mark": "S-02",
+          "region": "EAST"
+        },
+        "key": [
+          "S-02"
+        ],
+        "table": "assay"
+      }
+    ],
+    "table_totals": {
+      "after_retarget": {
+        "assay": 4,
+        "cassette": 3,
+        "frame": 4,
+        "substrate": 2
+      },
+      "after_value": {
+        "assay": 4,
+        "cassette": 3,
+        "frame": 4,
+        "substrate": 2
+      },
+      "public": {
+        "assay": 4,
+        "cassette": 3,
+        "frame": 4,
+        "substrate": 2
+      }
+    },
+    "value_change": [
+      {
+        "after": {
+          "cassette": 11,
+          "code": "MICA",
+          "doubled": 9.5,
+          "length_um": 4.75,
+          "mark": "S-01",
+          "region": "east"
+        },
+        "before": {
+          "cassette": 11,
+          "code": "MICA",
+          "doubled": 6.5,
+          "length_um": 3.25,
+          "mark": "S-01",
+          "region": "east"
+        },
+        "key": [
+          "S-01"
+        ],
+        "table": "assay"
+      }
+    ]
+  },
+  "trace_evidence": {
+    "early_vs_lost": {
+      "difference": [
+        [
+          "assay:[\"S-01\"]",
+          "1dac3abf8e6d27510b2e236dee4b2bbadaa831ac892ec32b3117c5980211514f"
+        ],
+        [
+          "assay:[\"S-01\"]",
+          "c88685db95b6956fa157574daaaf28a30a1959f9f47617e79a397ccad2d47b48"
+        ]
+      ],
+      "trace_identical": true,
+      "values_identical": false
+    },
+    "lost_vs_post": {
+      "trace_identical": false,
+      "values_identical": false
+    },
+    "lost_vs_retry": {
+      "only_difference": "capture_id (and the journal event that produced it)",
+      "trace_identical": true,
+      "values_identical": true
+    }
+  },
+  "verdicts": {
+    "candidate": [
+      {
+        "appearance": {
+          "counts": {
+            "assay": 2,
+            "cassette": 2,
+            "frame": 0,
+            "substrate": 1
+          },
+          "roots": [
+            [
+              "substrate",
+              [
+                "East",
+                "Mica"
+              ]
+            ]
+          ],
+          "rows": 5,
+          "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+          "witnesses": 8
+        },
+        "artifact_sha256": "e5a7f7e7bac17e4157a69d4bae041023016bcef278250a44cbf91d9ed3783d12",
+        "asserts": {
+          "artifact_sha256": "e5a7f7e7bac17e4157a69d4bae041023016bcef278250a44cbf91d9ed3783d12",
+          "counts": {
+            "assay": 2,
+            "cassette": 2,
+            "frame": 0,
+            "substrate": 1
+          },
+          "kind": "sealed-record",
+          "recomputed_from": "01-after-value",
+          "state": "certified"
+        },
+        "cannot_prove": "Cannot say which identifier is the intended continuation; both have the same rows, witnesses and artifact bytes.",
+        "capture_digest": "c90f92e1e80f92982b6d7079a14ff5e1877a4249d4ab38f36f26abf6725512e7",
+        "capture_id": "b93ab4bc606f4c288b13ea9a9dc55002",
+        "kind": "capture",
+        "label": "relay-retry",
+        "proves": "The sealed record recomputes from its snapshot, but a blind retry left a second record with identical content. Nothing ties either attempt to the operator intent, so this proves a candidate sample, not a unique continuation.",
+        "snapshot": "01-after-value",
+        "state": "sealed",
+        "verdict": "candidate"
+      }
+    ],
+    "entries": [
+      {
+        "appearance": {
+          "counts": {
+            "assay": 1,
+            "cassette": 1,
+            "frame": 0,
+            "substrate": 1
+          },
+          "roots": [
+            [
+              "substrate",
+              [
+                "West",
+                "Basalt"
+              ]
+            ]
+          ],
+          "rows": 3,
+          "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+          "witnesses": 3
+        },
+        "artifact_sha256": "570002f32e0be563a79fe8129f4c462f9cf88a25b315b619e16cd52715aaaf3c",
+        "asserts": {
+          "artifact_sha256": "570002f32e0be563a79fe8129f4c462f9cf88a25b315b619e16cd52715aaaf3c",
+          "counts": {
+            "assay": 1,
+            "cassette": 1,
+            "frame": 0,
+            "substrate": 1
+          },
+          "kind": "sealed-record",
+          "recomputed_from": "00-public-sample",
+          "state": "certified"
+        },
+        "cannot_prove": "Cannot prove the operator still wanted this exact sample; the record only proves the sample as sealed.",
+        "capture_digest": "c3a2ed30205be80566fac874809dd5052b7ef77049b6dbeadde37e07099a62eb",
+        "capture_id": "f463ca5adc14407294e6fe2a412b0a6c",
+        "kind": "capture",
+        "label": "attic-legacy",
+        "proves": "Sealed record f463ca5adc14407294e6fe2a412b0a6c recomputes byte-for-byte from snapshot 00-public-sample, and build/certify/download complete on a repository copy.",
+        "snapshot": "00-public-sample",
+        "state": "sealed",
+        "verdict": "recover"
+      },
+      {
+        "appearance": {
+          "counts": {
+            "assay": 2,
+            "cassette": 2,
+            "frame": 0,
+            "substrate": 1
+          },
+          "roots": [
+            [
+              "substrate",
+              [
+                "East",
+                "Mica"
+              ]
+            ]
+          ],
+          "rows": 5,
+          "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+          "witnesses": 8
+        },
+        "artifact_sha256": "a55b2cffc863cc6745184cad1a91e4e9b62617c49d3641f54537be404cc393a0",
+        "asserts": {
+          "artifact_sha256": "a55b2cffc863cc6745184cad1a91e4e9b62617c49d3641f54537be404cc393a0",
+          "counts": {
+            "assay": 2,
+            "cassette": 2,
+            "frame": 0,
+            "substrate": 1
+          },
+          "kind": "sealed-record",
+          "recomputed_from": "00-public-sample",
+          "state": "certified"
+        },
+        "cannot_prove": "Cannot prove the operator still wanted this exact sample; the record only proves the sample as sealed.",
+        "capture_digest": "dbf294a0a92d116c10324d81bd85a234800428466787661006a3a24d3031c873",
+        "capture_id": "bc0b76f8f0564c719ed12339d515dca7",
+        "kind": "capture",
+        "label": "relay-early",
+        "proves": "Sealed record bc0b76f8f0564c719ed12339d515dca7 recomputes byte-for-byte from snapshot 00-public-sample, and build/certify/download complete on a repository copy.",
+        "snapshot": "00-public-sample",
+        "state": "sealed",
+        "verdict": "recover"
+      },
+      {
+        "appearance": {
+          "counts": {
+            "assay": 2,
+            "cassette": 2,
+            "frame": 0,
+            "substrate": 1
+          },
+          "roots": [
+            [
+              "substrate",
+              [
+                "East",
+                "Mica"
+              ]
+            ]
+          ],
+          "rows": 5,
+          "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+          "witnesses": 8
+        },
+        "artifact_sha256": "e5a7f7e7bac17e4157a69d4bae041023016bcef278250a44cbf91d9ed3783d12",
+        "asserts": {
+          "artifact_sha256": "e5a7f7e7bac17e4157a69d4bae041023016bcef278250a44cbf91d9ed3783d12",
+          "counts": {
+            "assay": 2,
+            "cassette": 2,
+            "frame": 0,
+            "substrate": 1
+          },
+          "kind": "sealed-record",
+          "recomputed_from": "01-after-value",
+          "state": "certified"
+        },
+        "cannot_prove": "Cannot prove the operator still wanted this exact sample; the record only proves the sample as sealed.",
+        "capture_digest": "c90f92e1e80f92982b6d7079a14ff5e1877a4249d4ab38f36f26abf6725512e7",
+        "capture_id": "cf0d5e9381534c5a95733f5bef5dbeeb",
+        "kind": "capture",
+        "label": "relay-lost",
+        "proves": "Sealed record cf0d5e9381534c5a95733f5bef5dbeeb recomputes byte-for-byte from snapshot 01-after-value, and build/certify/download complete on a repository copy.",
+        "snapshot": "01-after-value",
+        "state": "sealed",
+        "verdict": "recover"
+      },
+      {
+        "appearance": {
+          "counts": {
+            "assay": 2,
+            "cassette": 2,
+            "frame": 0,
+            "substrate": 1
+          },
+          "roots": [
+            [
+              "substrate",
+              [
+                "East",
+                "Mica"
+              ]
+            ]
+          ],
+          "rows": 5,
+          "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+          "witnesses": 8
+        },
+        "artifact_sha256": "e5a7f7e7bac17e4157a69d4bae041023016bcef278250a44cbf91d9ed3783d12",
+        "asserts": {
+          "artifact_sha256": "e5a7f7e7bac17e4157a69d4bae041023016bcef278250a44cbf91d9ed3783d12",
+          "counts": {
+            "assay": 2,
+            "cassette": 2,
+            "frame": 0,
+            "substrate": 1
+          },
+          "kind": "sealed-record",
+          "recomputed_from": "01-after-value",
+          "state": "certified"
+        },
+        "cannot_prove": "Cannot say which identifier is the intended continuation; both have the same rows, witnesses and artifact bytes.",
+        "capture_digest": "c90f92e1e80f92982b6d7079a14ff5e1877a4249d4ab38f36f26abf6725512e7",
+        "capture_id": "b93ab4bc606f4c288b13ea9a9dc55002",
+        "kind": "capture",
+        "label": "relay-retry",
+        "proves": "The sealed record recomputes from its snapshot, but a blind retry left a second record with identical content. Nothing ties either attempt to the operator intent, so this proves a candidate sample, not a unique continuation.",
+        "snapshot": "01-after-value",
+        "state": "sealed",
+        "verdict": "candidate"
+      },
+      {
+        "appearance": {
+          "counts": {
+            "assay": 1,
+            "cassette": 2,
+            "frame": 0,
+            "substrate": 1
+          },
+          "root_occurrences": 1,
+          "rows": 4,
+          "witnesses": 5
+        },
+        "cannot_prove": "The successor rehearsed relay v1 after S-02 moved to another substrate, but only a live preview exists. A preview is a read snapshot, not a record, and the source can move again; to obtain this sample the successor must read the source and seal it.",
+        "kind": "requested-work",
+        "label": "relay-retargeted-closure",
+        "proves": "There is no persisted record of this work.",
+        "verdict": "reread"
+      },
+      {
+        "appearance": null,
+        "cannot_prove": "Recipe attic v1 is retired and refuses new seals. The old capture remains valid, but any new attic sample needs a fresh source read and a new recipe version.",
+        "kind": "requested-work",
+        "label": "attic-fresh-sample",
+        "proves": "There is no persisted record of this work.",
+        "verdict": "reread"
+      }
+    ],
+    "recover": [
+      {
+        "appearance": {
+          "counts": {
+            "assay": 1,
+            "cassette": 1,
+            "frame": 0,
+            "substrate": 1
+          },
+          "roots": [
+            [
+              "substrate",
+              [
+                "West",
+                "Basalt"
+              ]
+            ]
+          ],
+          "rows": 3,
+          "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+          "witnesses": 3
+        },
+        "artifact_sha256": "570002f32e0be563a79fe8129f4c462f9cf88a25b315b619e16cd52715aaaf3c",
+        "asserts": {
+          "artifact_sha256": "570002f32e0be563a79fe8129f4c462f9cf88a25b315b619e16cd52715aaaf3c",
+          "counts": {
+            "assay": 1,
+            "cassette": 1,
+            "frame": 0,
+            "substrate": 1
+          },
+          "kind": "sealed-record",
+          "recomputed_from": "00-public-sample",
+          "state": "certified"
+        },
+        "cannot_prove": "Cannot prove the operator still wanted this exact sample; the record only proves the sample as sealed.",
+        "capture_digest": "c3a2ed30205be80566fac874809dd5052b7ef77049b6dbeadde37e07099a62eb",
+        "capture_id": "f463ca5adc14407294e6fe2a412b0a6c",
+        "kind": "capture",
+        "label": "attic-legacy",
+        "proves": "Sealed record f463ca5adc14407294e6fe2a412b0a6c recomputes byte-for-byte from snapshot 00-public-sample, and build/certify/download complete on a repository copy.",
+        "snapshot": "00-public-sample",
+        "state": "sealed",
+        "verdict": "recover"
+      },
+      {
+        "appearance": {
+          "counts": {
+            "assay": 2,
+            "cassette": 2,
+            "frame": 0,
+            "substrate": 1
+          },
+          "roots": [
+            [
+              "substrate",
+              [
+                "East",
+                "Mica"
+              ]
+            ]
+          ],
+          "rows": 5,
+          "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+          "witnesses": 8
+        },
+        "artifact_sha256": "a55b2cffc863cc6745184cad1a91e4e9b62617c49d3641f54537be404cc393a0",
+        "asserts": {
+          "artifact_sha256": "a55b2cffc863cc6745184cad1a91e4e9b62617c49d3641f54537be404cc393a0",
+          "counts": {
+            "assay": 2,
+            "cassette": 2,
+            "frame": 0,
+            "substrate": 1
+          },
+          "kind": "sealed-record",
+          "recomputed_from": "00-public-sample",
+          "state": "certified"
+        },
+        "cannot_prove": "Cannot prove the operator still wanted this exact sample; the record only proves the sample as sealed.",
+        "capture_digest": "dbf294a0a92d116c10324d81bd85a234800428466787661006a3a24d3031c873",
+        "capture_id": "bc0b76f8f0564c719ed12339d515dca7",
+        "kind": "capture",
+        "label": "relay-early",
+        "proves": "Sealed record bc0b76f8f0564c719ed12339d515dca7 recomputes byte-for-byte from snapshot 00-public-sample, and build/certify/download complete on a repository copy.",
+        "snapshot": "00-public-sample",
+        "state": "sealed",
+        "verdict": "recover"
+      },
+      {
+        "appearance": {
+          "counts": {
+            "assay": 2,
+            "cassette": 2,
+            "frame": 0,
+            "substrate": 1
+          },
+          "roots": [
+            [
+              "substrate",
+              [
+                "East",
+                "Mica"
+              ]
+            ]
+          ],
+          "rows": 5,
+          "schema_digest": "c44f76b50609a3d2537ccd3b2fe88deb8c53943c83f4712bdf1f4922cf2ceb2e",
+          "witnesses": 8
+        },
+        "artifact_sha256": "e5a7f7e7bac17e4157a69d4bae041023016bcef278250a44cbf91d9ed3783d12",
+        "asserts": {
+          "artifact_sha256": "e5a7f7e7bac17e4157a69d4bae041023016bcef278250a44cbf91d9ed3783d12",
+          "counts": {
+            "assay": 2,
+            "cassette": 2,
+            "frame": 0,
+            "substrate": 1
+          },
+          "kind": "sealed-record",
+          "recomputed_from": "01-after-value",
+          "state": "certified"
+        },
+        "cannot_prove": "Cannot prove the operator still wanted this exact sample; the record only proves the sample as sealed.",
+        "capture_digest": "c90f92e1e80f92982b6d7079a14ff5e1877a4249d4ab38f36f26abf6725512e7",
+        "capture_id": "cf0d5e9381534c5a95733f5bef5dbeeb",
+        "kind": "capture",
+        "label": "relay-lost",
+        "proves": "Sealed record cf0d5e9381534c5a95733f5bef5dbeeb recomputes byte-for-byte from snapshot 01-after-value, and build/certify/download complete on a repository copy.",
+        "snapshot": "01-after-value",
+        "state": "sealed",
+        "verdict": "recover"
+      }
+    ],
+    "reread": [
+      {
+        "appearance": {
+          "counts": {
+            "assay": 1,
+            "cassette": 2,
+            "frame": 0,
+            "substrate": 1
+          },
+          "root_occurrences": 1,
+          "rows": 4,
+          "witnesses": 5
+        },
+        "cannot_prove": "The successor rehearsed relay v1 after S-02 moved to another substrate, but only a live preview exists. A preview is a read snapshot, not a record, and the source can move again; to obtain this sample the successor must read the source and seal it.",
+        "kind": "requested-work",
+        "label": "relay-retargeted-closure",
+        "proves": "There is no persisted record of this work.",
+        "verdict": "reread"
+      },
+      {
+        "appearance": null,
+        "cannot_prove": "Recipe attic v1 is retired and refuses new seals. The old capture remains valid, but any new attic sample needs a fresh source read and a new recipe version.",
+        "kind": "requested-work",
+        "label": "attic-fresh-sample",
+        "proves": "There is no persisted record of this work.",
+        "verdict": "reread"
+      }
+    ]
+  }
+}
