@@ -53,6 +53,8 @@ class RequestHandler(BaseHTTPRequestHandler):
         match self.command, parts:
             case 'GET', ['sources', alias, 'catalog']:
                 return 200, bench.catalog(alias)
+            case 'POST', ['proposals', 'evaluate']:
+                return 200, bench.evaluate_proposal(body)
             case 'POST', ['recipes', name, 'versions']:
                 return 201, bench.register(name, body)
             case 'GET', ['recipes', name, 'versions', number] if VERSION.fullmatch(number) and int(number) < 2**63:

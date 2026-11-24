@@ -15,6 +15,7 @@ from urllib.request import Request, urlopen
 from keelsplice.api import create_server
 
 from .walkthrough import seed
+from .proposal_walkthrough import seed as seed_onboarding
 
 
 def open_page(base, path, payload=None, expected=200, origin=None):
@@ -44,6 +45,23 @@ def run(base, source, root):
     assert open_page(base, '/workbench/assets/workspace.css')[1].get_content_type() == 'text/css'
     assert '未注册' in html(base, '/workbench?source=missing', expected=404)[1]
 
+    _, proposal_page = html(base, '/workbench/proposals?source=onboarding')
+    assert '外键草案评估' in proposal_page and '目录即可判定的条件' in proposal_page
+    proposal_form = {'source': 'onboarding', 'child': 'reading', 'parent': 'device',
+                     'child_cols': 'device_serial', 'parent_cols': 'serial'}
+    _, ready = html(base, '/workbench/proposals', proposal_form)
+    assert '可接入' in ready and '父键唯一性有保证' in ready and 'NULL 子键豁免' in ready
+    blocked_form = {'source': 'onboarding', 'child': 'ticket', 'parent': 'asset',
+                    'child_cols': 'asset_tag', 'parent_cols': 'tag'}
+    _, blocked = html(base, '/workbench/proposals', blocked_form)
+    assert '目录阻断' in blocked and '父键唯一性无保证' in blocked and '子键匹配多个父行' in blocked
+    orphan_form = {'source': 'onboarding', 'child': 'payment', 'parent': 'ledger',
+                   'child_cols': 'account_code', 'parent_cols': 'account_code'}
+    _, orphan = html(base, '/workbench/proposals', orphan_form)
+    assert '存在缺父子键' in orphan and 'P-9' in orphan
+    _, bad_request = html(base, '/workbench/proposals',
+                          {'source': 'onboarding', 'child': 'payment'}, expected=400)
+    assert '工作台无法完成' in bad_request or '不符合' in bad_request
     editor_url = '/workbench/recipes/new'
     _, editor = html(base, editor_url)
     digest = re.search(r'name="digest" value="([0-9a-f]{64})"', editor)[1]
@@ -96,7 +114,10 @@ def main():
         root = Path(directory)
         source = root / 'source.sqlite'
         seed(source)
-        with create_server(('127.0.0.1', 0), root / 'state.sqlite', {'microscope': source}) as server:
+        onboarding = root / 'onboarding.sqlite'
+        seed_onboarding(onboarding)
+        sources = {'microscope': source, 'onboarding': onboarding}
+        with create_server(('127.0.0.1', 0), root / 'state.sqlite', sources) as server:
             thread = Thread(target=server.serve_forever)
             thread.start()
             try:

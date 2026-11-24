@@ -30,3 +30,11 @@ legend { font-weight: 650; }
 .status.pending { background: var(--warning-bg); color: var(--warning); }
 .status.muted { background: #e7ebef; }
 .certificate { border-left: 3px solid var(--brand); padding-left: 12px; }
+.proposal-form { border: 1px solid var(--line); border-radius: 6px; background: var(--paper); padding: 18px; margin-bottom: 22px; }
+.proposal-form > label { max-width: 360px; margin-bottom: 14px; }
+.verdict { border: 1px solid var(--line); border-left-width: 4px; border-radius: 6px; padding: 14px 16px; margin-bottom: 22px; background: var(--paper); }
+.verdict.ready { border-left-color: var(--brand); }
+.verdict.pending { border-left-color: var(--warning); }
+.verdict.muted { border-left-color: var(--error); }
+.verdict p { margin: 8px 0 0; }
+.verdict code { overflow-wrap: anywhere; }

@@ -1,0 +1,35 @@
+<div class="content">
+  <header class="pagehead">
+    <div><p class="breadcrumb">关系目录 / 外键草案</p><h1>外键草案评估</h1></div>
+  </header>
+  <p class="muted">
+    候选列即使没有声明外键也可在此评估。<strong>目录条件</strong>只依据表、主键、唯一索引与列排序规则即可判定；
+    <strong>行级条件</strong>需要在当前源读事务中读取实际行验证。复合子键任一分量为 NULL 时没有必需父行，不计为缺父。
+  </p>
+  $error
+  <form class="proposal-form" method="post" action="/workbench/proposals">
+    <label>SQLite 数据源<select name="source">$options</select></label>
+    <div class="form-grid">
+      <label>子表<input name="child" value="$child" required placeholder="例如 reading"></label>
+      <label>父表<input name="parent" value="$parent" required placeholder="例如 device"></label>
+      <label>子表候选列（逗号分隔）<input name="child_cols" value="$child_cols" required placeholder="device_code"></label>
+      <label>父表候选列（逗号分隔，按对应次序）<input name="parent_cols" value="$parent_cols" required placeholder="serial_code"></label>
+    </div>
+    <div class="actions"><button class="primary">评估该草案</button></div>
+  </form>
+  $verdict
+  <section aria-labelledby="catalog-findings">
+    <h2 id="catalog-findings">目录即可判定的条件</h2>
+    <div class="scroll"><table><thead><tr><th scope="col">结论</th><th scope="col">条件</th><th scope="col">复查说明</th></tr></thead>
+    <tbody>$catalog_rows</tbody></table></div>
+  </section>
+  <section aria-labelledby="row-findings">
+    <h2 id="row-findings">需读取实际行验证的条件</h2>
+    <div class="scroll"><table><thead><tr><th scope="col">结论</th><th scope="col">条件</th><th scope="col">复查说明</th></tr></thead>
+    <tbody>$row_rows</tbody></table></div>
+  </section>
+  <section aria-labelledby="metrics">
+    <h2 id="metrics">本次读快照计量</h2>
+    <div class="scroll"><table><tbody>$metric_rows</tbody></table></div>
+  </section>
+</div>

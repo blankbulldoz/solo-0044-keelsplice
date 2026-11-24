@@ -30,6 +30,7 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 | 方法与路径 | 请求与结果 |
 | --- | --- |
 | `GET /sources/{alias}/catalog` | 读取表、列、关系、索引和模式摘要 |
+| `POST /proposals/evaluate` | 评估未声明外键的候选列，分开返回目录条件与行级条件 |
 | `POST /recipes/{name}/versions` | 登记 `source`、`roots`，以及可选的 `follow_children`、`row_limit` |
 | `GET /recipes/{name}/versions/{version}` | 读取版本及其投用状态 |
 | `POST /recipes/{name}/versions/{version}/retire` | 接收空对象并停用版本 |
@@ -42,12 +43,23 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 
 根记录中的键按目录的列顺序填写。整数为有符号 64 位 JSON 数字。字节用 `{"blob":"AAD/"}`，实数用 `{"real":"0x1.a000000000000p+1"}`，文本用 JSON 字符串。配方可以用不同拼写定位同一个 NOCASE 根，封存与追踪使用实存键。结果中的行去重，输入根出现项保留顺序。工作台近期列表显示最后登记的 50 个配方版本和最后封存的 50 次捕获，历史详情地址依然可访问。
 
+## 外键草案评估
+
+接入组的源库常没有声明目标关系，但候选列已知。`POST /proposals/evaluate` 与浏览器「外键草案」页针对一组候选子列、父列给出可复查的接入建议，结论分两层且互不混淆：
+
+- **目录即可判定的条件**：不读任何行。包括父键是否由主键或非部分、非表达式的唯一索引保证（列序可互换、列排序规则须一致）、子/父列排序规则与类型亲和性差异、子键是否可空。样本里恰好唯一但没有可用唯一约束时判为阻断，因为 SQLite 写入期会报 `foreign key mismatch`。
+- **需读取实际行验证的条件**：在同一只源读事务里执行。报告重复父键、匹配多父的子键、缺父子键，以及「仅在父列排序规则（如 NOCASE）下匹配、按 BINARY 拼法并不相等」的子键，并附带数量与最多 5 条证据样本。
+- **NULL 子键**：复合子键任一分量为 NULL 时按 SQLite 语义没有必需父行，单列统计为豁免行，不计入缺父。
+
+请求形如 `{"source":"onboarding","child":"ticket","parent":"asset","child_cols":["asset_tag"],"parent_cols":["tag"]}`。响应给出 `verdict`（`ready`、`blocked_catalog`、`blocked_data`、`inconclusive`）、`recommendation`、`catalog_findings`、`row_findings` 与本次读快照的 `metrics`。行级结论只对该次读快照有效，不写入状态库，也不影响既有配方、采样与认证。
+
 ## 复跑
 
 ```sh
 python3 -m compileall -q keelsplice examples
 python3 -m examples.walkthrough all
+python3 -m examples.proposal_walkthrough all
 python3 -m examples.browser_walkthrough
 ```
 
-两份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。独立自动化测试套件延后。
+`examples/onboarding.sql` 是公开构造的正反例库（刻意不声明外键）：含可直接接入的正例、样本唯一但无唯一约束的目录反例、NOCASE 才匹配的拼写差异、缺父子键、重复父键与 NULL 豁免行。两份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。独立自动化测试套件延后。

@@ -3,7 +3,7 @@
 import re
 import sqlite3
 
-from . import bundle, capture, catalog, recipe
+from . import bundle, capture, catalog, proposal, recipe
 from .codec import Fault
 
 NAME = re.compile(r'[a-z][a-z0-9_-]{0,63}\Z')
@@ -16,6 +16,13 @@ class Workbench:
     def catalog(self, alias):
         with self.repository.source(alias) as conn:
             return catalog.snapshot(conn)
+
+    def evaluate_proposal(self, body):
+        draft = proposal.normalize(body)
+        with self.repository.source(draft['source']) as conn:
+            disclosed = catalog.snapshot(conn)
+            return proposal.evaluate(conn, disclosed['schema'], draft) | {
+                'source': draft['source'], 'schema_digest': disclosed['schema_digest']}
 
     def register(self, name, body, *, expected_schema=None):
         if not NAME.fullmatch(name):

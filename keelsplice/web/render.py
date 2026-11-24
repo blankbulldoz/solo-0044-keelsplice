@@ -11,6 +11,7 @@ from ..codec import dumps
 DIRECTORY = Path(__file__).parent
 NAVIGATION = (
     ('catalog', '关系目录', '/workbench'),
+    ('proposal', '外键草案', '/workbench/proposals'),
     ('recipe', '配方版本', '/workbench/recipes'),
     ('capture', '封存捕获', '/workbench/captures'),
     ('compare', '捕获对比', '/workbench/compare'),
