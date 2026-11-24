@@ -1,0 +1,138 @@
+{
+  "generated_by": "evaluation/retention.py",
+  "captures_per_case": 4,
+  "cases": [
+    {
+      "name": "fanout-4500",
+      "class": "high fan-out",
+      "sealed_json_bytes": 4360369,
+      "steps": [
+        {
+          "capture": 1,
+          "file_bytes": 9097216,
+          "freelist_bytes": 4538368,
+          "live": {
+            "captures": 4542464,
+            "recipes": 4096,
+            "sqlite_autoindex_captures_1": 4096,
+            "sqlite_autoindex_recipes_1": 4096,
+            "sqlite_schema": 4096
+          }
+        },
+        {
+          "capture": 2,
+          "file_bytes": 13643776,
+          "freelist_bytes": 4538368,
+          "live": {
+            "captures": 9089024,
+            "recipes": 4096,
+            "sqlite_autoindex_captures_1": 4096,
+            "sqlite_autoindex_recipes_1": 4096,
+            "sqlite_schema": 4096
+          }
+        },
+        {
+          "capture": 3,
+          "file_bytes": 18186240,
+          "freelist_bytes": 4538368,
+          "live": {
+            "captures": 13631488,
+            "recipes": 4096,
+            "sqlite_autoindex_captures_1": 4096,
+            "sqlite_autoindex_recipes_1": 4096,
+            "sqlite_schema": 4096
+          }
+        },
+        {
+          "capture": 4,
+          "file_bytes": 22728704,
+          "freelist_bytes": 4538368,
+          "live": {
+            "captures": 18173952,
+            "recipes": 4096,
+            "sqlite_autoindex_captures_1": 4096,
+            "sqlite_autoindex_recipes_1": 4096,
+            "sqlite_schema": 4096
+          }
+        }
+      ],
+      "after_vacuum": {
+        "file_bytes": 18190336,
+        "freelist_bytes": 0,
+        "live": {
+          "captures": 18173952,
+          "recipes": 4096,
+          "sqlite_autoindex_captures_1": 4096,
+          "sqlite_autoindex_recipes_1": 4096,
+          "sqlite_schema": 4096
+        }
+      }
+    },
+    {
+      "name": "blob-3x1600k",
+      "class": "large BLOB rows, few edges",
+      "sealed_json_bytes": 6557167,
+      "steps": [
+        {
+          "capture": 1,
+          "file_bytes": 23048192,
+          "freelist_bytes": 11513856,
+          "live": {
+            "captures": 11517952,
+            "recipes": 4096,
+            "sqlite_autoindex_captures_1": 4096,
+            "sqlite_autoindex_recipes_1": 4096,
+            "sqlite_schema": 4096
+          }
+        },
+        {
+          "capture": 2,
+          "file_bytes": 34570240,
+          "freelist_bytes": 11513856,
+          "live": {
+            "captures": 23040000,
+            "recipes": 4096,
+            "sqlite_autoindex_captures_1": 4096,
+            "sqlite_autoindex_recipes_1": 4096,
+            "sqlite_schema": 4096
+          }
+        },
+        {
+          "capture": 3,
+          "file_bytes": 46088192,
+          "freelist_bytes": 11513856,
+          "live": {
+            "captures": 34557952,
+            "recipes": 4096,
+            "sqlite_autoindex_captures_1": 4096,
+            "sqlite_autoindex_recipes_1": 4096,
+            "sqlite_schema": 4096
+          }
+        },
+        {
+          "capture": 4,
+          "file_bytes": 57606144,
+          "freelist_bytes": 11513856,
+          "live": {
+            "captures": 46075904,
+            "recipes": 4096,
+            "sqlite_autoindex_captures_1": 4096,
+            "sqlite_autoindex_recipes_1": 4096,
+            "sqlite_schema": 4096
+          }
+        }
+      ],
+      "after_vacuum": {
+        "file_bytes": 46092288,
+        "freelist_bytes": 0,
+        "live": {
+          "captures": 46075904,
+          "recipes": 4096,
+          "sqlite_autoindex_captures_1": 4096,
+          "sqlite_autoindex_recipes_1": 4096,
+          "sqlite_schema": 4096
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,858 @@
+{
+  "generated_by": "evaluation/advise.py",
+  "cases": [
+    {
+      "capture_id": "c69a3953e96249d2bd4d5f7ef07aeb39",
+      "rows": 5,
+      "witnesses": 8,
+      "sealed_json_bytes": 4730,
+      "artifact_bytes": 32768,
+      "repository_bytes": 24576,
+      "index_storage_bytes": 49152,
+      "split_evidence_bytes": 4476,
+      "split_payload_bytes": 354,
+      "split_storage_bytes": 20480,
+      "index_build_s": 0.0006023750174790621,
+      "equivalence": true,
+      "samples": [
+        {
+          "key": [
+            "assay",
+            [
+              "S-01"
+            ]
+          ],
+          "causes": 1,
+          "sealed": {
+            "median_s": 0.00015158404130488634,
+            "median_read_bytes": 16614
+          },
+          "split": {
+            "median_s": 0.00011466699652373791,
+            "median_read_bytes": 16614
+          },
+          "index": {
+            "median_s": 0.0002247499069198966,
+            "median_read_bytes": 37158
+          }
+        },
+        {
+          "key": [
+            "assay",
+            [
+              "S-02"
+            ]
+          ],
+          "causes": 1,
+          "sealed": {
+            "median_s": 0.0001628749305382371,
+            "median_read_bytes": 16614
+          },
+          "split": {
+            "median_s": 0.00013137503992766142,
+            "median_read_bytes": 16614
+          },
+          "index": {
+            "median_s": 0.00022179202642291784,
+            "median_read_bytes": 37159
+          }
+        },
+        {
+          "key": [
+            "cassette",
+            [
+              11
+            ]
+          ],
+          "causes": 2,
+          "sealed": {
+            "median_s": 0.00014183297753334045,
+            "median_read_bytes": 16615
+          },
+          "split": {
+            "median_s": 0.00013454200234264135,
+            "median_read_bytes": 16615
+          },
+          "index": {
+            "median_s": 0.00019070901907980442,
+            "median_read_bytes": 37159
+          }
+        }
+      ],
+      "verdict": {
+        "choice": "sealed",
+        "reason": "no alternative cuts every sampled read by 10%; keep reading the sealed capture",
+        "cheapest_per_lookup": [],
+        "storage_delta_bytes": {
+          "split": 15750,
+          "index": 49152
+        },
+        "storage_premium": {
+          "split": 3.3298097251585626,
+          "index": 10.391543340380549
+        },
+        "sealed_wins": true
+      }
+    },
+    {
+      "capture_id": "8994ff9c93014037b69de680b4e9a434",
+      "rows": 59,
+      "witnesses": 500,
+      "sealed_json_bytes": 51393,
+      "artifact_bytes": 16384,
+      "repository_bytes": 69632,
+      "index_storage_bytes": 73728,
+      "split_evidence_bytes": 49515,
+      "split_payload_bytes": 2311,
+      "split_storage_bytes": 65536,
+      "index_build_s": 0.004466751008294523,
+      "equivalence": true,
+      "samples": [
+        {
+          "key": [
+            "probe",
+            [
+              10
+            ]
+          ],
+          "causes": 1,
+          "sealed": {
+            "median_s": 0.0008352500153705478,
+            "median_read_bytes": 61667
+          },
+          "split": {
+            "median_s": 0.0007488339906558394,
+            "median_read_bytes": 61667
+          },
+          "index": {
+            "median_s": 0.00023508304730057716,
+            "median_read_bytes": 53539
+          }
+        },
+        {
+          "key": [
+            "probe",
+            [
+              11
+            ]
+          ],
+          "causes": 1,
+          "sealed": {
+            "median_s": 0.0008173749083653092,
+            "median_read_bytes": 61668
+          },
+          "split": {
+            "median_s": 0.0007226261077448726,
+            "median_read_bytes": 61668
+          },
+          "index": {
+            "median_s": 0.0002394999610260129,
+            "median_read_bytes": 53540
+          }
+        },
+        {
+          "key": [
+            "probe",
+            [
+              12
+            ]
+          ],
+          "causes": 1,
+          "sealed": {
+            "median_s": 0.0008064169669523835,
+            "median_read_bytes": 61668
+          },
+          "split": {
+            "median_s": 0.0006910000229254365,
+            "median_read_bytes": 61668
+          },
+          "index": {
+            "median_s": 0.0002306249225512147,
+            "median_read_bytes": 53540
+          }
+        }
+      ],
+      "verdict": {
+        "choice": "index",
+        "reason": "cuts every sampled read by at least 10% versus the whole-sealed path and its added storage stays under 8 MiB",
+        "cheapest_per_lookup": [
+          "index"
+        ],
+        "storage_delta_bytes": {
+          "split": 14143,
+          "index": 73728
+        },
+        "storage_premium": {
+          "split": 0.2751931196855603,
+          "index": 1.4345922596462553
+        },
+        "sealed_wins": false
+      }
+    },
+    {
+      "capture_id": "6bd5ee8c18f04272adeff70624f78537",
+      "rows": 259,
+      "witnesses": 2500,
+      "sealed_json_bytes": 242606,
+      "artifact_bytes": 24576,
+      "repository_bytes": 262144,
+      "index_storage_bytes": 147456,
+      "split_evidence_bytes": 233577,
+      "split_payload_bytes": 11013,
+      "split_storage_bytes": 258048,
+      "index_build_s": 0.020712174009531736,
+      "equivalence": true,
+      "samples": [
+        {
+          "key": [
+            "probe",
+            [
+              100
+            ]
+          ],
+          "causes": 1,
+          "sealed": {
+            "median_s": 0.0034557930193841457,
+            "median_read_bytes": 254179
+          },
+          "split": {
+            "median_s": 0.003562876023352146,
+            "median_read_bytes": 245988
+          },
+          "index": {
+            "median_s": 0.0002979160053655505,
+            "median_read_bytes": 82212
+          }
+        },
+        {
+          "key": [
+            "probe",
+            [
+              101
+            ]
+          ],
+          "causes": 1,
+          "sealed": {
+            "median_s": 0.0037293770583346486,
+            "median_read_bytes": 254181
+          },
+          "split": {
+            "median_s": 0.003512750961817801,
+            "median_read_bytes": 245989
+          },
+          "index": {
+            "median_s": 0.0003722079563885927,
+            "median_read_bytes": 82213
+          }
+        },
+        {
+          "key": [
+            "probe",
+            [
+              102
+            ]
+          ],
+          "causes": 1,
+          "sealed": {
+            "median_s": 0.003692375961691141,
+            "median_read_bytes": 254181
+          },
+          "split": {
+            "median_s": 0.0036119180731475353,
+            "median_read_bytes": 245989
+          },
+          "index": {
+            "median_s": 0.00027466705068945885,
+            "median_read_bytes": 82213
+          }
+        }
+      ],
+      "verdict": {
+        "choice": "index",
+        "reason": "cuts every sampled read by at least 10% versus the whole-sealed path and its added storage stays under 8 MiB",
+        "cheapest_per_lookup": [
+          "index"
+        ],
+        "storage_delta_bytes": {
+          "split": 15442,
+          "index": 147456
+        },
+        "storage_premium": {
+          "split": 0.06365052801661954,
+          "index": 0.6078003017237826
+        },
+        "sealed_wins": false
+      }
+    },
+    {
+      "capture_id": "13757c31cac24fafb452c904fbc4837b",
+      "rows": 1009,
+      "witnesses": 10000,
+      "sealed_json_bytes": 961869,
+      "artifact_bytes": 53248,
+      "repository_bytes": 983040,
+      "index_storage_bytes": 475136,
+      "split_evidence_bytes": 925839,
+      "split_payload_bytes": 44015,
+      "split_storage_bytes": 983040,
+      "index_build_s": 0.0820365670369938,
+      "equivalence": true,
+      "samples": [
+        {
+          "key": [
+            "probe",
+            [
+              1000
+            ]
+          ],
+          "causes": 1,
+          "sealed": {
+            "median_s": 0.015215463005006313,
+            "median_read_bytes": 975078
+          },
+          "split": {
+            "median_s": 0.014545254060067236,
+            "median_read_bytes": 938214
+          },
+          "index": {
+            "median_s": 0.00035112490877509117,
+            "median_read_bytes": 98598
+          }
+        },
+        {
+          "key": [
+            "probe",
+            [
+              100
+            ]
+          ],
+          "causes": 1,
+          "sealed": {
+            "median_s": 0.015458753914572299,
+            "median_read_bytes": 975078
+          },
+          "split": {
+            "median_s": 0.014511505025438964,
+            "median_read_bytes": 938215
+          },
+          "index": {
+            "median_s": 0.0003945420030504465,
+            "median_read_bytes": 98599
+          }
+        },
+        {
+          "key": [
+            "probe",
+            [
+              101
+            ]
+          ],
+          "causes": 1,
+          "sealed": {
+            "median_s": 0.015666421968489885,
+            "median_read_bytes": 975079
+          },
+          "split": {
+            "median_s": 0.01440317090600729,
+            "median_read_bytes": 938215
+          },
+          "index": {
+            "median_s": 0.0003423329908400774,
+            "median_read_bytes": 98599
+          }
+        }
+      ],
+      "verdict": {
+        "choice": "index",
+        "reason": "cuts every sampled read by at least 10% versus the whole-sealed path and its added storage stays under 8 MiB",
+        "cheapest_per_lookup": [
+          "index"
+        ],
+        "storage_delta_bytes": {
+          "split": 21171,
+          "index": 475136
+        },
+        "storage_premium": {
+          "split": 0.022010273748296286,
+          "index": 0.4939716323116765
+        },
+        "sealed_wins": false
+      }
+    },
+    {
+      "capture_id": "769d9518844642be8573a2c5d41e8b94",
+      "rows": 4509,
+      "witnesses": 45000,
+      "sealed_json_bytes": 4360369,
+      "artifact_bytes": 176128,
+      "repository_bytes": 4382720,
+      "index_storage_bytes": 2007040,
+      "split_evidence_bytes": 4194839,
+      "split_payload_bytes": 205015,
+      "split_storage_bytes": 4419584,
+      "index_build_s": 0.3606389049673453,
+      "equivalence": true,
+      "samples": [
+        {
+          "key": [
+            "probe",
+            [
+              1000
+            ]
+          ],
+          "causes": 1,
+          "sealed": {
+            "median_s": 0.2674014170188457,
+            "median_read_bytes": 4374761
+          },
+          "split": {
+            "median_s": 0.2611326299374923,
+            "median_read_bytes": 4210922
+          },
+          "index": {
+            "median_s": 0.000459291972219944,
+            "median_read_bytes": 98603
+          }
+        },
+        {
+          "key": [
+            "probe",
+            [
+              1001
+            ]
+          ],
+          "causes": 1,
+          "sealed": {
+            "median_s": 0.2626522979699075,
+            "median_read_bytes": 4374763
+          },
+          "split": {
+            "median_s": 0.2461237929528579,
+            "median_read_bytes": 4210923
+          },
+          "index": {
+            "median_s": 0.00046237604692578316,
+            "median_read_bytes": 98603
+          }
+        },
+        {
+          "key": [
+            "probe",
+            [
+              1002
+            ]
+          ],
+          "causes": 1,
+          "sealed": {
+            "median_s": 0.26845150790177286,
+            "median_read_bytes": 4374763
+          },
+          "split": {
+            "median_s": 0.24873954302165657,
+            "median_read_bytes": 4210923
+          },
+          "index": {
+            "median_s": 0.00048329203855246305,
+            "median_read_bytes": 98603
+          }
+        }
+      ],
+      "verdict": {
+        "choice": "index",
+        "reason": "cuts every sampled read by at least 10% versus the whole-sealed path and its added storage stays under 8 MiB",
+        "cheapest_per_lookup": [
+          "index"
+        ],
+        "storage_delta_bytes": {
+          "split": 59215,
+          "index": 2007040
+        },
+        "storage_premium": {
+          "split": 0.013580272678757234,
+          "index": 0.460291319381456
+        },
+        "sealed_wins": false
+      }
+    },
+    {
+      "capture_id": "4271dd77ef744e59b571481cbbc5b281",
+      "rows": 6,
+      "witnesses": 6,
+      "sealed_json_bytes": 265711,
+      "artifact_bytes": 217088,
+      "repository_bytes": 282624,
+      "index_storage_bytes": 49152,
+      "split_evidence_bytes": 3263,
+      "split_payload_bytes": 262596,
+      "split_storage_bytes": 278528,
+      "index_build_s": 0.0012152919080108404,
+      "equivalence": true,
+      "samples": [
+        {
+          "key": [
+            "assay",
+            [
+              "B-01"
+            ]
+          ],
+          "causes": 1,
+          "sealed": {
+            "median_s": 0.0004729169886559248,
+            "median_read_bytes": 274666
+          },
+          "split": {
+            "median_s": 0.00010108307469636202,
+            "median_read_bytes": 12523
+          },
+          "index": {
+            "median_s": 0.00017100002150982618,
+            "median_read_bytes": 37163
+          }
+        },
+        {
+          "key": [
+            "assay",
+            [
+              "B-02"
+            ]
+          ],
+          "causes": 1,
+          "sealed": {
+            "median_s": 0.0004128749715164304,
+            "median_read_bytes": 274667
+          },
+          "split": {
+            "median_s": 0.00010895798914134502,
+            "median_read_bytes": 12524
+          },
+          "index": {
+            "median_s": 0.0001978749642148614,
+            "median_read_bytes": 37164
+          }
+        },
+        {
+          "key": [
+            "assay",
+            [
+              "B-03"
+            ]
+          ],
+          "causes": 1,
+          "sealed": {
+            "median_s": 0.0004940839717164636,
+            "median_read_bytes": 274668
+          },
+          "split": {
+            "median_s": 0.00010800000745803118,
+            "median_read_bytes": 12524
+          },
+          "index": {
+            "median_s": 0.00018629198893904686,
+            "median_read_bytes": 37164
+          }
+        }
+      ],
+      "verdict": {
+        "choice": "split",
+        "reason": "cuts every sampled read by at least 10% versus the whole-sealed path and its added storage stays under 8 MiB",
+        "cheapest_per_lookup": [
+          "split"
+        ],
+        "storage_delta_bytes": {
+          "split": 12817,
+          "index": 49152
+        },
+        "storage_premium": {
+          "split": 0.0482366179796847,
+          "index": 0.18498293258465023
+        },
+        "sealed_wins": false
+      }
+    },
+    {
+      "capture_id": "8a1e300bb5b64b9c9916ed05133cf5dc",
+      "rows": 6,
+      "witnesses": 6,
+      "sealed_json_bytes": 4197871,
+      "artifact_bytes": 3178496,
+      "repository_bytes": 4218880,
+      "index_storage_bytes": 49152,
+      "split_evidence_bytes": 3263,
+      "split_payload_bytes": 4194756,
+      "split_storage_bytes": 4214784,
+      "index_build_s": 0.009635712020099163,
+      "equivalence": true,
+      "samples": [
+        {
+          "key": [
+            "assay",
+            [
+              "B-01"
+            ]
+          ],
+          "causes": 1,
+          "sealed": {
+            "median_s": 0.005968919023871422,
+            "median_read_bytes": 4210926
+          },
+          "split": {
+            "median_s": 0.00010487495455890894,
+            "median_read_bytes": 12526
+          },
+          "index": {
+            "median_s": 0.00021674996241927147,
+            "median_read_bytes": 37166
+          }
+        },
+        {
+          "key": [
+            "assay",
+            [
+              "B-02"
+            ]
+          ],
+          "causes": 1,
+          "sealed": {
+            "median_s": 0.006931668962351978,
+            "median_read_bytes": 4210927
+          },
+          "split": {
+            "median_s": 0.00011345802340656519,
+            "median_read_bytes": 12527
+          },
+          "index": {
+            "median_s": 0.00018583296332508326,
+            "median_read_bytes": 37167
+          }
+        },
+        {
+          "key": [
+            "assay",
+            [
+              "B-03"
+            ]
+          ],
+          "causes": 1,
+          "sealed": {
+            "median_s": 0.005913752014748752,
+            "median_read_bytes": 4210927
+          },
+          "split": {
+            "median_s": 0.00011849997099488974,
+            "median_read_bytes": 12527
+          },
+          "index": {
+            "median_s": 0.00020474998746067286,
+            "median_read_bytes": 37167
+          }
+        }
+      ],
+      "verdict": {
+        "choice": "split",
+        "reason": "cuts every sampled read by at least 10% versus the whole-sealed path and its added storage stays under 8 MiB",
+        "cheapest_per_lookup": [
+          "split"
+        ],
+        "storage_delta_bytes": {
+          "split": 16913,
+          "index": 49152
+        },
+        "storage_premium": {
+          "split": 0.0040289470543520755,
+          "index": 0.011708792385473494
+        },
+        "sealed_wins": false
+      }
+    },
+    {
+      "capture_id": "03c8e59a74704c528a73233cf484b98d",
+      "rows": 6,
+      "witnesses": 6,
+      "sealed_json_bytes": 6557167,
+      "artifact_bytes": 4947968,
+      "repository_bytes": 6582272,
+      "index_storage_bytes": 49152,
+      "split_evidence_bytes": 3263,
+      "split_payload_bytes": 6554052,
+      "split_storage_bytes": 6574080,
+      "index_build_s": 0.015534171951003373,
+      "equivalence": true,
+      "samples": [
+        {
+          "key": [
+            "assay",
+            [
+              "B-01"
+            ]
+          ],
+          "causes": 1,
+          "sealed": {
+            "median_s": 0.008839669986627996,
+            "median_read_bytes": 6574318
+          },
+          "split": {
+            "median_s": 0.00012229103595018387,
+            "median_read_bytes": 12527
+          },
+          "index": {
+            "median_s": 0.0001996250357478857,
+            "median_read_bytes": 37167
+          }
+        },
+        {
+          "key": [
+            "assay",
+            [
+              "B-02"
+            ]
+          ],
+          "causes": 1,
+          "sealed": {
+            "median_s": 0.008884085924364626,
+            "median_read_bytes": 6574319
+          },
+          "split": {
+            "median_s": 0.0001181670231744647,
+            "median_read_bytes": 12527
+          },
+          "index": {
+            "median_s": 0.0002166670747101307,
+            "median_read_bytes": 37167
+          }
+        },
+        {
+          "key": [
+            "assay",
+            [
+              "B-03"
+            ]
+          ],
+          "causes": 1,
+          "sealed": {
+            "median_s": 0.008805045043118298,
+            "median_read_bytes": 6574319
+          },
+          "split": {
+            "median_s": 0.0001165410503745079,
+            "median_read_bytes": 12527
+          },
+          "index": {
+            "median_s": 0.0001937909983098507,
+            "median_read_bytes": 37167
+          }
+        }
+      ],
+      "verdict": {
+        "choice": "split",
+        "reason": "cuts every sampled read by at least 10% versus the whole-sealed path and its added storage stays under 8 MiB",
+        "cheapest_per_lookup": [
+          "split"
+        ],
+        "storage_delta_bytes": {
+          "split": 16913,
+          "index": 49152
+        },
+        "storage_premium": {
+          "split": 0.0025793151219116427,
+          "index": 0.007495920113061022
+        },
+        "sealed_wins": false
+      }
+    },
+    {
+      "capture_id": "c7e4f3bb5a154942b808dfe920231755",
+      "rows": 4040,
+      "witnesses": 8000,
+      "sealed_json_bytes": 943524,
+      "artifact_bytes": 90112,
+      "repository_bytes": 962560,
+      "index_storage_bytes": 499712,
+      "split_evidence_bytes": 853920,
+      "split_payload_bytes": 125290,
+      "split_storage_bytes": 991232,
+      "index_build_s": 0.07454277493525296,
+      "equivalence": true,
+      "samples": [
+        {
+          "key": [
+            "item",
+            [
+              1000
+            ]
+          ],
+          "causes": 1,
+          "sealed": {
+            "median_s": 0.01427871291525662,
+            "median_read_bytes": 954602
+          },
+          "split": {
+            "median_s": 0.012250295956619084,
+            "median_read_bytes": 864490
+          },
+          "index": {
+            "median_s": 0.0002932091010734439,
+            "median_read_bytes": 61738
+          }
+        },
+        {
+          "key": [
+            "item",
+            [
+              1001
+            ]
+          ],
+          "causes": 1,
+          "sealed": {
+            "median_s": 0.014089546049945056,
+            "median_read_bytes": 954602
+          },
+          "split": {
+            "median_s": 0.012531420914456248,
+            "median_read_bytes": 864491
+          },
+          "index": {
+            "median_s": 0.0003243749961256981,
+            "median_read_bytes": 65835
+          }
+        },
+        {
+          "key": [
+            "item",
+            [
+              1002
+            ]
+          ],
+          "causes": 1,
+          "sealed": {
+            "median_s": 0.01411779597401619,
+            "median_read_bytes": 954603
+          },
+          "split": {
+            "median_s": 0.012788421008735895,
+            "median_read_bytes": 864491
+          },
+          "index": {
+            "median_s": 0.0003119170432910323,
+            "median_read_bytes": 65835
+          }
+        }
+      ],
+      "verdict": {
+        "choice": "index",
+        "reason": "cuts every sampled read by at least 10% versus the whole-sealed path and its added storage stays under 8 MiB",
+        "cheapest_per_lookup": [
+          "index"
+        ],
+        "storage_delta_bytes": {
+          "split": 47708,
+          "index": 499712
+        },
+        "storage_premium": {
+          "split": 0.05056363166172773,
+          "index": 0.5296229878625239
+        },
+        "sealed_wins": false
+      }
+    }
+  ]
+}

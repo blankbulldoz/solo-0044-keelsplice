@@ -1,0 +1,195 @@
+{
+  "generated_by": "evaluation/http_cost.py",
+  "reps": 5,
+  "cases": [
+    {
+      "name": "microscope",
+      "class": "small control",
+      "rows": 5,
+      "witnesses": 8,
+      "sealed_json_bytes": 5505,
+      "pages": {
+        "detail": {
+          "median_s": 0.0007913749432191253,
+          "median_read_bytes": 16617
+        },
+        "trace": {
+          "median_s": 0.0008298329776152968,
+          "median_read_bytes": 16617
+        },
+        "captures_index": {
+          "median_s": 0.0006207500118762255,
+          "median_read_bytes": 12521
+        }
+      }
+    },
+    {
+      "name": "wide-1000",
+      "class": "many rows, one witness each",
+      "rows": 1020,
+      "witnesses": 2000,
+      "sealed_json_bytes": 282249,
+      "pages": {
+        "detail": {
+          "median_s": 0.003670751000754535,
+          "median_read_bytes": 245993
+        },
+        "trace": {
+          "median_s": 0.003968292963691056,
+          "median_read_bytes": 245994
+        },
+        "captures_index": {
+          "median_s": 0.0006874169921502471,
+          "median_read_bytes": 241898
+        }
+      }
+    },
+    {
+      "name": "wide-4000",
+      "class": "many rows, one witness each",
+      "rows": 4040,
+      "witnesses": 8000,
+      "sealed_json_bytes": 1137049,
+      "pages": {
+        "detail": {
+          "median_s": 0.013641254045069218,
+          "median_read_bytes": 954604
+        },
+        "trace": {
+          "median_s": 0.015279880026355386,
+          "median_read_bytes": 954604
+        },
+        "captures_index": {
+          "median_s": 0.0007954590255394578,
+          "median_read_bytes": 950508
+        }
+      }
+    },
+    {
+      "name": "fanout-250",
+      "class": "high fan-out",
+      "rows": 259,
+      "witnesses": 2500,
+      "sealed_json_bytes": 286813,
+      "pages": {
+        "detail": {
+          "median_s": 0.004225417971611023,
+          "median_read_bytes": 254188
+        },
+        "trace": {
+          "median_s": 0.004752793000079691,
+          "median_read_bytes": 254188
+        },
+        "captures_index": {
+          "median_s": 0.0007360830204561353,
+          "median_read_bytes": 250092
+        }
+      }
+    },
+    {
+      "name": "fanout-1000",
+      "class": "high fan-out",
+      "rows": 1009,
+      "witnesses": 10000,
+      "sealed_json_bytes": 1136576,
+      "pages": {
+        "detail": {
+          "median_s": 0.014426170964725316,
+          "median_read_bytes": 975086
+        },
+        "trace": {
+          "median_s": 0.016563839046284556,
+          "median_read_bytes": 975087
+        },
+        "captures_index": {
+          "median_s": 0.0010088749695569277,
+          "median_read_bytes": 970991
+        }
+      }
+    },
+    {
+      "name": "fanout-4500",
+      "class": "high fan-out",
+      "rows": 4509,
+      "witnesses": 45000,
+      "sealed_json_bytes": 5144076,
+      "pages": {
+        "detail": {
+          "median_s": 0.08650723600294441,
+          "median_read_bytes": 4374767
+        },
+        "trace": {
+          "median_s": 0.0894421529956162,
+          "median_read_bytes": 4374768
+        },
+        "captures_index": {
+          "median_s": 0.0013597499346360564,
+          "median_read_bytes": 4370672
+        }
+      }
+    },
+    {
+      "name": "blob-3x256k",
+      "class": "large BLOB rows, few edges",
+      "rows": 6,
+      "witnesses": 6,
+      "sealed_json_bytes": 1052772,
+      "pages": {
+        "detail": {
+          "median_s": 0.0021164999343454838,
+          "median_read_bytes": 1065200
+        },
+        "trace": {
+          "median_s": 0.0020265011116862297,
+          "median_read_bytes": 1065200
+        },
+        "captures_index": {
+          "median_s": 0.0008005009731277823,
+          "median_read_bytes": 1061104
+        }
+      }
+    },
+    {
+      "name": "blob-3x1024k",
+      "class": "large BLOB rows, few edges",
+      "rows": 6,
+      "witnesses": 6,
+      "sealed_json_bytes": 4198500,
+      "pages": {
+        "detail": {
+          "median_s": 0.006212376989424229,
+          "median_read_bytes": 4210929
+        },
+        "trace": {
+          "median_s": 0.00637196097522974,
+          "median_read_bytes": 4210929
+        },
+        "captures_index": {
+          "median_s": 0.001235750038176775,
+          "median_read_bytes": 4206833
+        }
+      }
+    },
+    {
+      "name": "blob-3x1600k",
+      "class": "large BLOB rows, few edges",
+      "rows": 6,
+      "witnesses": 6,
+      "sealed_json_bytes": 6557796,
+      "pages": {
+        "detail": {
+          "median_s": 0.009480045060627162,
+          "median_read_bytes": 6574321
+        },
+        "trace": {
+          "median_s": 0.009717752924188972,
+          "median_read_bytes": 6574321
+        },
+        "captures_index": {
+          "median_s": 0.0019096670439466834,
+          "median_read_bytes": 6570226
+        }
+      }
+    }
+  ]
+}
