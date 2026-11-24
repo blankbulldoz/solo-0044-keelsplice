@@ -51,6 +51,8 @@ class RequestHandler(BaseHTTPRequestHandler):
         bench = self.server.workbench
         body = self.read_body() if self.command == 'POST' else None
         match self.command, parts:
+            case 'GET', ['instance']:
+                return 200, bench.instance()
             case 'GET', ['sources', alias, 'catalog']:
                 return 200, bench.catalog(alias)
             case 'POST', ['recipes', name, 'versions']:
@@ -74,6 +76,9 @@ class RequestHandler(BaseHTTPRequestHandler):
             case 'POST', ['captures', capture_id, 'certify']:
                 fields(body)
                 return 200, bench.certify(capture_id)
+            case 'POST', ['captures', capture_id, 'reverify']:
+                fields(body)
+                return 200, bench.reverify(capture_id)
             case 'POST', ['compare']:
                 return 200, bench.compare(body)
             case 'GET', ['captures', capture_id, 'database']:
@@ -116,5 +121,5 @@ class RequestHandler(BaseHTTPRequestHandler):
     do_POST = handle_request
 
 
-def create_server(address, repo, sources):
-    return FixtureHTTPServer(address, Workbench(Repository(repo, sources)))
+def create_server(address, repo, sources, *, role='primary', switchover=None):
+    return FixtureHTTPServer(address, Workbench(Repository(repo, sources, role=role, switchover=switchover)))

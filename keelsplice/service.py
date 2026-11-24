@@ -13,11 +13,26 @@ class Workbench:
     def __init__(self, repository):
         self.repository = repository
 
+    @property
+    def read_only(self):
+        return self.repository.read_only
+
+    def _writable(self):
+        if self.read_only:
+            raise Fault('standby_read_only', 'Standby instance only re-verifies existing fixtures', 409)
+
+    def instance(self):
+        return self.repository.instance_info()
+
+    def context(self):
+        return self.repository.state_context()
+
     def catalog(self, alias):
         with self.repository.source(alias) as conn:
             return catalog.snapshot(conn)
 
     def register(self, name, body, *, expected_schema=None):
+        self._writable()
         if not NAME.fullmatch(name):
             raise Fault('invalid_name', 'Expected an ASCII recipe name')
         recipe.fields(body, ('source', 'roots'), ('follow_children', 'row_limit'))
@@ -28,9 +43,16 @@ class Workbench:
         return recipe.describe(self.repository.add_recipe(name, disclosed['schema_digest'], normalized))
 
     def version(self, name, number):
-        return recipe.describe(self.repository.version(name, number))
+        described = recipe.describe(self.repository.version(name, number))
+        if self.read_only:
+            context = self.context()
+            return described | {'authoritative': False, 'observed_at': context['as_of'],
+                                'snapshot_source_repository': context['snapshot_source_repository'],
+                                'note': 'active 仅表示快照时刻的投用状态，不代表主实例当前状态。'}
+        return described
 
     def retire(self, name, number):
+        self._writable()
         return recipe.describe(self.repository.retire(name, number))
 
     def execute(self, body):
@@ -50,11 +72,13 @@ class Workbench:
         return name, number, disclosed | {'recipe': normalized, 'result': result}
 
     def preview(self, body):
+        self._writable()
         name, number, sealed = self.execute(body)
         return {'name': name, 'version': number, 'schema_digest': sealed['schema_digest'],
                 'summary': capture.summarize(sealed['result']), 'roots': sealed['result']['roots']}
 
     def capture(self, body):
+        self._writable()
         name, number, sealed = self.execute(body)
         return self.describe(self.repository.add_capture(name, number, sealed))
 
@@ -77,6 +101,7 @@ class Workbench:
         return {'left': body['left'], 'right': body['right'], 'changes': capture.compare(left, right)}
 
     def build(self, capture_id):
+        self._writable()
         record = self.repository.load_capture(capture_id)
         if record['state'] == 'sealed':
             try:
@@ -87,6 +112,7 @@ class Workbench:
         return self.describe(record)
 
     def certify(self, capture_id):
+        self._writable()
         record = self.repository.load_capture(capture_id, with_artifact=True)
         if record['state'] == 'sealed':
             raise Fault('fixture_not_built', 'Build the fixture before certifying', 409)
@@ -98,7 +124,26 @@ class Workbench:
             record = self.repository.promote(capture_id, certificate=certificate)
         return self.describe(record)
 
+    def reverify(self, capture_id):
+        """Re-check a previously certified fixture without changing any state."""
+        record = self.repository.load_capture(capture_id, with_artifact=True)
+        if record['state'] != 'certified' or record['certificate'] is None:
+            raise Fault('fixture_not_certified', 'Only previously certified fixtures can be re-verified', 409)
+        try:
+            certificate = bundle.certify(record['artifact'], record['sealed'])
+        except sqlite3.Error as exc:
+            raise Fault('artifact_unreadable', 'SQLite could not read the stored fixture') from exc
+        stored = record['certificate']
+        if certificate['sha256'] != stored['sha256'] or certificate['counts'] != stored['counts']:
+            raise Fault('artifact_integrity', 'Stored fixture bytes do not match the stored certificate', 409)
+        return {'capture': capture_id, 'state': record['state'], 'certificate': stored,
+                'verified': True, 'sha256': bundle.digest_bytes(record['artifact']),
+                'bytes': len(record['artifact']), 'role': self.repository.role}
+
     def download(self, capture_id):
+        if self.read_only:
+            raise Fault('standby_read_only',
+                        'Standby instance re-verifies fixtures but does not hand them off', 409)
         record = self.repository.load_capture(capture_id, with_artifact=True)
         if record['state'] != 'certified':
             raise Fault('fixture_not_certified', 'Certify the fixture before handing it off', 409)

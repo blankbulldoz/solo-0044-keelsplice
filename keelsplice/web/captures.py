@@ -12,6 +12,14 @@ def stage(state):
     return f'<span class="status {style}">{STAGES[state]}</span>'
 
 
+def provenance(bench):
+    context = bench.context()
+    if context['authoritative']:
+        return ''
+    return (f'<p class="notice info">备用实例视图：配方投用状态取自 {text(context["as_of"])} 的快照，'
+            f'不代表主实例当前状态。来源 <code>{text(context["snapshot_source_repository"])}</code>。</p>')
+
+
 def index(bench):
     records = bench.repository.recent_captures()
     rows = ''.join(
@@ -20,11 +28,11 @@ def index(bench):
         f'<td>{record["version"]}</td><td>{stage(record["state"])}</td></tr>'
         for record in records
     )
-    return 200, page('封存捕获', 'capture', 'captures',
+    return 200, page('封存捕获', 'capture', 'captures', provenance=provenance(bench),
                      rows=rows or '<tr><td colspan="4" class="empty">尚无封存捕获。</td></tr>')
 
 
-def detail(bench, capture_id):
+def detail(bench, capture_id, *, reverified=False):
     record = bench.status(capture_id)
     base = f'/workbench/captures/{segment(capture_id)}'
     roots = ''.join(
@@ -35,9 +43,11 @@ def detail(bench, capture_id):
         for table, key in record['roots']
     )
     return 200, page('捕获详情', 'capture', 'capture', id=text(capture_id), base=base,
+                     provenance=provenance(bench),
                      recipe=f'/workbench/recipes/{segment(record["name"])}/{record["version"]}',
                      name=text(record['name']), number=record['version'], stage=stage(record['state']),
-                     digest=text(record['schema_digest']), certificate=handoff.certificate(record),
-                     actions=handoff.actions(base, record['state']), roots=roots,
-                     counts=preview.counts(record['summary']), rows=record['summary']['rows'],
-                     witnesses=record['summary']['witnesses'])
+                     digest=text(record['schema_digest']),
+                     certificate=handoff.certificate(record, reverified=reverified),
+                     actions=handoff.actions(base, record['state'], read_only=bench.read_only),
+                     roots=roots, counts=preview.counts(record['summary']),
+                     rows=record['summary']['rows'], witnesses=record['summary']['witnesses'])

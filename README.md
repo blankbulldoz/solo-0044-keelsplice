@@ -37,6 +37,8 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 | `GET /captures/{id}` | 读取捕获状态、实存根、计数和证书 |
 | `POST /captures/{id}/trace` | 接收如 `{"table":"substrate","key":["East","Mica"]}`，返回直接证据和从零开始的根序号 |
 | `POST /captures/{id}/build`、`POST /captures/{id}/certify` | 接收空对象，构建或认证该捕获的子库 |
+| `POST /captures/{id}/reverify` | 接收空对象，仅重算已认证字节摘要并与既有证书核对，不改变状态；备用实例唯一的写路径操作 |
+| `GET /instance` | 返回实例角色、是否权威、内容摘要、配方与捕获索引；备用实例附带快照来源 |
 | `POST /compare` | 接收 `{"left":"id-a","right":"id-b"}`，按表报告带类型主键的差异 |
 | `GET /captures/{id}/database` | 返回已认证 SQLite 字节，`ETag` 为带引号的 SHA-256 |
 
@@ -48,6 +50,35 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 python3 -m compileall -q keelsplice examples
 python3 -m examples.walkthrough all
 python3 -m examples.browser_walkthrough
+python3 -m examples.switchover_drill
 ```
 
-两份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。独立自动化测试套件延后。
+三份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。独立自动化测试套件延后。
+
+## 两进程切换演练
+
+`examples/switchover_drill.py` 在临时目录启动真实的两组 `python3 -m keelsplice` 进程，演示有明确回退窗口的重启切换：
+
+- **备用实例**（`--role standby`）只读打开一份带来源戳的状态库快照。工作台与 JSON 都标出「备用实例视图」及快照时间，配方投用状态显示为「快照时投用」，不会把旧配方状态当作主实例当前状态。它只允许 `reverify` 复核此前已认证的子库，其余写入（登记、试算、封存、停用、构建、认证）返回 `standby_read_only`。
+- **主实例**在备用运行时仍可继续封存新的关系捕获；旧成果在切换前后分别用 `SHA-256` 与独立 SQLite 连接核对。
+- **切换清单**由 `keelsplice.switchover` 生成，记录持久状态库路径、设备号/inode、内容摘要、快照捕获索引与回退窗口。主实例以 `--switchover MANIFEST` 重启，先核对持久记录位置与摘要，再允许接续写入；摘要变化（`handover_content`）或窗口关闭（`handover_window`）都会拒绝启动。
+- **回退归因**：`python3 -m keelsplice.switchover report --manifest M --instance URL ...` 按快照比对两个实例，指出哪个实例新增了捕获。演练本身会走这条真实命令。
+
+本机手工复跑等价流程：
+
+```sh
+# 1) 主实例启动并形成已认证子库，然后停掉
+python3 -m keelsplice --repository primary/state.sqlite \
+  --source microscope=primary/microscope.sqlite &
+# 2) 生成 standby/state.sqlite 与 switchover.json（见 examples/switchover_drill.py）
+# 3) 同时启动主、备
+python3 -m keelsplice --repository primary/state.sqlite \
+  --source microscope=primary/microscope.sqlite --port 8794 &
+python3 -m keelsplice --role standby --repository standby/state.sqlite \
+  --source microscope=primary/microscope.sqlite --port 8795 &
+# 4) 需要恢复写入时，主实例带清单重启
+python3 -m keelsplice --repository primary/state.sqlite \
+  --source microscope=primary/microscope.sqlite --switchover switchover.json &
+```
+
+`--port 0` 时服务把实际端口写入环境变量 `KEELSPLICE_PORT_FILE` 指定的文件，便于脚本驱动。`keelsplice.switchover` 的 `export_replica`/`plan`/`write_manifest`/`rollback_report` 也可直接导入复用。

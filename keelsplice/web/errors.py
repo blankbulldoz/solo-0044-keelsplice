@@ -36,6 +36,15 @@ MESSAGES = {
     'artifact_reference': '子库的外键复核失败。',
     'artifact_schema': '子库模式与封存模式不一致。',
     'artifact_content': '子库行内容与封存内容不一致。',
+    'standby_read_only': '备用实例只复核此前已认证的子库，不写入状态库。',
+    'standby_repository': '备用实例的状态库不存在，无法以只读方式打开。',
+    'replica_provenance': '备用状态库缺少快照来源，无法区分旧快照与主实例当前状态。',
+    'handover_manifest': '切换清单无效或缺失，主实例拒绝按写入模式启动。',
+    'handover_location': '持久记录位置与切换清单不一致。',
+    'handover_content': '切换清单之后持久记录已变化，需要重新核对。',
+    'handover_window': '回退窗口已关闭，不能再按该清单恢复写入。',
+    'replica_exists': '目标副本已存在，拒绝覆盖。',
+    'replica_location': '目标副本目录不存在。',
     'unknown_route': '找不到指定页面。',
 }
 

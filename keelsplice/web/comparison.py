@@ -8,6 +8,14 @@ from ..codec import Fault
 LABELS = {'added': '新增', 'removed': '移除', 'modified': '修改'}
 
 
+def provenance(bench):
+    context = bench.context()
+    if context['authoritative']:
+        return ''
+    return (f'<p class="notice info">备用实例视图：对比只覆盖 {text(context["as_of"])} 的快照捕获，'
+            f'不包含主实例此后新增的捕获。</p>')
+
+
 def changes(result):
     if result is None:
         return ''
@@ -40,6 +48,6 @@ def show(bench, values=None):
             available.append((selected, selected))
         return options(available, selected)
 
-    return status, page('捕获对比', 'compare', 'compare',
+    return status, page('捕获对比', 'compare', 'compare', provenance=provenance(bench),
                         left=choices(left), right=choices(right), result=changes(result),
                         error=f'<p class="notice" role="alert">{text(error)}</p>' if error else '')

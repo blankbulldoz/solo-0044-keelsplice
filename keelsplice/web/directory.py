@@ -67,5 +67,6 @@ def show(bench, query):
                      pk=code(' → '.join(table['pk'])), columns=column_rows(table),
                      edges=edge_rows(catalog['schema']['edges'], selected),
                      indexes=index_items or '<li class="empty">无显式索引。</li>',
-                     recipe=text(location('/workbench/recipes/new', source=alias)),
+                     register_action='' if bench.read_only else
+                     f'<a class="button primary" href="{text(location("/workbench/recipes/new", source=alias))}">登记配方</a>',
                      ddl=text(table['ddl']))

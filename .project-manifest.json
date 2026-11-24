@@ -45,6 +45,11 @@
       "id": "web",
       "path": "keelsplice/web",
       "responsibility": "服务端 HTML、类型化表单、目录、配方、追踪、对比及子库交接页面"
+    },
+    {
+      "id": "switchover",
+      "path": "keelsplice/switchover.py",
+      "responsibility": "切换清单、备用副本来源、回退窗口与新增捕获归因"
     }
   ],
   "workflows": [
@@ -261,6 +266,29 @@
         "bundle",
         "codec"
       ]
+    },
+    {
+      "id": "switchover",
+      "name": "两进程切换演练",
+      "entry": "python3 -m examples.switchover_drill",
+      "success": "主实例在备用就绪时仍可封存，备用实例只读复核已认证子库，清单核对持久位置与摘要后恢复写入，旧成果摘要前后一致",
+      "failure": "持久记录变化或回退窗口关闭时主实例拒绝按写入模式启动，回退报告指出哪个实例新增捕获",
+      "verification": "python3 -m examples.switchover_drill",
+      "steps": [
+        "以只读角色启动备用实例并展示快照来源，而非主实例当前投用状态",
+        "备用实例只对既有已认证子库重算摘要并拒绝一切写入",
+        "主实例带切换清单重启，先核对持久记录位置、文件身份与内容摘要",
+        "回退时按快照比对两个实例并列出各自新增的捕获"
+      ],
+      "module_ids": [
+        "switchover",
+        "storage",
+        "service",
+        "bundle",
+        "api",
+        "web",
+        "codec"
+      ]
     }
   ],
   "complexity": {
@@ -275,7 +303,10 @@
       "capacity",
       "idempotency",
       "lineage",
-      "snapshot_consistency"
+      "snapshot_consistency",
+      "switchover_handover",
+      "read_only_replica",
+      "attribution"
     ]
   }
 }

@@ -43,15 +43,20 @@ def route(handler, path):
         return 200, assets.serve(parts[2]), 'text/css; charset=utf-8', {}
     query = decode_form(path.query.encode('ascii'))
     values = form(handler) if method == 'POST' else {}
+    read_only = bench.read_only
     match method, parts:
         case 'GET', ['workbench']:
             status, body = directory.show(bench, query)
         case 'GET', ['workbench', 'recipes']:
             status, body = versions.index(bench)
         case 'GET', ['workbench', 'recipes', 'new']:
+            if read_only:
+                return standby_refusal()
             source = field(query, 'source', next(iter(sorted(bench.repository.sources)), ''))
             status, body = selection.editor(bench, source)
         case 'POST', ['workbench', 'recipes', 'new']:
+            if read_only:
+                return standby_refusal()
             result = selection.register(bench, values)
             if isinstance(result, str):
                 return redirect(result)
@@ -59,6 +64,8 @@ def route(handler, path):
         case 'GET', ['workbench', 'recipes', name, number]:
             status, body = versions.detail(bench, name, version(number))
         case 'POST', ['workbench', 'recipes', name, number, action]:
+            if read_only:
+                return standby_refusal()
             number = version(number)
             base = f'/workbench/recipes/{segment(name)}/{number}'
             if action == 'preview':
@@ -76,6 +83,8 @@ def route(handler, path):
         case 'GET', ['workbench', 'captures', capture_id]:
             status, body = captures.detail(bench, capture_id)
         case 'GET', ['workbench', 'captures', capture_id, 'database']:
+            if read_only:
+                return standby_refusal()
             data, sha = bench.download(capture_id)
             return 200, data, 'application/vnd.sqlite3', {
                 'Content-Disposition': f'attachment; filename="keelsplice-{capture_id}.sqlite"',
@@ -84,7 +93,12 @@ def route(handler, path):
         case 'POST', ['workbench', 'captures', capture_id, action]:
             if action == 'trace':
                 status, body = evidence.show(bench, capture_id, values)
+            elif action == 'reverify':
+                bench.reverify(capture_id)
+                status, body = captures.detail(bench, capture_id, reverified=True)
             elif action in ('build', 'certify'):
+                if read_only:
+                    return standby_refusal()
                 (bench.build if action == 'build' else bench.certify)(capture_id)
                 return redirect(f'/workbench/captures/{segment(capture_id)}')
             else:
@@ -96,6 +110,13 @@ def route(handler, path):
         case _:
             raise invalid_route()
     return status, body, 'text/html; charset=utf-8', {}
+
+
+def standby_refusal():
+    """Reject standby writes with the same visible fault the JSON layer raises."""
+    exc = Fault('standby_read_only', '备用实例只复核此前已认证的子库，不写入状态库。', 409)
+    return exc.status, page('操作未完成', '', 'error', error=text(message(exc)),
+                            status=exc.status), 'text/html; charset=utf-8', {}
 
 
 def handle(handler):
