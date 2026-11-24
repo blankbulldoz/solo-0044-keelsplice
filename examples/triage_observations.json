@@ -1,0 +1,455 @@
+{
+  "alias_remap": {
+    "certificate_sha256_differ": true,
+    "decision_without_source_fingerprints": {
+      "A": {
+        "observation": "same binding and sealed parent differs; source bytes are not recorded, so drift or an alias rebinding cannot be confirmed from history alone",
+        "sealing_parent": [
+          "South",
+          "Slate"
+        ],
+        "verdict": "consistent_unconfirmed"
+      },
+      "B": {
+        "observation": "capture row records the reviewed version",
+        "verdict": "excluded"
+      },
+      "C": {
+        "byte_bound_to_certificate": true,
+        "observation": "opened bytes match the sealing capture certificate and content",
+        "verdict": "excluded"
+      }
+    },
+    "first_still_certified": true,
+    "parents": [
+      [
+        [
+          "East",
+          "Mica"
+        ]
+      ],
+      [
+        [
+          "South",
+          "Slate"
+        ]
+      ]
+    ],
+    "same_schema_digest": true,
+    "same_version": true,
+    "totals_equal": true
+  },
+  "areas": {
+    "A": {
+      "capture_schema_equal": true,
+      "capture_totals_equal": true,
+      "certificate_sha256_differ": true,
+      "compare_assay": {
+        "added": [],
+        "modified": [
+          [
+            "S-01"
+          ]
+        ],
+        "removed": []
+      },
+      "compare_substrate": {
+        "added": [
+          [
+            "West",
+            "Basalt"
+          ]
+        ],
+        "modified": [],
+        "removed": [
+          [
+            "East",
+            "Mica"
+          ]
+        ]
+      },
+      "edge_identity_equal": true,
+      "parents": [
+        [
+          "East",
+          "Mica"
+        ],
+        [
+          "West",
+          "Basalt"
+        ]
+      ],
+      "preview_roots_equal": true,
+      "preview_schema_equal": true,
+      "preview_totals_equal": true,
+      "source_fingerprint_changed": true
+    },
+    "B": {
+      "capture_version": 2,
+      "certificate_sha256_differ": true,
+      "parents": [
+        [
+          "East",
+          "Mica"
+        ],
+        [
+          "South",
+          "Slate"
+        ]
+      ],
+      "preview_totals_equal": true,
+      "recipe_source": "twin",
+      "reviewed_capture_version": 1,
+      "totals_equal": true
+    },
+    "C": {
+      "capture_ids_differ": true,
+      "certify_as_drifted": {
+        "counts": {
+          "assay": 1,
+          "cassette": 2,
+          "frame": 0,
+          "substrate": 1
+        },
+        "ok": true
+      },
+      "certify_as_reviewed": {
+        "error": "artifact_content",
+        "message": "Unexpected row or values in assay",
+        "ok": false
+      },
+      "certify_as_sibling": {
+        "error": "artifact_content",
+        "message": "Unexpected row or values in assay",
+        "ok": false
+      },
+      "identical_bytes_different_roots": {
+        "bytes_equal": true,
+        "capture_digest_equal": false,
+        "roots": [
+          [
+            [
+              "cassette",
+              [
+                11
+              ]
+            ]
+          ],
+          [
+            [
+              "cassette",
+              [
+                11
+              ]
+            ],
+            [
+              "cassette",
+              [
+                11
+              ]
+            ]
+          ]
+        ],
+        "sha_equal": true
+      },
+      "received_sha_matches_drifted_certificate": true,
+      "received_sha_matches_reviewed_certificate": false,
+      "rows_in_received_file": [
+        [
+          "S-01",
+          "West",
+          "Basalt"
+        ]
+      ],
+      "rows_in_reviewed_file": [
+        [
+          "S-01",
+          "East",
+          "Mica"
+        ]
+      ]
+    },
+    "control": {
+      "count_changing_drift": {
+        "drifted_counts": {
+          "assay": 1,
+          "cassette": 2,
+          "frame": 0,
+          "substrate": 0
+        },
+        "drifted_rows": 3,
+        "reviewed_rows": 4,
+        "schema_equal": true
+      },
+      "parents_for_focus_row": [
+        [
+          "East",
+          "Mica"
+        ],
+        [
+          "West",
+          "Basalt"
+        ]
+      ],
+      "reviewed_rows": 4,
+      "schema_equal": true,
+      "totals_equal": false,
+      "wider_rows": 6
+    },
+    "equivalent_version": {
+      "bytes_equal_drifted": true,
+      "decision": {
+        "A": {
+          "observation": "sealing used a different version or source binding",
+          "verdict": "excluded"
+        },
+        "B": {
+          "observation": "another version was used, but it normalizes to the same source, roots and reverse edges; it can only matter through the source file itself",
+          "sealed_source": "primary",
+          "sealed_version": 3,
+          "verdict": "confirmed_but_equivalent"
+        },
+        "C": {
+          "byte_ambiguous_between": [
+            "CAPTURE",
+            "CAPTURE"
+          ],
+          "byte_bound_to_certificate": true,
+          "note": "several stored captures carry identical bytes; the certificate cannot name one of them, but none of them has a different parent",
+          "observation": "opened bytes match the sealing capture certificate and content",
+          "verdict": "excluded"
+        }
+      },
+      "recipe_equals_reviewed": true,
+      "version": 3
+    }
+  },
+  "decisions": {
+    "A": {
+      "delivered_sha256": "CAPTURECAPTURE",
+      "delivered_subject": [
+        "CAPTURE"
+      ],
+      "reviewed_parent": [
+        "East",
+        "Mica"
+      ],
+      "reviewed_version": 1,
+      "sealing_capture": {
+        "id": "CAPTURE",
+        "name": "parent-shift",
+        "sealed_parent": [
+          "West",
+          "Basalt"
+        ],
+        "version": 1
+      },
+      "verdicts": {
+        "A": {
+          "observation": "same binding, sealed parent differs, out-of-band source fingerprint changed",
+          "sealing_parent": [
+            "West",
+            "Basalt"
+          ],
+          "verdict": "confirmed"
+        },
+        "B": {
+          "observation": "capture row records the reviewed version",
+          "verdict": "excluded"
+        },
+        "C": {
+          "byte_bound_to_certificate": true,
+          "observation": "opened bytes match the sealing capture certificate and content",
+          "verdict": "excluded"
+        }
+      }
+    },
+    "A_without_fingerprints": {
+      "delivered_sha256": "CAPTURECAPTURE",
+      "delivered_subject": [
+        "CAPTURE"
+      ],
+      "reviewed_parent": [
+        "East",
+        "Mica"
+      ],
+      "reviewed_version": 1,
+      "sealing_capture": {
+        "id": "CAPTURE",
+        "name": "parent-shift",
+        "sealed_parent": [
+          "West",
+          "Basalt"
+        ],
+        "version": 1
+      },
+      "verdicts": {
+        "A": {
+          "observation": "same binding and sealed parent differs; source bytes are not recorded, so drift or an alias rebinding cannot be confirmed from history alone",
+          "sealing_parent": [
+            "West",
+            "Basalt"
+          ],
+          "verdict": "consistent_unconfirmed"
+        },
+        "B": {
+          "observation": "capture row records the reviewed version",
+          "verdict": "excluded"
+        },
+        "C": {
+          "byte_bound_to_certificate": true,
+          "observation": "opened bytes match the sealing capture certificate and content",
+          "verdict": "excluded"
+        }
+      }
+    },
+    "B": {
+      "delivered_sha256": "CAPTURECAPTURE",
+      "delivered_subject": [
+        "CAPTURE"
+      ],
+      "reviewed_parent": [
+        "East",
+        "Mica"
+      ],
+      "reviewed_version": 1,
+      "sealing_capture": {
+        "id": "CAPTURE",
+        "name": "parent-shift",
+        "sealed_parent": [
+          "South",
+          "Slate"
+        ],
+        "version": 2
+      },
+      "verdicts": {
+        "A": {
+          "observation": "sealing used a different version or source binding",
+          "verdict": "excluded"
+        },
+        "B": {
+          "observation": "capture row records a version other than the reviewed one",
+          "sealed_source": "twin",
+          "sealed_version": 2,
+          "verdict": "confirmed"
+        },
+        "C": {
+          "byte_bound_to_certificate": true,
+          "observation": "opened bytes match the sealing capture certificate and content",
+          "verdict": "excluded"
+        }
+      }
+    },
+    "C": {
+      "delivered_sha256": "CAPTURECAPTURE",
+      "delivered_subject": [
+        "CAPTURE"
+      ],
+      "reviewed_parent": [
+        "East",
+        "Mica"
+      ],
+      "reviewed_version": 1,
+      "sealing_capture": {
+        "id": "CAPTURE",
+        "name": "parent-shift",
+        "sealed_parent": [
+          "East",
+          "Mica"
+        ],
+        "version": 1
+      },
+      "verdicts": {
+        "A": {
+          "observation": "sealing capture retained the reviewed parent",
+          "verdict": "excluded"
+        },
+        "B": {
+          "observation": "capture row records the reviewed version",
+          "verdict": "excluded"
+        },
+        "C": {
+          "actual_captures": [
+            "CAPTURE"
+          ],
+          "actual_version": 1,
+          "observation": "opened bytes carry another certified capture certificate",
+          "verdict": "confirmed"
+        }
+      }
+    }
+  },
+  "history": {
+    "drifted": {
+      "certificate": {
+        "bytes": 32768,
+        "capture_digest": "CAPTURECAPTURE",
+        "counts": {
+          "assay": 1,
+          "cassette": 2,
+          "frame": 0,
+          "substrate": 1
+        },
+        "schema_digest": "CAPTURECAPTURE",
+        "sha256": "CAPTURECAPTURE"
+      },
+      "id": "CAPTURE",
+      "schema_digest": "CAPTURECAPTURE",
+      "summary": {
+        "counts": {
+          "assay": 1,
+          "cassette": 2,
+          "frame": 0,
+          "substrate": 1
+        },
+        "root_occurrences": 1,
+        "rows": 4,
+        "witnesses": 4
+      },
+      "version": 1
+    },
+    "resolved_same_state": {
+      "bytes_equal": true,
+      "certificate_equal": true,
+      "same_version": true
+    },
+    "reviewed": {
+      "certificate": {
+        "bytes": 32768,
+        "capture_digest": "CAPTURECAPTURE",
+        "counts": {
+          "assay": 1,
+          "cassette": 2,
+          "frame": 0,
+          "substrate": 1
+        },
+        "schema_digest": "CAPTURECAPTURE",
+        "sha256": "CAPTURECAPTURE"
+      },
+      "id": "CAPTURE",
+      "schema_digest": "CAPTURECAPTURE",
+      "summary": {
+        "counts": {
+          "assay": 1,
+          "cassette": 2,
+          "frame": 0,
+          "substrate": 1
+        },
+        "root_occurrences": 1,
+        "rows": 4,
+        "witnesses": 4
+      },
+      "version": 1
+    }
+  },
+  "reencoded_delivery": {
+    "C": {
+      "byte_bound_to_certificate": false,
+      "observation": "content equals the sealing capture but bytes differ from its certificate; the file was re-saved or copied, ask the recipient for the delivered SHA-256",
+      "verdict": "excluded"
+    },
+    "content_certifies": true,
+    "delivered_sha_matches_certificate": false
+  },
+  "same_schema_digest": true
+}

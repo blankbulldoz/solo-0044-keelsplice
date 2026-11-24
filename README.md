@@ -48,6 +48,9 @@ python3 -m keelsplice --repository keelsplice-local/state.sqlite \
 python3 -m compileall -q keelsplice examples
 python3 -m examples.walkthrough all
 python3 -m examples.browser_walkthrough
+python3 -m examples.triage --expect examples/triage_observations.json
 ```
 
-两份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。独立自动化测试套件延后。
+前两份演练使用临时库和临时端口，验证成功和拒绝路径，并用独立 SQLite 连接复核交付数据。
+
+`examples/triage.py` 构造「封存后父关系与核对结论不同」的三种互斥解释——源数据在试算与封存之间变化、误用同名配方的另一版本、接收方拿错已交付文件——并在 `docs/DIAGNOSIS.md` 记录每种解释在哪个观察上被排除、历史记录无法确认的范围，以及用状态库与交付文件离线复判的方法。独立自动化测试套件延后。
